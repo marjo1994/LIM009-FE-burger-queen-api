@@ -5,7 +5,6 @@ const {
   requireAdmin,
 } = require('../middleware/auth');
 
-
 const initAdminUser = (app, next) => {
   const { adminEmail, adminPassword } = app.get('config');
   if (!adminEmail || !adminPassword) {
@@ -18,9 +17,8 @@ const initAdminUser = (app, next) => {
     roles: { admin: true },
   };
 
-  // TODO: crear usuarix admin
+  // TO DO: crear usuarix admin
 };
-
 
 /*
  * Diagrama de flujo de una aplicación y petición en node - express :
