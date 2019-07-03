@@ -10,12 +10,14 @@ const { port, dbUrl, secret } = config;
 const app = express();
 
 // TO DO: Conección a la BD en mogodb
-mongoose.connect('mongodb://localhost/crud-mongo')
-.then((db)=>{
-  console.log('connected');
-}).catch((e)=>{
-  console.log(e);
-})
+//Aqui conectamos con la base de datos de mongodb
+mongoose.connect(dbUrl)
+  .then(() => {
+    console.log('connected'); //si consoleas esta pagina te sale este connected y puedes verificar en la consola de mongod.exe
+  }).catch((e) => {
+    console.log(e);
+  })
+
 app.set('config', config);
 app.set('pkg', pkg);
 
@@ -30,9 +32,9 @@ routes(app, (err) => {
     throw err;
   }
   app.use(errorHandler);
-  app.get('/',(req,res)=>{
+/*   app.get('/', (req, res) => {
     //aqui debo ejecutar el almacenamiento de la base de datos y emitir una respuesta
-  })
+  }) */
 
 });
 app.listen(port, () => {
