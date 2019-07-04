@@ -25,7 +25,7 @@ module.exports = (app, nextMain) => {
     if (!email || !password) {
       return next(400);
     }
-    let token = jwt.sign(tokenData, 'Secret Password', {
+   let token = jwt.sign(tokenData, 'Secret Password', {
       expiresIn: 60 * 60 * 24 // expires in 24 hours
     })
     console.log(token)
