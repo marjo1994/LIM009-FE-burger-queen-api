@@ -1,9 +1,28 @@
 const bcrypt = require('bcrypt');
+const users = require('../modelData')
 
 const {
   requireAuth,
   requireAdmin,
 } = require('../middleware/auth');
+
+const signUp = (req, res) => {
+  const newUser = new user();
+  newUser.email = req.body.email;
+  newUser.password = bcrypt.hashSync(req.body.password, 10);
+  newUser.save((err, userStored) => {
+    if (err) {
+      res.status(500).send('hubo un error:' + err);
+    };
+    res.status(200).send({
+      message: 'se ha registrado exitosamente',
+      // token: token
+
+    });
+    console.log(userStored)
+
+  })
+};
 
 
 const initAdminUser = (app, next) => {
@@ -11,22 +30,25 @@ const initAdminUser = (app, next) => {
   if (!adminEmail || !adminPassword) {
     return next();
   }
+  if (users.find({ email: adminEmail })) {
+    return next()
+  }
   const adminUser = {
     email: adminEmail,
     password: bcrypt.hashSync(adminPassword, 10),
     roles: { admin: true },
   };
   // TO DO: crear usuarix admin
-  /*   let userAdmin = new users({adminUser}).
-    userAdmin.email = adminUser.email;
-    userAdmin.password = adminUser.password;
-    userAdmin.roles = adminUser.roles;
-    userAdmin.save((err, userStored) => {
-      if (err) {
-        console.log('hubo un error al salvar la data:' + err);
-      }
-      console.log(userStored)
-    }) */
+  let userAdmin = new users()
+  userAdmin.email = adminUser.email;
+  userAdmin.password = adminUser.password;
+  userAdmin.roles = adminUser.roles;
+  userAdmin.save((err, userStored) => {
+    if (err) {
+      console.log('hubo un error al salvar la data:' + err);
+    }
+    console.log(userStored)
+  })
 };
 
 /*
@@ -74,7 +96,7 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin
    */
   app.get('/users', requireAdmin, (req, resp) => {
-
+    resp.send('token válido');
   });
   /*   app.get('/admin', requireAdmin, (req, resp) => {
       res.send(req.body())

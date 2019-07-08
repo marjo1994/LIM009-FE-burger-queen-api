@@ -36,7 +36,8 @@ const users = new Schema({
     },
     roles: {
         type: Object,
-        required: true
+        required: true,
+        default: { admin: false }
     }
 });
 const products = new Schema({

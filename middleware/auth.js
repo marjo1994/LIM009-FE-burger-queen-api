@@ -19,10 +19,13 @@ module.exports = secret => (req, resp, next) => {
     if (err) {
       return next(403);
     }
-    if(users.find({_id: decodedToken.uid})){
-      next();
-    }
     // TODO: Verificar identidad del usuario usando `decodeToken.uid`
+    console.log(decodedToken);
+    users.findOne({ _id: decodedToken.uid},(err,user)=>{
+
+    })
+      next();
+    
   });
 };
 
