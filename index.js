@@ -30,34 +30,27 @@ app.use(express.json());
 app.use(authMiddleware(secret));
 
 //middleware
-app.use(morgan('dev'))
+//app.use(morgan('dev'))
 
-app.get('/user', (req, res) => {
+/* app.get('/users', (req, res) => {
   //  let userId = req.params._id
-  Users.find({}, (err, user) => {
+  Users.findOne({ email: req.body.email }, (err, user) => {
     if (err) {
       return res.status(500).send('error al traer usuario: ' + err)
     }
     if (!user) {
       return res.status(404).send('error al encontrar usuario')
     }
-    console.log(user)
+    console.log(user._id)
     res.status(200).send(user)
-  })
-})
+  });
+}); */
 // Registrar rutas
 routes(app, (err) => {
   if (err) {
     throw err;
   }
   app.use(errorHandler);
-<<<<<<< HEAD
-/*   app.get('/', (req, res) => {
-    //aqui debo ejecutar el almacenamiento de la base de datos y emitir una respuesta
-  }) */
- 
-=======
-
 /*app.post('/register',signUp)
   app.get('/signIn',signIn)
   app.post('/orders',orders)
@@ -66,15 +59,12 @@ routes(app, (err) => {
   app.get('*', (req, res) => {
     res.send('Archivo no encontrado')
   })
->>>>>>> 3a9b6cdf6601ea4b9911ad8b6a1ecd332894f3a8
 });
+
 app.listen(port, () => {
   console.info(`App listening on port ${port}`);
 });
 
 
-/*app.get('/hola', (req,res) =>{
-  res.send(`Soy Marjorie`)
-})*/
 
 
