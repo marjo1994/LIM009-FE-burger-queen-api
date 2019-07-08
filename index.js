@@ -5,6 +5,8 @@ const errorHandler = require('./middleware/error');
 const routes = require('./routes');
 const pkg = require('./package.json');
 const mongoose = require('mongoose');
+const morgan = require('morgan');
+const Users = require('./modelData')
 
 const { port, dbUrl, secret } = config;
 const app = express();
@@ -26,16 +28,37 @@ app.use(express.urlencoded({ extended: false })); //permite leer los datos strin
 app.use(express.json());
 app.use(authMiddleware(secret));
 
+//middleware
+app.use(morgan('dev'))
+
+app.get('/user', (req, res) => {
+  //  let userId = req.params._id
+  Users.find({}, (err, user) => {
+    if (err) {
+      return res.status(500).send('error al traer usuario: ' + err)
+    }
+    if (!user) {
+      return res.status(404).send('error al encontrar usuario')
+    }
+    console.log(user)
+    res.status(200).send(user)
+  })
+})
 // Registrar rutas
 routes(app, (err) => {
   if (err) {
     throw err;
   }
   app.use(errorHandler);
-/*   app.get('/', (req, res) => {
-    //aqui debo ejecutar el almacenamiento de la base de datos y emitir una respuesta
-  }) */
 
+/*app.post('/register',signUp)
+  app.get('/signIn',signIn)
+  app.post('/orders',orders)
+  app.post('/register',register) */
+
+  app.get('*', (req, res) => {
+    res.send('Archivo no encontrado')
+  })
 });
 app.listen(port, () => {
   console.info(`App listening on port ${port}`);
