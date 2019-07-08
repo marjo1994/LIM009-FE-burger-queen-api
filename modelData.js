@@ -92,12 +92,6 @@ const order = new Schema({ //el mismo para crear la orden
 })
 
 //PARA convertir usar => const Blog = mongoose.model('Blog', blogSchema);
-<<<<<<< HEAD
-module.exports= mongoose.model('Recorde', order)
-module.exports= mongoose.model('products', product)
-module.exports= mongoose.model('users', user)
-=======
 module.exports = mongoose.model('Users', users);
 //modeule.exports= mongoose.model('Orders',order);
 
->>>>>>> 3a9b6cdf6601ea4b9911ad8b6a1ecd332894f3a8

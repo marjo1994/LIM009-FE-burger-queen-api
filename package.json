@@ -8,12 +8,8 @@
   },
   "scripts": {
     "pretest": "eslint .",
-<<<<<<< HEAD
-    "start": "nodemon index.js",
-=======
     "start": "node index.js",
     "dev": "nodemon index.js",
->>>>>>> 3a9b6cdf6601ea4b9911ad8b6a1ecd332894f3a8
     "test:e2e": "jest --verbose --testPathPattern e2e --globalSetup ./e2e/globalSetup --globalTeardown ./e2e/globalTeardown --runInBand",
     "test:unit": "jest --verbose --testPathIgnorePatterns e2e",
     "test": "npm run test:e2e && npm run test:unit",
