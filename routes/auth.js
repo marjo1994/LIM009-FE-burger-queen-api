@@ -21,15 +21,16 @@ module.exports = (app, nextMain) => {
 
   app.post('/auth', (req, res, next) => {
     const { email, password } = req.body;
-
+    
     if (!email || !password) {
       return next(400);
     }
-   let token = jwt.sign(tokenData, 'Secret Password', {
+   /*let token = jwt.sign(tokenData, 'Secret Password', {
       expiresIn: 60 * 60 * 24 // expires in 24 hours
     })
     console.log(token)
-    res.send({ token })
+    res.send({ token })*/
+
     // TO DO: autenticar a la usuarix
   });
 

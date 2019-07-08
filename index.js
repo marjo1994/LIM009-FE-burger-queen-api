@@ -36,10 +36,15 @@ routes(app, (err) => {
 /*   app.get('/', (req, res) => {
     //aqui debo ejecutar el almacenamiento de la base de datos y emitir una respuesta
   }) */
-
+ 
 });
-
 app.listen(port, () => {
   console.info(`App listening on port ${port}`);
-});  
+});
+
+
+/*app.get('/hola', (req,res) =>{
+  res.send(`Soy Marjorie`)
+})*/
+
 
