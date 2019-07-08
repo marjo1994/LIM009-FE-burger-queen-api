@@ -5,19 +5,28 @@ const {
   requireAdmin,
 } = require('../middleware/auth');
 
+
 const initAdminUser = (app, next) => {
   const { adminEmail, adminPassword } = app.get('config');
   if (!adminEmail || !adminPassword) {
     return next();
   }
-
   const adminUser = {
     email: adminEmail,
     password: bcrypt.hashSync(adminPassword, 10),
     roles: { admin: true },
   };
-
   // TO DO: crear usuarix admin
+  /*   let userAdmin = new users({adminUser}).
+    userAdmin.email = adminUser.email;
+    userAdmin.password = adminUser.password;
+    userAdmin.roles = adminUser.roles;
+    userAdmin.save((err, userStored) => {
+      if (err) {
+        console.log('hubo un error al salvar la data:' + err);
+      }
+      console.log(userStored)
+    }) */
 };
 
 /*
@@ -65,8 +74,12 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin
    */
   app.get('/users', requireAdmin, (req, resp) => {
-  });
 
+  });
+  /*   app.get('/admin', requireAdmin, (req, resp) => {
+      res.send(req.body())
+      //id del admin =5d2185c8a290e73e549fc1cd
+    }); */
   /**
    * @name GET /users/:uid
    * @description Obtiene información de un usuario
