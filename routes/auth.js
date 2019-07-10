@@ -28,7 +28,7 @@ module.exports = (app, nextMain) => {
     }
     // TO DO: autenticar a la usuarix
     //  res.json({ token })
-    user.findOne({ email: req.body.email }, (err, userStored) => {
+    user.findOne({ email: req.body.email }, (err, userStored) => {      
       if (err) {
         return res.status(500).send({ message: err })
       };
@@ -37,13 +37,12 @@ module.exports = (app, nextMain) => {
           message: 'no existe el usuario'
         })
       };
+      console.log(userStored)
       bcrypt.compare(req.body.password, '10', (err, res) => {
         if(err){
           console.log(err)
         }
         if (res) {
-          console.log(res)
-
           const token = jwt.sign({ uid: userStored._id }, secret);
           res.status(200).send({ token: token })
         } else {

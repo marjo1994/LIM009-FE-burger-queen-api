@@ -2,22 +2,6 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema; //se define un modelo de objetos que pueden ser reutilizados
 //para otras collections es recomendable hacerlo en otra hoja
 
-const product = new Schema ({
-    name: String,
-    price: Number,
-    image: URL,
-    type: String,
-    dateEntry: Date
-})
-
-const user = new Schema ({
-    id: String,
-    email: Object,
-    roles: {
-    admin: Boolean
-    }    
-})
-
 /* const register = new Schema({
     token: String,
     name: String,
