@@ -8,11 +8,12 @@ const mongoose = require('mongoose');
 const morgan = require('morgan');
 
 const { port, dbUrl, secret } = config;
+
 const app = express();
 
 // TO DO: Conección a la BD en mogodb
 //Aqui conectamos con la base de datos de mongodb
-mongoose.connect(dbUrl,{ useNewUrlParser: true })
+mongoose.connect(dbUrl, { useNewUrlParser: true })
   .then(() => {
     console.log('connected'); //si consoleas esta pagina te sale este connected y puedes verificar en la consola de mongod.exe
   }).catch((e) => {
@@ -49,8 +50,20 @@ routes(app, (err) => {
     throw err;
   }
   app.use(errorHandler);
+/*app.post('/register',signUp)
+  app.get('/signIn',signIn)
+  app.post('/orders',orders)
+  app.post('/register',register) */
+
+  app.get('*', (req, res) => {
+    res.send('Archivo no encontrado')
+  })
 });
+
 app.listen(port, () => {
   console.info(`App listening on port ${port}`);
 });
+
+
+
 
