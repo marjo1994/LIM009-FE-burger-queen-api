@@ -6,7 +6,6 @@ const routes = require('./routes');
 const pkg = require('./package.json');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
-const Users = require('./modelData')
 
 const { port, dbUrl, secret } = config;
 
@@ -32,7 +31,7 @@ app.use(authMiddleware(secret));
 //middleware
 //app.use(morgan('dev'))
 
- /*app.get('/users', (req, res) => {
+/* app.get('/users', (req, res) => {
   //  let userId = req.params._id
   Users.findOne({ email: req.body.email }, (err, user) => {
     if (err) {
@@ -44,7 +43,7 @@ app.use(authMiddleware(secret));
     console.log(user._id)
     res.status(200).send(user)
   });
-});*/
+}); */
 // Registrar rutas
 routes(app, (err) => {
   if (err) {
@@ -55,6 +54,10 @@ routes(app, (err) => {
   app.get('/signIn',signIn)
   app.post('/orders',orders)
   app.post('/register',register) */
+
+  app.get('*', (req, res) => {
+    res.send('Archivo no encontrado')
+  })
 });
 
 app.listen(port, () => {

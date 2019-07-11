@@ -22,8 +22,6 @@ module.exports = (app, nextMain) => {
    * @code {401} si no hay cabecera de autenticación
    */
   app.get('/products', requireAuth, (req, resp, next) => {
-    resp.send('Hola productos')
-
   });
 
   /**
