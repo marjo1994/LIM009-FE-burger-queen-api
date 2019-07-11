@@ -32,7 +32,7 @@ app.use(authMiddleware(secret));
 //middleware
 //app.use(morgan('dev'))
 
-app.get('/users', (req, res) => {
+ /*app.get('/users', (req, res) => {
   //  let userId = req.params._id
   Users.findOne({ email: req.body.email }, (err, user) => {
     if (err) {
@@ -44,7 +44,7 @@ app.get('/users', (req, res) => {
     console.log(user._id)
     res.status(200).send(user)
   });
-});
+});*/
 // Registrar rutas
 routes(app, (err) => {
   if (err) {

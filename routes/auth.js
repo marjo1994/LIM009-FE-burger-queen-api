@@ -38,7 +38,7 @@ module.exports = (app, nextMain) => {
         })
       };
       console.log(userStored)
-      bcrypt.compare(req.body.password, '10', (err, res) => {
+      bcrypt.compare(req.body.password, (err, res) => {
         if(err){
           console.log(err)
         }
