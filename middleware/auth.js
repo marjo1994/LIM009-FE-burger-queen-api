@@ -14,33 +14,35 @@ module.exports = secret => (req, resp, next) => {
   if (type.toLowerCase() !== 'bearer') {
     return next();
   }
-
   jwt.verify(token, secret, (err, decodedToken) => {
     if (err) {
+      console.log('bbbbbbb')
       return next(403);
     }
     // TODO: Verificar identidad del usuario usando `decodeToken.uid`
-    console.log(decodedToken);
-    users.findOne({ _id: decodedToken.uid},(err,user)=>{
-
-    })
+    users.findOne({ _id: decodedToken.uid }, (err, user) => {
+      if (err) { return next(500, { err }) }
+      req.headers.user = user;
+      //resp.status(200);
       next();
-    
+    })
   });
 };
 
 
 module.exports.isAuthenticated = req => (
-  // TODO: decidir por la informacion del request si la usuaria esta autenticada
-
-  false
+  // TODO: decidir por la informacion del request si la usuaria está atutenticada
+  users.findOne({ email: req.body.email }, (err, user) => {
+    (user) ? true : false
+  })
 );
 
 
-module.exports.isAdmin = req => (
+module.exports.isAdmin = req => {
   // TODO: decidir por la informacion del request si la usuaria es admin
-  (req.roles.admin) ? true : false
-);
+  //console.log(req.headers.user.roles.admin)
+  return req.headers.user && req.headers.user.roles.admin
+}
 
 
 module.exports.requireAuth = (req, resp, next) => (

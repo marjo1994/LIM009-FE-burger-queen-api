@@ -6,48 +6,33 @@ const {
   requireAdmin,
 } = require('../middleware/auth');
 
-const signUp = (req, res) => {
-  const newUser = new user();
-  newUser.email = req.body.email;
-  newUser.password = bcrypt.hashSync(req.body.password, 10);
-  newUser.save((err, userStored) => {
-    if (err) {
-      res.status(500).send('hubo un error:' + err);
-    };
-    res.status(200).send({
-      message: 'se ha registrado exitosamente',
-      // token: token
-
-    });
-    console.log(userStored)
-
-  })
-};
-
 
 const initAdminUser = (app, next) => {
   const { adminEmail, adminPassword } = app.get('config');
   if (!adminEmail || !adminPassword) {
-    return next();
+    return next(400);
   }
-  if (users.find({ email: adminEmail })) {
-    return next()
-  }
-  const adminUser = {
-    email: adminEmail,
-    password: bcrypt.hashSync(adminPassword, 10),
-    roles: { admin: true },
-  };
-  // TO DO: crear usuarix admin
-  let userAdmin = new users()
-  userAdmin.email = adminUser.email;
-  userAdmin.password = adminUser.password;
-  userAdmin.roles = adminUser.roles;
-  userAdmin.save((err, userStored) => {
-    if (err) {
-      console.log('hubo un error al salvar la data:' + err);
+  users.findOne({ email: adminEmail }, (err, res) => {
+    if (res) {
+      next()
+    } else {
+      const adminUser = {
+        email: adminEmail,
+        password: bcrypt.hashSync(adminPassword, 10),
+        roles: { admin: true },
+      };
+      // TO DO: crear usuarix admin
+      let userAdmin = new users()
+      userAdmin.email = adminUser.email;
+      userAdmin.password = adminUser.password;
+      userAdmin.roles = adminUser.roles;
+      userAdmin.save((err, userStored) => {
+        if (err) {
+          console.log('hubo un error al salvar la data:' + err);
+        }
+        console.log(userStored)
+      })
     }
-    console.log(userStored)
   })
 };
 
@@ -96,7 +81,16 @@ module.exports = (app, next) => {
    * @code {403} si no es ni admin
    */
   app.get('/users', requireAdmin, (req, resp) => {
-    resp.send('token válido');
+    if (!req.headers.authorization) {
+      return next(401, { message: 'No existe cabecera de autenticación' })
+    }
+    users.find({}, (err, res) => {
+      if (err) {
+        return next(400, { message: 'error al traer usuarios' })
+      } else {
+        resp.status(200).send(res)
+      }
+    });
   });
   /*   app.get('/admin', requireAdmin, (req, resp) => {
       res.send(req.body())
@@ -119,6 +113,17 @@ module.exports = (app, next) => {
    * @code {404} si el usuario solicitado no existe
    */
   app.get('/users/:uid', requireAuth, (req, resp) => {
+    if (!req.headers.authorization) {
+      return next(401, { message: 'No existe cabecera de autenticación' })
+    }
+    // console.log(req.params)
+    users.findOne({ _id: req.params.uid }, (err, res) => {
+      if (err) {
+        return next(404, { message: 'El usuario solicitado no existe' })
+      } else {
+        resp.status(200).send(res)
+      }
+    });
   });
 
   /**
@@ -139,6 +144,24 @@ module.exports = (app, next) => {
    * @code {403} si ya existe usuario con ese `email`
    */
   app.post('/users', requireAdmin, (req, resp, next) => {
+    if (!req.headers.authorization) {
+      return next(401, { message: 'No existe cabecera de autenticación' })
+    }
+    if (!req.body.email || !req.body.password) {
+      return next(400, { message: 'no se proveen `email` o `password` o ninguno de los dos' })
+    }
+    let newUser = new users();
+    newUser.email = req.body.email;
+    newUser.password = bcrypt.hashSync(req.body.password, 10);
+    newUser.save((err, userStored) => {
+      if (err) {
+        console.log('aaaaaaa')
+        return next(403, { message: err })
+      }else{
+        console.log(userStored);
+        resp.status(200).send({message: 'se ha registrado exitosamente'});
+      }
+    })
   });
 
   /**

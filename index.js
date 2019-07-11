@@ -6,14 +6,13 @@ const routes = require('./routes');
 const pkg = require('./package.json');
 const mongoose = require('mongoose');
 const morgan = require('morgan');
-const Users = require('./modelData')
 
 const { port, dbUrl, secret } = config;
 const app = express();
 
 // TO DO: Conección a la BD en mogodb
 //Aqui conectamos con la base de datos de mongodb
-mongoose.connect(dbUrl)
+mongoose.connect(dbUrl,{ useNewUrlParser: true })
   .then(() => {
     console.log('connected'); //si consoleas esta pagina te sale este connected y puedes verificar en la consola de mongod.exe
   }).catch((e) => {

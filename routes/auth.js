@@ -21,33 +21,26 @@ module.exports = (app, nextMain) => {
    * @auth No requiere autenticación
    */
 
-  app.post('/auth', (req, res, next) => {
+  app.post('/auth', (req, resp, next) => {
     const { email, password } = req.body;
     if (!email || !password) {
       return next(400);
     }
-    // TO DO: autenticar a la usuarix
-    //  res.json({ token })
+    // TO DO: autenticar a la usuarix--------------
     user.findOne({ email: req.body.email }, (err, userStored) => {
       if (err) {
-        return res.status(500).send({ message: err })
+       return next(500, {message: err});
       };
       if (!userStored) {
-        return res.status(404).send({
+        return resp.status(404).send({
           message: 'no existe el usuario'
         })
       };
-      bcrypt.compare(req.body.password, '10', (err, res) => {
-        if(err){
-          console.log(err)
-        }
-        if (res) {
-          console.log(res)
+      bcrypt.compare(req.body.password, userStored.password, (err, res) => {
 
+        if (res) {
           const token = jwt.sign({ uid: userStored._id }, secret);
-          res.status(200).send({ token: token })
-        } else {
-          next(401)
+          resp.status(200).send({ token: token })
         }
       });
 
@@ -55,4 +48,3 @@ module.exports = (app, nextMain) => {
   });
   return nextMain();
 };
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NjI2MTc1MzJ9.5dzueIxO7QceZUwwn3CqrL2qfLMxhmRuq-_EGu3Y8LA
