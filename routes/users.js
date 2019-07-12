@@ -114,12 +114,12 @@ module.exports = (app, next) => {
    */
   app.get('/users/:uid', requireAuth, (req, resp) => {
     if (!req.headers.authorization) {
-      return next(401, { message: 'No existe cabecera de autenticación' })
+     resp.status(401).send({message: 'No hay cabecera de autenticación'})
     }
     // console.log(req.params)
-    users.findOne({ _id: req.params.uid }, (err, res) => {
-      if (err) {
-        return next(404, { message: 'El usuario solicitado no existe' })
+    users.findOne({ _id: req.params.uid }, (err, res) => {'El usuario solicitado no existe'
+      if (err) {        
+        resp.status(404).send({message: 'El usuario solicitado no existe'})
       } else {
         resp.status(200).send(res)
       }
@@ -152,13 +152,11 @@ module.exports = (app, next) => {
     }
     let newUser = new users();
     newUser.email = req.body.email;
-    newUser.password = bcrypt.hashSync(req.body.password, 10);
+    newUser.password = bcrypt.hashSync(req.body.password, 10);    
     newUser.save((err, userStored) => {
       if (err) {
-        console.log('aaaaaaa')
-        return next(403, { message: err })
-      }else{
-        console.log(userStored);
+        return next(403, { message: 'ya existe usuaria con ese `email`' })
+      }else{        
         resp.status(200).send({message: 'se ha registrado exitosamente'});
       }
     })
