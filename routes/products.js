@@ -22,6 +22,7 @@ module.exports = (app, nextMain) => {
    * @code {401} si no hay cabecera de autenticación
    */
   app.get('/products', requireAuth, (req, resp, next) => {
+    
   });
 
   /**
@@ -69,6 +70,12 @@ module.exports = (app, nextMain) => {
    * @code {404} si el producto con `productId` indicado no existe
    */
   app.post('/products', requireAdmin, (req, resp, next) => {
+
+    /*Primero, como administrador debo poder crear productos*/
+    let newProduct = new products();
+    newProduct.name= req.body.name
+    newProduct.price = req.body.price
+
   });
 
 

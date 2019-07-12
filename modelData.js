@@ -25,11 +25,6 @@ const users = new Schema({
         required: true,
         trim: true
     },
-    username: {
-        type: String,
-        unique: true,
-        trim: true
-    },
     password: {
         type: String,
         required: true,
@@ -63,7 +58,7 @@ const products = new Schema({
     dateEntry: {
         type: Date,
         required: true,
-        default: Date.now
+        default: Date.now()
     }
 });
 
@@ -78,5 +73,6 @@ const order = new Schema({ //el mismo para crear la orden
 
 //PARA convertir usar => const Blog = mongoose.model('Blog', blogSchema);
 module.exports = mongoose.model('Users', users);
+// module.exports = mongoose.model('Products', products);
 //modeule.exports= mongoose.model('Orders',order);
 
