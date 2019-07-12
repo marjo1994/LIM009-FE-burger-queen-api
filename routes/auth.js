@@ -48,4 +48,3 @@ module.exports = (app, nextMain) => {
   });
   return nextMain();
 };
-
