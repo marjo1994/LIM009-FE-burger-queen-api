@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const users = require('../modelData')
+const users = require('../modelUsers')
 
 const {
   requireAuth,
@@ -29,7 +29,7 @@ const initAdminUser = (app, next) => {
       userAdmin.roles = adminUser.roles;
       userAdmin.save((err, userStored) => {
         if (err) {
-          console.log('hubo un error al salvar la data:' + err);
+          console.log(err);
         }
         console.log(userStored)
       })

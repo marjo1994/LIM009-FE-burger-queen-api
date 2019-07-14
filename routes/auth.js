@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config');
-const user = require('../modelData');
+const user = require('../modelUsers');
 const bcrypt = require('bcrypt');
 
 const { secret } = config;
