@@ -118,8 +118,7 @@ module.exports = (app, next) => {
     if (!req.headers.authorization) {
       return resp.status(401).send({ message: 'No existe cabecera de autenticación' });
     }
-    console.log(req.headers.user)
-    if (req.headers.user._id.toString() === req.params.uid) {
+    if (req.headers.user._id.toString() === req.params.uid || isAdmin(req)) {
       users.findOne({ _id: req.params.uid }, (err, res) => {
         if (err) {
           resp.status(404).send({ message: 'El usuario solicitado no existe' })
@@ -154,17 +153,17 @@ module.exports = (app, next) => {
       return resp.status(401).send({ message: 'No existe cabecera de autenticación' });
     }
     if (!req.body.email || !req.body.password) {
-      return next(400, { message: 'no se proveen `email` o `password` o ninguno de los dos' })
+      return resp.status(400).send({ message: 'No se proveen `email` o `password` o ninguno de los dos' })
     }
     let newUser = new users();
     newUser.email = req.body.email;
     newUser.password = bcrypt.hashSync(req.body.password, 10);
     newUser.save((err, userStored) => {
       if (err) {
-        return resp.status(403).send({ message: 'ya existe usuaria con ese `email`' });
+        return resp.status(403).send({ message: 'Ya existe usuarix con ese `email`' });
       } else {
         console.log(userStored)
-        resp.status(200).send({ message: 'se ha registrado exitosamente' });
+        resp.status(200).send({ message: 'Se ha registrado exitosamente' });
       }
     })
   });
@@ -215,6 +214,7 @@ module.exports = (app, next) => {
           user.body.roles.admin = req.body.admin
         }
         console.log(user)
+        user.save();
         resp.status(200).send({ message: 'Cambios registrados satisfactoriamente' })
       } else {
         resp.status(403).send({ message: 'No es ni admin o el mismo usuario' })

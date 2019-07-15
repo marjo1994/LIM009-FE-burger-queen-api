@@ -43,7 +43,6 @@ module.exports = (app, nextMain) => {
           resp.status(200).send({ token: token })
         }
       });
-
     })
   });
   return nextMain();
