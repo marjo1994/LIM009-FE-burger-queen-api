@@ -35,32 +35,7 @@ const users = new Schema({
         default: { admin: false }
     }
 });
-const products = new Schema({
-    name: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    price: {
-        type: Number,
-        unique: true,
-        required: true,
-        trim: true
-    },
-    image: {
-        type: String,
-        required: true,
-    },
-    type: {
-        type: Object,
-        required: true
-    },
-    dateEntry: {
-        type: Date,
-        required: true,
-        default: Date.now()
-    }
-});
+
 
 const order = new Schema({ //el mismo para crear la orden
     userId: String,
@@ -71,8 +46,6 @@ const order = new Schema({ //el mismo para crear la orden
     dateProcessed: Date
 })
 
-//PARA convertir usar => const Blog = mongoose.model('Blog', blogSchema);
 module.exports = mongoose.model('Users', users);
-// module.exports = mongoose.model('Products', products);
 //modeule.exports= mongoose.model('Orders',order);
 
