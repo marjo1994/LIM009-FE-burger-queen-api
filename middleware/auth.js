@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const users = require('../modelData');
+const users = require('../models/modelUsers');
 
 
 module.exports = secret => (req, resp, next) => {
@@ -39,7 +39,6 @@ module.exports.isAuthenticated = req => (
 
 module.exports.isAdmin = req => {
   // TODO: decidir por la informacion del request si la usuaria es admin
-  //console.log(req.headers.user.roles.admin)
   return req.headers.user && req.headers.user.roles.admin
 }
 
@@ -56,6 +55,6 @@ module.exports.requireAdmin = (req, resp, next) => (
   (!module.exports.isAuthenticated(req))
     ? next(401)
     : (!module.exports.isAdmin(req))
-      ? next(403)
+      ? resp.status(403).send({message: 'No es administrador'})
       : next()
 );
