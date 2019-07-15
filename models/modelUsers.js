@@ -16,15 +16,8 @@ const users = new Schema({
         type: Object,
         required: true,
         default: { admin: false }
-    },
-    versionKey: false
+    }
 });
 
-
-
-//cantidad: Object, qty: Number, product: Object 
-
-
-//PARA convertir usar => const Blog = mongoose.model('Blog', blogSchema);
-module.exports =  mongoose.model('Users', users)
+module.exports = mongoose.model('Users', users);
 
