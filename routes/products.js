@@ -154,6 +154,7 @@ module.exports = (app, nextMain) => {
       if(req.body.type) {
         productById.type = req.body.type
       }
+      productById.save()
       resp.status(200).send({ message: 'Cambios registrados satisfactoriamente' })
       console.log(productbyId)
     })

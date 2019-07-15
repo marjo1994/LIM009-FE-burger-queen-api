@@ -5,7 +5,7 @@ const errorHandler = require('./middleware/error');
 const routes = require('./routes');
 const pkg = require('./package.json');
 const mongoose = require('mongoose');
-const morgan = require('morgan');
+//const morgan = require('morgan');
 
 const { port, dbUrl, secret } = config;
 
@@ -20,18 +20,7 @@ mongoose.connect(dbUrl, { useNewUrlParser: true })
     console.log(e);
   })
 
-app.set('config', config);
-app.set('pkg', pkg);
-
-// parse application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: false })); //permite leer los datos string en json que envie el usuario
-app.use(express.json());
-app.use(authMiddleware(secret));
-
-//middleware
-//app.use(morgan('dev'))
-
-/* app.get('/users', (req, res) => {
+  /* app.get('/users', (req, res) => {
   //  let userId = req.params._id
   Users.findOne({ email: req.body.email }, (err, user) => {
     if (err) {
@@ -44,20 +33,29 @@ app.use(authMiddleware(secret));
     res.status(200).send(user)
   });
 }); */
+app.set('config', config);
+app.set('pkg', pkg);
+
+// parse application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: false })); //permite leer los datos string en json que envie el usuario
+app.use(express.json());
+app.use(authMiddleware(secret));
+
+//middleware
+//app.use(morgan('dev'))
 // Registrar rutas
 routes(app, (err) => {
   if (err) {
     throw err;
   }
   app.use(errorHandler);
-/*app.post('/register',signUp)
-  app.get('/signIn',signIn)
-  app.post('/orders',orders)
-  app.post('/register',register) */
   app.listen(port, () => {
     console.info(`App listening on port ${port}`);
   });
 });
+
+
+
 
 
 
