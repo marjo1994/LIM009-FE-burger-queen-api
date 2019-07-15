@@ -32,6 +32,7 @@ const initAdminUser = (app, next) => {
           console.log(err);
         }
         console.log(userStored)
+        next();
       })
     }
   })
