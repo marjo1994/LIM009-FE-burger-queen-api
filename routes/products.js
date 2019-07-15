@@ -3,6 +3,7 @@ const {
   requireAdmin,
 } = require('../middleware/auth');
 
+const products= require('../models/modelProducts');
 /** @module products */
 module.exports = (app, nextMain) => {
   /**
