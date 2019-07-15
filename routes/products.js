@@ -101,7 +101,6 @@ module.exports = (app, nextMain) => {
       if (err) {
         return resp.status(400).send({ message: 'no se indica `name` o  `price`' });
       } else {
-        
         resp.status(200).send({ message: 'se ha registró el producto exitosamente' });
       }
     })
@@ -156,6 +155,7 @@ module.exports = (app, nextMain) => {
         productById.type = req.body.type
       }
       resp.status(200).send({ message: 'Cambios registrados satisfactoriamente' })
+      console.log(productbyId)
     })
   });
 

@@ -54,11 +54,9 @@ routes(app, (err) => {
   app.get('/signIn',signIn)
   app.post('/orders',orders)
   app.post('/register',register) */
- 
-});
-
-app.listen(port, () => {
-  console.info(`App listening on port ${port}`);
+  app.listen(port, () => {
+    console.info(`App listening on port ${port}`);
+  });
 });
 
 
