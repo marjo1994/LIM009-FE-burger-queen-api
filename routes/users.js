@@ -116,9 +116,6 @@ module.exports = (app, next) => {
    */
   app.get('/users/:uid', requireAuth, (req, resp) => {
     if (!req.headers.authorization) {
-<<<<<<< HEAD
-     resp.status(401).send({message: 'No hay cabecera de autenticación                                                                                                                                                                                                           '})
-=======
       return resp.status(401).send({ message: 'No existe cabecera de autenticación' });
     }
     console.log(req.headers.user)
@@ -132,7 +129,6 @@ module.exports = (app, next) => {
       });
     } else {
       resp.status(403).send({ message: 'La información no corresponde al usuario activo' })
->>>>>>> c5e9a0782b248f8b4c2a0a9df810e0301659166f
     }
   });
 

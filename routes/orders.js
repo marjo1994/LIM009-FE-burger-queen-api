@@ -157,7 +157,7 @@ module.exports = (app, nextMain) => {
       if (req.body.client) {
         orderById.client = req.body.client;
       }
-      if(req.body.qty||req.bod)
+     // if(req.body.qty||req.bod)
 /*       if (req.body.product || req.body.qty || (req.body.product && req.body.qty)) {
         orderById.products.push({ product: req.body.product } || { qty: req.body.qty } || { qty: req.body.qty, product: req.body.product });
       }
