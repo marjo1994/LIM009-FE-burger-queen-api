@@ -114,7 +114,7 @@ module.exports = (app, next) => {
    */
   app.get('/users/:uid', requireAuth, (req, resp) => {
     if (!req.headers.authorization) {
-     resp.status(401).send({message: 'No hay cabecera de autenticación'})
+     resp.status(401).send({message: 'No hay cabecera de autenticación                                                                                                                                                                                                           '})
     }
     // console.log(req.params)
     users.findOne({ _id: req.params.uid }, (err, res) => {'El usuario solicitado no existe'
