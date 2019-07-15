@@ -1,7 +1,7 @@
 const {
   requireAuth,
 } = require('../middleware/auth');
-const order = require('../modelOrders')
+// const order = require('../modelOrders')
 /** @module orders */
 module.exports = (app, nextMain) => {
   /**
@@ -146,7 +146,7 @@ module.exports = (app, nextMain) => {
    */
   app.put('/orders/:orderid', requireAuth, (req, resp, next) => {
     if (!req.headers.authorization) {
-      return resp.status(401).send({ message: 'No existe cabecera de autenficación' })
+      return resp.status(401).send({ message: 'No existe cabecera de autenticación' })
     }
     if (!req.body || !req.body.status) {
       return resp.status(400).send({ message: 'No se indican ninguna propiedad a modificar o la propiedad `status` no es valida' })

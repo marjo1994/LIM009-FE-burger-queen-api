@@ -54,15 +54,13 @@ routes(app, (err) => {
   app.get('/signIn',signIn)
   app.post('/orders',orders)
   app.post('/register',register) */
-
-  app.get('*', (req, res) => {
-    res.send('Archivo no encontrado')
-  })
+ 
 });
 
 app.listen(port, () => {
   console.info(`App listening on port ${port}`);
 });
+
 
 
 
