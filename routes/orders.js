@@ -1,7 +1,8 @@
 const {
   requireAuth,
 } = require('../middleware/auth');
-// const order = require('../modelOrders')
+const order = require('../models/modelOrders')
+
 /** @module orders */
 module.exports = (app, nextMain) => {
   /**
@@ -32,7 +33,7 @@ module.exports = (app, nextMain) => {
       if (err) {
         return resp.status(404).send({ message: 'No hay ordenes para mostrar' })
       }
-      resp.send(orders);
+      resp.status(200).send(orders);
     })
   });
 
@@ -64,7 +65,7 @@ module.exports = (app, nextMain) => {
       if (err) {
         return resp.status(404).send({ message: 'La orden con `orderId` indicado no existe' })
       }
-      resp.send(orderById);
+      resp.status(200).send(orderById);
     })
   });
 
@@ -101,9 +102,7 @@ module.exports = (app, nextMain) => {
     const newOrder = new order();
     newOrder.userId = req.headers.user._id;
     newOrder.client = req.body.client;
-    //newOrder.products=[]
     newOrder.products.push({ qty: req.body.qty, product: req.body.product });
-    console.log(newOrder.products)
     newOrder.status = req.body.status;
     if (req.body.status === 'delivered') {
       newOrder.dateProcessed = new Date();
@@ -113,8 +112,8 @@ module.exports = (app, nextMain) => {
         console.log(err);
         resp.status(400).send({ message: 'no se indica `userId` o se intenta crear una orden sin productos' })
       }
-      resp.status(200).send({ message: 'se registro la orden exitosamente' })
       console.log(orderStored);
+      resp.status(200).send({ message: 'se registro la orden exitosamente' })
     })
   });
   /**
@@ -158,9 +157,17 @@ module.exports = (app, nextMain) => {
       if (req.body.client) {
         orderById.client = req.body.client;
       }
-      if (req.body.client) {
-        orderById.status = req.body.status;
+      if(req.body.qty||req.bod)
+/*       if (req.body.product || req.body.qty || (req.body.product && req.body.qty)) {
+        orderById.products.push({ product: req.body.product } || { qty: req.body.qty } || { qty: req.body.qty, product: req.body.product });
       }
+ */
+      if (req.body.status === 'delivered') {
+        orderById.status = 'delivered';
+        orderById.dateProcessed = new Date();
+      }
+      console.log(orderById)
+      resp.status(200).send(orderById);
     })
   });
 
@@ -192,6 +199,7 @@ module.exports = (app, nextMain) => {
        return resp.send({ message: 'Admin no puede autoeliminarse' })
      } */
     /*  if (req.headers.user._id.toString() === req.params.orderid || isAdmin(req)) { */
+    //order.products.id(req.params.orderid).remove();===> para eliminar solo la sección productos
     order.remove({ _id: req.params.orderid }, (err) => {
       if (err) {
         resp.status(404).send({ message: 'La orden seleccionada no existe' })
