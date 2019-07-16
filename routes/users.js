@@ -91,14 +91,11 @@ module.exports = (app, next) => {
       if (err) {
         return resp.status(400).send({ message: 'error al traer usuarios' })
       } else {
-        resp.status(200).send(res)
+        return resp.status(200).send(res)
       }
     });
   });
-  /*   app.get('/admin', requireAdmin, (req, resp) => {
-      res.send(req.body())
-      //id del admin =5d2185c8a290e73e549fc1cd
-    }); */
+
   /**
    * @name GET /users/:uid
    * @description Obtiene información de un usuario

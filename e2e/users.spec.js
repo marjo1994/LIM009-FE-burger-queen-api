@@ -20,12 +20,14 @@ const parseLinkHeader = str => str.split(',')
 
 describe('GET /users', () => {
   it('should fail with 401 when no auth', () => (
-    fetch('/users').then(resp => expect(resp.status).toBe(401))
+    fetch('/users').then(resp => {
+      console.log('hola', resp.status)
+      expect(resp.status).toEqual(401)})
   ));
 
   it('should fail with 403 when not admin', () => (
     fetchAsTestUser('/users')
-      .then(resp => expect(resp.status).toBe(403))
+      .then(resp => expect(resp.status).toEqual(403))
   ));
 
   it('should get users', () => (
