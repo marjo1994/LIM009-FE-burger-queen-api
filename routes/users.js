@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const users = require('../models/modelUsers')
+const users = require('../models/modelUsers');
 
 const {
   requireAuth,
@@ -31,7 +31,7 @@ const initAdminUser = (app, next) => {
         if (err) {
           console.log(err);
         }
-        console.log(userStored)
+
         next();
       })
     }
@@ -116,12 +116,18 @@ module.exports = (app, next) => {
     if (!req.headers.authorization) {
       return resp.status(401).send({ message: 'No existe cabecera de autenticación' });
     }
-    if (req.headers.user._id.toString() === req.params.uid || isAdmin(req)) {
-      users.findOne({ _id: req.params.uid }, (err, res) => {
-        if (err) {
-          resp.status(404).send({ message: 'El usuario solicitado no existe' })
+    let obj = new Object();
+    if (req.params.uid.indexOf('@') < 0) {
+      obj._id = req.params.uid;
+    } else {
+      obj.email = req.params.uid;
+    }
+    if (req.headers.user._id.toString() === req.params.uid || req.headers.user.email === req.params.uid || isAdmin(req)) {
+      users.findOne(obj, (err, user) => {
+        if (err || !user) {
+          return resp.status(404).send({ message: 'El usuario solicitado no existe' })
         } else {
-          resp.status(200).send(res)
+          return resp.status(200).send(user)
         }
       });
     } else {
@@ -147,6 +153,7 @@ module.exports = (app, next) => {
    * @code {403} si ya existe usuario con ese `email`
    */
   app.post('/users', requireAdmin, (req, resp, next) => {
+
     if (!req.headers.authorization) {
       return resp.status(401).send({ message: 'No existe cabecera de autenticación' });
     }
@@ -190,18 +197,22 @@ module.exports = (app, next) => {
     if (!req.headers.authorization) {
       return resp.status(401).send({ message: 'No existe cabecera de autenticación' });
     }
-    if (!req.body.email && !req.body.password && !isAdmin(req)) {
+    if (!req.body.email && !req.body.password && !isAdmin(req)) { //Puede ocurrir que el administrador no desee modificar ni email, ni password pero si roles
       return resp.status(400).send({ message: 'no se provee ni email ni passsword' })
     }
-    if (req.headers.user._id.toString() === req.params.uid && req.body.roles) {
-      return resp.status(403).send({ message: 'No puede modificar sus `roles`' })
+    let obj = new Object();
+    if (req.params.uid.indexOf('@') < 0) {
+      obj._id = req.params.uid;
+    } else {
+      obj.email = req.params.uid;
     }
-    users.findOne({ _id: req.params.uid }, (err, user) => {
-
-      if (!user) {
+    users.findOne(obj, (err, user) => {
+      if (err || !user) {
         return resp.status(404).send({ message: 'El usuario solicitado no existe' })
       }
-      if (req.headers.user._id.toString() === req.params.uid || isAdmin(req)) {
+      if ((req.headers.user._id.toString() !== obj._id || req.headers.user.email !== obj.email) && !isAdmin(req)) {//nadie puede modificar sus propios roles, inclus el admin
+        return resp.status(403).send({ message: 'No es ni admin o el mismo usuario' })
+      } else {
         if (req.body.email) {
           user.email = req.body.email;
         }
@@ -211,13 +222,45 @@ module.exports = (app, next) => {
         if (req.body.roles && isAdmin(req)) {
           user.body.roles.admin = req.body.admin
         }
-        console.log(user)
+        resp.status(200).send(user)
         user.save();
-        resp.status(200).send({ message: 'Cambios registrados satisfactoriamente' })
-      } else {
-        resp.status(403).send({ message: 'No es ni admin o el mismo usuario' })
       }
     })
+
+    /*  if (!req.body.email && !req.body.password && !isAdmin(req)) { //Puede ocurrir que el administrador no desee modificar ni email, ni password pero si roles
+       return resp.status(400).send({ message: 'no se provee ni email ni passsword' })
+     }
+     if ((req.headers.user._id.toString() === req.params.uid||req.headers.user.email === req.params.uid) && req.body.roles) {//nadie puede modificar sus propios roles, inclus el admin
+       return resp.status(403).send({ message: 'No puede modificar sus `roles`'})
+     }
+     let obj = new Object();
+     if (req.params.uid.indexOf('@') < 0) {
+       obj._id = req.params.uid;
+     } else {
+       obj.email = req.params.uid;
+     }
+ 
+     users.findOne(obj, (err, user) => {
+ 
+       if (!user||err) {
+         return resp.status(404).send({ message: 'El usuario solicitado no existe' })
+       }
+       if (req.headers.user._id.toString() === req.params.uid || req.headers.user.email === req.params.uid || isAdmin(req)) {
+         if (req.body.email) {
+           user.email = req.body.email;
+         }
+         if (req.body.password) {
+           user.password = bcrypt.hashSync(req.body.password, 10);
+         }
+         if (req.body.roles && isAdmin(req)) {
+           user.body.roles.admin = req.body.admin
+         }
+         user.save();
+         resp.status(200).send({ message: 'Cambios registrados satisfactoriamente' })
+       } else {
+         resp.status(403).send({ message: 'No es ni admin o el mismo usuario' })
+       }
+     }) */
   });
 
   /**

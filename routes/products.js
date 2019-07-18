@@ -101,7 +101,9 @@ module.exports = (app, nextMain) => {
       if (err) {
         return resp.status(400).send({ message: 'no se indica `name` o  `price`' });
       } else {
-        resp.status(200).send({ message: 'se ha registró el producto exitosamente' });
+              
+        console.log(resp.json().name)  
+              
       }
     })
   });

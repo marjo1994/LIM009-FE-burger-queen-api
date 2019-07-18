@@ -22,7 +22,7 @@ module.exports = secret => (req, resp, next) => {
     users.findOne({ _id: decodedToken.uid }, (err, user) => {
       if (err) { return next(500, { err }) }
       req.headers.user = user;
-      console.log(req.headers.user)
+      
       //resp.status(200);
       next();
     })
@@ -31,7 +31,7 @@ module.exports = secret => (req, resp, next) => {
 
 
 module.exports.isAuthenticated = req => (
-  // TODO: decidir por la informacion del request si la usuaria está atutenticada
+  // TODO: decidir por la informacion del request si la usuaria está autenticada
     (req.headers.user) ? true : false
   
 );

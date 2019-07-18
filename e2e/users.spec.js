@@ -3,6 +3,7 @@ const qs = require('querystring');
 const config = require('../config');
 
 
+
 const {
   fetch,
   fetchAsTestUser,
@@ -21,13 +22,14 @@ const parseLinkHeader = str => str.split(',')
 describe('GET /users', () => {
   it('should fail with 401 when no auth', () => (
     fetch('/users').then(resp => {
-      console.log('hola', resp.status)
-      expect(resp.status).toEqual(401)})
+      // console.log('hola', resp.status)
+      expect(resp.status).toBe(401)
+    })
   ));
 
   it('should fail with 403 when not admin', () => (
     fetchAsTestUser('/users')
-      .then(resp => expect(resp.status).toEqual(403))
+      .then(resp => expect(resp.status).toBe(403))
   ));
 
   it('should get users', () => (
@@ -37,6 +39,7 @@ describe('GET /users', () => {
         return resp.json();
       })
       .then((json) => {
+       // console.log(Array.isArray(json))
         expect(Array.isArray(json)).toBe(true);
         expect(json.length > 0).toBe(true);
         // TODO: Check that the results are actually the "expected" user objects
@@ -116,7 +119,9 @@ describe('GET /users/:uid', () => {
         expect(resp.status).toBe(200);
         return resp.json();
       })
-      .then(json => expect(json.email).toBe('test@test.test'))
+      .then(json => {
+        expect(json.email).toBe('test@test.test')
+      })
   ));
 
   it('should get other user as admin', () => (
@@ -163,6 +168,7 @@ describe('POST /users', () => {
         return resp.json();
       })
       .then((json) => {
+        console.log(json)
         expect(typeof json._id).toBe('string');
         expect(typeof json.email).toBe('string');
         expect(typeof json.password).toBe('undefined');
@@ -220,7 +226,9 @@ describe('PUT /users/:uid', () => {
 
   it('should fail with 403 when not owner nor admin', () => (
     fetchAsTestUser(`/users/${config.adminEmail}`, { method: 'PUT' })
-      .then(resp => expect(resp.status).toBe(403))
+      .then(resp => {
+          console.log(resp.status)
+         expect(resp.status).toBe(403)})
   ));
 
   it('should fail with 404 when admin and not found', () => (
@@ -246,7 +254,9 @@ describe('PUT /users/:uid', () => {
       method: 'PUT',
       body: { password: 'garmadon' },
     })
-      .then(resp => expect(resp.status).toBe(200))
+      .then(resp =>{
+        console.log(resp.status)
+        expect(resp.status).toBe(200)})
       .then(() => fetch('/auth', {
         method: 'POST',
         body: { email: 'test@test.test', password: 'garmadon' },

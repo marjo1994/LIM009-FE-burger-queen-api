@@ -27,10 +27,10 @@ describe('POST /products', () => {
       body: { name: 'Test', price: 5 },
     })
       .then((resp) => {
-        expect(resp.status).toBe(200);
-        return resp.json();
-      })
-      .then((json) => {
+        expect(resp.status).toBe(200);        
+        return resp.json();        
+        })
+      .then((json) => {        
         expect(typeof json._id).toBe('string');
         expect(typeof json.name).toBe('string');
         expect(typeof json.price).toBe('number');
@@ -70,6 +70,7 @@ describe('GET /products/:productid', () => {
         return resp.json();
       })
       .then((json) => {
+        console.log(json)
         expect(Array.isArray(json)).toBe(true);
         expect(json.length > 0).toBe(true);
         json.forEach((product) => {
