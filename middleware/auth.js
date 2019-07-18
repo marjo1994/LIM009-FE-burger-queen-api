@@ -55,6 +55,6 @@ module.exports.requireAdmin = (req, resp, next) => (
   (!module.exports.isAuthenticated(req))
     ? next(401)
     : (!module.exports.isAdmin(req))
-      ? resp.status(403).send({message: 'No es administrador'}) //next(403)
+      ? resp.status(403).send({message: 'No es administrador'}) 
       : next()
 );

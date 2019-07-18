@@ -168,7 +168,6 @@ describe('POST /users', () => {
         return resp.json();
       })
       .then((json) => {
-        console.log(json)
         expect(typeof json._id).toBe('string');
         expect(typeof json.email).toBe('string');
         expect(typeof json.password).toBe('undefined');
@@ -224,21 +223,25 @@ describe('PUT /users/:uid', () => {
       .then(resp => expect(resp.status).toBe(401))
   ));
 
-  it('should fail with 403 when not owner nor admin', () => (
+  it('should fail with 403 when not owner nor admin', () => (// Cuando no es el propio usuario ni el adminstrador
     fetchAsTestUser(`/users/${config.adminEmail}`, { method: 'PUT' })
       .then(resp => {
-          console.log(resp.status)
+          console.log(resp.status)// 403
          expect(resp.status).toBe(403)})
   ));
 
-  it('should fail with 404 when admin and not found', () => (
+  it('should fail with 404 when admin and not found', () => (//El usuario solicitado no existe
     fetchAsAdmin('/users/abc@def.gih', { method: 'PUT' })
-      .then(resp => expect(resp.status).toBe(404))
+      .then(resp => {
+        console.log(resp.status)// 404
+        expect(resp.status).toBe(404)})
   ));
 
-  it('should fail with 400 when no props to update', () => (
+  it('should fail with 400 when no props to update', () => (// No proporciona información a actualizar
     fetchAsTestUser('/users/test@test.test', { method: 'PUT' })
-      .then(resp => expect(resp.status).toBe(400))
+      .then(resp =>{        
+        expect(resp.status).toBe(400)})
+
   ));
 
   it('should fail with 403 when not admin tries to change own roles', () => (
@@ -254,8 +257,7 @@ describe('PUT /users/:uid', () => {
       method: 'PUT',
       body: { password: 'garmadon' },
     })
-      .then(resp =>{
-        console.log(resp.status)
+      .then(resp =>{        
         expect(resp.status).toBe(200)})
       .then(() => fetch('/auth', {
         method: 'POST',
