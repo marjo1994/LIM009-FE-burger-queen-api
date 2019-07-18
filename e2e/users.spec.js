@@ -302,7 +302,9 @@ describe('DELETE /users/:uid', () => {
 
   it('should fail with 404 when admin and not found', () => (
     fetchAsAdmin('/users/abc@def.ghi', { method: 'DELETE' })
-      .then(resp => expect(resp.status).toBe(404))
+      .then(resp => {
+        console.log(resp.status)
+        expect(resp.status).toBe(404)})
   ));
 
   it('should delete own user', () => {

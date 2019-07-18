@@ -202,7 +202,6 @@ module.exports = (app, next) => {
     }
     // req.headers.user._id.toString() === req.params.uid
    
-
     let obj = new Object();
     if (req.params.uid.indexOf('@') < 0) {
       obj._id = req.params.uid;
@@ -213,7 +212,7 @@ module.exports = (app, next) => {
       if (err || !queryUser) {
         return resp.status(404).send({ message: 'El usuario solicitado no existe' })
       }
-      
+
       if (req.headers.user._id.toString() === obj._id || req.headers.user.email === obj.email || isAdmin(req)) {
 
         if (!req.body.email && !req.body.password && !isAdmin(req)) {
@@ -235,9 +234,6 @@ module.exports = (app, next) => {
       }
     })
   });
-
- 
-
   /**
    * @name DELETE /users
    * @description Elimina un usuario
@@ -268,16 +264,27 @@ module.exports = (app, next) => {
       obj.email = req.params.uid;
     }
     if (req.headers.user._id.toString() === obj._id|| req.headers.user.email === obj.email|| isAdmin(req)) {
-      users.remove(obj, (err) => {
-        if (err) {
+      users.findOne(obj, (err,queryUser) => {
+        if(!queryUser) {
+          resp.status(404).send({ message: 'El usuario seleccionado no existe' })
+        } else {users.remove(obj, (err) => {
+            resp.status(200).send({ message: 'Se borro satisfactoriamente!' });
+          })
+        }
+      })     
+      } else {
+          resp.status(403).send({ message: 'No es ni admin o el mismo usuario' })
+        }
+      });
+     
+      
+
+     /* users.remove(obj, (err, queryUser) => {
+        if (err || !queryUser) {
           resp.status(404).send({ message: 'El usuario seleccionado no existe' })
         }
-        resp.status(200).send({ message: 'Se borro satisfactoriamente!' });
-      });
-    } else {
-      resp.status(403).send({ message: 'No es ni admin o el mismo usuario' })
-    }
-  });
-
+        
+      });*/
+   
   initAdminUser(app, next);
 };
