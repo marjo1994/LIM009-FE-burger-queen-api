@@ -240,6 +240,7 @@ describe('PUT /users/:uid', () => {
   it('should fail with 400 when no props to update', () => (// No proporciona información a actualizar
     fetchAsTestUser('/users/test@test.test', { method: 'PUT' })
       .then(resp =>{        
+        console.log(resp)
         expect(resp.status).toBe(400)})
 
   ));

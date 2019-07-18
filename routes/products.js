@@ -2,7 +2,7 @@ const {
   requireAuth,
   requireAdmin,
 } = require('../middleware/auth');
-const products= require('../models/modelProducts');
+const products = require('../models/modelProducts');
 /** @module products */
 module.exports = (app, nextMain) => {
   /**
@@ -22,14 +22,11 @@ module.exports = (app, nextMain) => {
    * @code {401} si no hay cabecera de autenticación
    */
   app.get('/products', requireAuth, (req, resp, next) => {
-    if (!req.headers.authorization) {
-      return resp.status(401).send({ message: 'No existe cabecera de autenticación' })
-    }
     products.find({}, (err, res) => {
       if (err) {
         return resp.status(400).send({ message: 'error al obtener productos' })
       } else {
-        resp.status(200).send(res)
+        resp.send(res)
       }
     });
   });
@@ -55,14 +52,14 @@ module.exports = (app, nextMain) => {
    * @code {404} si el producto con `productId` indicado no existe
    */
   app.get('/products/:productId', requireAuth, (req, resp, next) => {
-    if (!req.headers.authorization) {
-      return resp.status(401).send({ message: 'No existe cabecera de autenticación' })
-    }
     products.find({ _id: req.params.productId }, (err, productById) => {
       if (err) {
+        return resp.send({ message: 'Error al traer información' },err)
+      }
+      if(!productById){
         return resp.status(404).send({ message: 'El producto con `productId` indicado no existe' })
       }
-      resp.status(200).send(productById);
+      resp.send(productById);
     })
   });
 
@@ -85,28 +82,24 @@ module.exports = (app, nextMain) => {
    * @code {400} si no se indican `name` o `price`
    * @code {401} si no hay cabecera de autenticación
    * @code {403} si no es admin
-   * @code {404} si el producto con `productId` indicado no existe
    */
   app.post('/products', requireAdmin, (req, resp, next) => {
-    if (!req.headers.authorization) {
-      return resp.status(401).send({ message: 'No existe cabecera de autenticación' })
+    if (!req.body.name || !req.body.price) {
+      return resp.status(400).send({ message: 'No se indican `name` o `price`' })
     }
     /*Primero, como administrador debo poder crear productos*/
     let newProduct = new products();
-    newProduct.name= req.body.name
+    newProduct.name = req.body.name
     newProduct.price = req.body.price
     newProduct.image = req.body.image
     newProduct.type = req.body.type
     newProduct.save((err, productStored) => {
-      if (err) {
-        return resp.status(400).send({ message: 'no se indica `name` o  `price`' });
-      } else {
-              
-        console.log(resp.json().name)  
-              
+      if(err){
+        resp.send(err)
       }
-    })
-  });
+      resp.send(productStored)
+    });
+  })
 
 
   /**
@@ -132,28 +125,25 @@ module.exports = (app, nextMain) => {
    * @code {404} si el producto con `productId` indicado no existe
    */
   app.put('/products/:productId', requireAdmin, (req, resp, next) => {
-    if (!req.headers.authorization) {
-      return resp.status(401).send({ message: 'No existe cabecera de autenticación' })
+    if (!req.body) {
+      return resp.status(400).send({ message: 'No se indica ninguna propiedad a modificar' })
     }
-    if(!req.body) {
-      return resp.status(400).send({message: 'No se indica ninguna propiedad a modificar'})
-    }
-    products.findOne({_id: req.params.productId}, (err, productById) => {
+    products.findOne({ _id: req.params.productId }, (err, productById) => {
       if (err) {
         return resp.status(404).send({ message: 'El producto con `productId` indicado no existe' })
       }
       console.log(productById)
-      if(req.body.name) {
+      if (req.body.name) {
         console.log(productById.name)
         productById.name = req.body.name
       }
-      if(req.body.price) {
+      if (req.body.price) {
         productById.price = req.body.price
       }
-      if(req.body.image) {
+      if (req.body.image) {
         productById.image = req.body.image
       }
-      if(req.body.type) {
+      if (req.body.type) {
         productById.type = req.body.type
       }
       productById.save()
@@ -180,10 +170,7 @@ module.exports = (app, nextMain) => {
    * @code {404} si el producto con `productId` indicado no existe
    */
   app.delete('/products/:productId', requireAdmin, (req, resp, next) => {
-    if (!req.headers.authorization) {
-      return resp.status(401).send({ message: 'No existe cabecera de autenticación' })
-    }
-    products.remove({_id:req.params.productId}, (err) => {
+    products.remove({ _id: req.params.productId }, (err) => {
       if (err) {
         resp.status(404).send({ message: 'El producto seleccionado no existe' })
       }

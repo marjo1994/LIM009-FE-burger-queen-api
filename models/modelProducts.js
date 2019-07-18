@@ -5,11 +5,13 @@ const products = new Schema({
     name: {
         type: String,
         required: true,
-        trim: true
+        unique  : false     
+
     },
     price: {
         type: Number,
-        required: true     
+        required: true,
+        unique  : false     
     },
     image: {
         type: String,

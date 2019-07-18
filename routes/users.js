@@ -4,7 +4,8 @@ const users = require('../models/modelUsers');
 const {
   requireAuth,
   requireAdmin,
-  isAdmin
+  isAdmin,
+  requireAdminOrUser
 } = require('../middleware/auth');
 
 
@@ -84,14 +85,11 @@ module.exports = (app, next) => {
    */
   //marjo 5 5d28e0c8dad31f777cc03c51
   app.get('/users', requireAdmin, (req, resp) => {
-    if (!req.headers.authorization) {
-      return resp.status(401).send({ message: 'No existe cabecera de autenticación' })
-    }
     users.find({}, (err, res) => {
       if (err) {
         return resp.status(400).send({ message: 'error al traer usuarios' })
       } else {
-        return resp.status(200).send(res)
+        return resp.send(res)
       }
     });
   });
@@ -113,9 +111,6 @@ module.exports = (app, next) => {
    * @code {404} si el usuario solicitado no existe
    */
   app.get('/users/:uid', requireAuth, (req, resp) => {
-    if (!req.headers.authorization) {
-      return resp.status(401).send({ message: 'No existe cabecera de autenticación' });
-    }
     let obj = new Object();
     if (req.params.uid.indexOf('@') < 0) {
       obj._id = req.params.uid;
@@ -127,7 +122,7 @@ module.exports = (app, next) => {
         if (err || !user) {
           return resp.status(404).send({ message: 'El usuario solicitado no existe' })
         } else {
-          return resp.status(200).send(user)
+          return resp.send(user)
         }
       });
     } else {
@@ -154,21 +149,21 @@ module.exports = (app, next) => {
    */
   app.post('/users', requireAdmin, (req, resp, next) => {
 
-    if (!req.headers.authorization) {
-      return resp.status(401).send({ message: 'No existe cabecera de autenticación' });
-    }
     if (!req.body.email || !req.body.password) {
       return resp.status(400).send({ message: 'No se proveen `email` o `password` o ninguno de los dos' })
     }
     let newUser = new users();
     newUser.email = req.body.email;
     newUser.password = bcrypt.hashSync(req.body.password, 10);
+    if(req.body.admin){
+      newUser.roles.admin= req.body.admin;
+    }
     newUser.save((err, userStored) => {
       if (err) {
         return resp.status(403).send({ message: 'Ya existe usuarix con ese `email`' });
       } else {
         console.log(userStored)
-        resp.status(200).send({ message: 'Se ha registrado exitosamente' });
+        resp.send({ message: 'Se ha registrado exitosamente' });
       }
     })
   });
@@ -193,15 +188,12 @@ module.exports = (app, next) => {
    * @code {403} un usuario no admin intenta de modificar sus `roles`
    * @code {404} si el usuario solicitado no existe
    */
-  app.put('/users/:uid', requireAuth, (req, resp, next) => {
-    if (!req.headers.authorization) {
-      return resp.status(401).send({ message: 'No existe cabecera de autenticación' });
-    }
+  app.put('/users/:uid', requireAdminOrUser, (req, resp, next) => {
+
     if (!isAdmin(req) && req.body.roles) {
       return resp.status(403).send({ message: 'No puede modificar sus `roles`' })
     }
     // req.headers.user._id.toString() === req.params.uid
-   
     let obj = new Object();
     if (req.params.uid.indexOf('@') < 0) {
       obj._id = req.params.uid;
@@ -209,12 +201,12 @@ module.exports = (app, next) => {
       obj.email = req.params.uid;
     }
     users.findOne(obj, (err, queryUser) => {
-      if (err || !queryUser) {
+      if(err){
+        resp.send(err)
+      }
+      if (!queryUser) {
         return resp.status(404).send({ message: 'El usuario solicitado no existe' })
       }
-
-      if (req.headers.user._id.toString() === obj._id || req.headers.user.email === obj.email || isAdmin(req)) {
-
         if (!req.body.email && !req.body.password && !isAdmin(req)) {
           return resp.status(400).send({ message: 'no se provee ni email ni passsword' })
         }   
@@ -228,10 +220,7 @@ module.exports = (app, next) => {
           queryUser.body.roles.admin = req.body.admin
         }
         queryUser.save();
-        resp.status(200).send({ message: 'Cambios registrados satisfactoriamente' })
-      } else {
-        resp.status(403).send({ message: 'No es ni admin o el mismo usuario' })
-      }
+        resp.send({ message: 'Cambios registrados satisfactoriamente' })
     })
   });
   /**
@@ -251,9 +240,9 @@ module.exports = (app, next) => {
    * @code {404} si el usuario solicitado no existe
    */
   app.delete('/users/:uid', requireAuth, (req, resp, next) => {
-    if (!req.headers.authorization) {
+/*     if (!req.headers.authorization) {
       return resp.status(401).send({ message: 'No existe cabecera de autenticación' });
-    }
+    } */
     if (req.headers.user._id.toString() === req.params.uid && isAdmin(req)) {
       return resp.send({ message: 'Admin no puede autoeliminarse' })
     }
@@ -268,7 +257,7 @@ module.exports = (app, next) => {
         if(!queryUser) {
           resp.status(404).send({ message: 'El usuario seleccionado no existe' })
         } else {users.remove(obj, (err) => {
-            resp.status(200).send({ message: 'Se borro satisfactoriamente!' });
+            resp.send({ message: 'Se borro satisfactoriamente!' });
           })
         }
       })     
