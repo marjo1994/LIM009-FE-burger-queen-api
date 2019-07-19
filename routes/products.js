@@ -3,6 +3,7 @@ const {
   requireAdmin,
 } = require('../middleware/auth');
 const products = require('../models/modelProducts');
+
 /** @module products */
 module.exports = (app, nextMain) => {
   /**
@@ -53,14 +54,21 @@ module.exports = (app, nextMain) => {
    */
   app.get('/products/:productId', requireAuth, (req, resp, next) => {
     products.find({ _id: req.params.productId }, (err, productById) => {
+      if (err || !productById) {
+        return resp.status(404).send({ message: 'El producto con `productId` indicado no existe' })
+      }
+      resp.send(productById);
+    })
+ 
+    /*products.find({ _id: req.params.productId }, (err, productById) => {
       if (err) {
         return resp.send({ message: 'Error al traer información' },err)
       }
       if(!productById){
         return resp.status(404).send({ message: 'El producto con `productId` indicado no existe' })
       }
-      resp.send(productById);
-    })
+      resp.status(200).send(productById);
+    })*/
   });
 
   /**

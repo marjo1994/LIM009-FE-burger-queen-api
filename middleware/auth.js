@@ -21,9 +21,8 @@ module.exports = secret => (req, resp, next) => {
     }
     // TODO: Verificar identidad del usuario usando `decodeToken.uid`
     users.findOne({ _id: decodedToken.uid }, (err, user) => {
-      if (err) { return next(500, { err }) }
+      if (err) { return next(500, err ) }
       req.headers.user = user;
-
       //resp.status(200);
       next();
     })
@@ -63,10 +62,8 @@ module.exports.requireAdmin = (req, resp, next) => (
 
 module.exports.requireAdminOrUser = (req, resp, next) => {
   (!module.exports.isAuthenticated(req))
-    ?  next(401)
-    : (req.headers.user._id.toString() !== req.params.uid || req.headers.user.email !== req.params.uid)
-      ? (!module.exports.isAdmin(req))
-        ?next(403)
-        :next()
+    ? next(401)
+    : (!module.exports.isAdmin(req) && !(req.headers.user._id.toString() === req.params.uid || req.headers.user.email === req.params.uid))
+      ? next(403)
       : next()
 };
