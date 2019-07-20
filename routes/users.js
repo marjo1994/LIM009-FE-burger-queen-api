@@ -199,18 +199,19 @@ module.exports = (app, next) => {
         newUser.email = req.body.email;
         newUser.password = bcrypt.hashSync(req.body.password, 10);
 
-        /*if (req.body.admin) {
-          newUser.roles.admin = req.body.admin;
-        }*/
+        if (!req.body.email || !req.body.password) {
+            return resp.status(400).send({ message: 'No se proveen `email` o `password` o ninguno de los dos' })
+        }
+        let newUser = new users();
+        newUser.email = req.body.email;
+        newUser.password = bcrypt.hashSync(req.body.password, 10);
         if (req.body.roles && req.body.roles.admin) {
             newUser.roles = { admin: true }
         }
-
         newUser.save((err, userStored) => {
             if (err) {
                 return resp.status(403).send({ message: 'Ya existe usuarix con ese `email`' });
             } else {
-
                 resp.send({
                     roles: userStored.roles,
                     _id: userStored._id,
@@ -314,6 +315,8 @@ module.exports = (app, next) => {
             }
         })
     });
+
+
 
     initAdminUser(app, next);
 };

@@ -3,7 +3,6 @@ const {
   requireAdmin,
 } = require('../middleware/auth');
 const products = require('../models/modelProducts');
-
 /** @module products */
 module.exports = (app, nextMain) => {
   /**
@@ -52,24 +51,15 @@ module.exports = (app, nextMain) => {
    * @code {401} si no hay cabecera de autenticación
    * @code {404} si el producto con `productId` indicado no existe
    */
-  app.get('/products/:productId', requireAuth, (req, resp, next) => {
-    products.find({ _id: req.params.productId }, (err, productById) => {
-      if (err || !productById) {
-        return resp.status(404).send({ message: 'El producto con `productId` indicado no existe' })
-      }
-      resp.send(productById);
-    })
- 
-    /*products.find({ _id: req.params.productId }, (err, productById) => {
-      if (err) {
-        return resp.send({ message: 'Error al traer información' },err)
-      }
-      if(!productById){
-        return resp.status(404).send({ message: 'El producto con `productId` indicado no existe' })
-      }
-      resp.status(200).send(productById);
-    })*/
-  });
+    app.get('/products/:productId', requireAuth, (req, resp, next) => {
+      products.findOne({ _id: req.params.productId }, (err, productById) => {
+        if (err || !productById) {
+          return resp.status(404).send({ message: 'El producto con `productId` indicado no existe' })
+        }
+        resp.send(productById);
+      })
+    });
+  
 
   /**
    * @name POST /products
@@ -140,9 +130,7 @@ module.exports = (app, nextMain) => {
       if (err) {
         return resp.status(404).send({ message: 'El producto con `productId` indicado no existe' })
       }
-      console.log(productById)
       if (req.body.name) {
-        console.log(productById.name)
         productById.name = req.body.name
       }
       if (req.body.price) {
@@ -155,8 +143,7 @@ module.exports = (app, nextMain) => {
         productById.type = req.body.type
       }
       productById.save()
-      resp.status(200).send({ message: 'Cambios registrados satisfactoriamente' })
-      console.log(productbyId)
+      resp.send(productById)
     })
   });
 
@@ -178,10 +165,11 @@ module.exports = (app, nextMain) => {
    * @code {404} si el producto con `productId` indicado no existe
    */
   app.delete('/products/:productId', requireAdmin, (req, resp, next) => {
-    products.remove({ _id: req.params.productId }, (err) => {
-      if (err) {
+    products.findByIdAndDelete({ _id: req.params.productId }, (err, doc) => {
+      if (!doc) {
         resp.status(404).send({ message: 'El producto seleccionado no existe' })
       }
+     // console.log(resp.status)
       resp.status(200).send({ message: 'Se borro satisfactoriamente!' });
     })
   });
