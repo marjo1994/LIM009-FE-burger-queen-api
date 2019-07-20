@@ -13,15 +13,13 @@ const {
 
 
 const parseLinkHeader = str => {
-  console.log(str)
   str.split(',')
     .reduce((memo, item) => {
       const [, value, key] = /^<(.*)>;\s+rel="(first|last|prev|next)"/.exec(item.trim());
-      console.log([, value, key])
+      console.log(value, key)
       return { ...memo, [key]: value };
     }, {});
 }
-
 
 describe('GET /users', () => {
   it('should fail with 401 when no auth', () => (
@@ -43,7 +41,6 @@ describe('GET /users', () => {
         return resp.json();
       })
       .then((json) => {
-        // console.log(Array.isArray(json))
         expect(Array.isArray(json)).toBe(true);
         expect(json.length > 0).toBe(true);
         // TODO: Check that the results are actually the "expected" user objects
