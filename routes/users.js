@@ -67,10 +67,9 @@ const initAdminUser = (app, next) => {
  * (response).
  */
 
+
 /** @module users */
 module.exports = (app, next) => {
-
-
   /**
    * @name GET /users
    * @description Lista usuarios
@@ -87,28 +86,51 @@ module.exports = (app, next) => {
    * @code {401} si no hay cabecera de autenticación
    * @code {403} si no es ni admin
    */
-  //marjo 5 5d28e0c8dad31f777cc03c51
+  //marjo 5 5d28e0c8dad31f777cc03c51    
   app.get('/users', requireAdmin, (req, resp) => {
-    //console.log(typeof req.url)
-    if (!req.query.limit && !req.query.page) {
+/*     if (!req.query.limit && !req.query.page ) {
       users.find({}, (err, list) => {
         if (err) { resp.status(400).send(err) }
         resp.send(list)
       })
-    } else {
-      const perPage = parseInt(req.query.limit) || 10;
-      const page = parseInt(req.query.page) || 1;
+    } else { */
+      if(req.query.rel){
+          req.headers.URL = `link rel=${req.query.rel}`;
+      }
+      let perPage = parseInt(req.query.limit) || 10;  
+      let page = parseInt(req.query.page) || 1;
+/* 
+        switch (req.query.rel) {
+        users.count({},(err,count)=>{
 
-      users.find().skip(page * perPage).limit(perPage).exec((err, result) => {
+        case firts:
+          page =  1;
+          break;
+        case last:
+          page = count-perPage;
+          break;
+        case prev:
+        if(page>1){
+          page = page-1;
+        }
+          break;
+        case next:
+        if(page<count){
+          page = page+1
+        }
+          break;  
+              }) 
+      } 
+       */
+    console.log(page)    
+      users.find().skip((page-1) * perPage).limit(perPage).exec((err, result) => {
         if (err) {
           return resp.status(400).send({ message: err })
         } else {
           resp.send(result)
         }
       });
-
-    }
-
+       req.headers.URL = `link rel=${req.query.rel}`;
   });
 
   /**
@@ -119,7 +141,7 @@ module.exports = (app, next) => {
    * @auth Requiere `token` de autenticación y que el usuario sea **admin** o el usuario a consultar
    * @response {Object} user
    * @response {String} user._id
-   * @response {Object} user.email
+   * @response {Object} user.emai0l
    * @response {Object} user.roles
    * @response {Boolean} user.roles.admin
    * @code {200} si la autenticación es correcta

@@ -22,7 +22,6 @@ const parseLinkHeader = str => {
     }, {});
 }
 
-
 describe('GET /users', () => {
   it('should fail with 401 when no auth', () => (
     fetch('/users').then(resp => {
@@ -43,7 +42,6 @@ describe('GET /users', () => {
         return resp.json();
       })
       .then((json) => {
-        // console.log(Array.isArray(json))
         expect(Array.isArray(json)).toBe(true);
         expect(json.length > 0).toBe(true);
         // TODO: Check that the results are actually the "expected" user objects
@@ -54,7 +52,7 @@ describe('GET /users', () => {
     fetchAsAdmin('/users?limit=1')
       .then((resp) => {
         expect(resp.status).toBe(200);
-        return resp.json().then(json => (console.log(resp.headers, json), { headers: resp.headers, json }));//why headers
+        return resp.json().then(json => (console.log(resp.headers.URL, json), { headers: resp.headers, json }));//why headers
       })
       .then(({ headers, json }) => {
         const linkHeader = parseLinkHeader(headers.get('link'));

@@ -26,14 +26,13 @@ module.exports = (app, nextMain) => {
    * @code {401} si no hay cabecera de autenticación
    */
   app.get('/orders', requireAuth, (req, resp, next) => {
-    if (!req.headers.authorization) {
-      return resp.status(401).send({ message: 'No existe cabecera de autenficación' })
-    }
+
     order.find({}, (err, orders) => {
-      if (err) {
-        return resp.status(404).send({ message: 'No hay ordenes para mostrar' })
+      if (err || !orders) {
+        return next(404)
+        //resp.status(404).send({ message: 'No hay ordenes para mostrar' })
       }
-      resp.status(200).send(orders);
+      return resp.send(orders);
     })
   });
 
@@ -58,9 +57,7 @@ module.exports = (app, nextMain) => {
    * @code {404} si la orden con `orderId` indicado no existe
    */
   app.get('/orders/:orderid', requireAuth, (req, resp, next) => {
-    if (!req.headers.authorization) {
-      return resp.status(401).send({ message: 'No existe cabecera de autenficación' })
-    }
+
     order.find({ _id: req.params.orderid }, (err, orderById) => {
       if (err) {
         return resp.status(404).send({ message: 'La orden con `orderId` indicado no existe' })
@@ -96,9 +93,6 @@ module.exports = (app, nextMain) => {
    */
 
   app.post('/orders', requireAuth, (req, resp, next) => {
-    if (!req.headers.authorization) {
-      return resp.status(401).send({ message: 'No existe cabecera de autenficación' })
-    }
     const newOrder = new order();
     newOrder.userId = req.headers.user._id;
     newOrder.client = req.body.client;
@@ -144,9 +138,7 @@ module.exports = (app, nextMain) => {
    * @code {404} si la orderId con `orderId` indicado no existe
    */
   app.put('/orders/:orderid', requireAuth, (req, resp, next) => {
-    if (!req.headers.authorization) {
-      return resp.status(401).send({ message: 'No existe cabecera de autenticación' })
-    }
+
     if (!req.body || !req.body.status) {
       return resp.status(400).send({ message: 'No se indican ninguna propiedad a modificar o la propiedad `status` no es valida' })
     }
@@ -193,12 +185,7 @@ module.exports = (app, nextMain) => {
    * @code {404} si el producto con `orderId` indicado no existe
    */
   app.delete('/orders/:orderid', requireAuth, (req, resp, next) => {
-    if (!req.headers.authorization) {
-      return resp.status(401).send({ message: 'No existe cabecera de autenficación' })
-    }
-    /*  if (req.headers.user._id.toString() === req.params.uid && isAdmin(req)) {
-       return resp.send({ message: 'Admin no puede autoeliminarse' })
-     } */
+
     /*  if (req.headers.user._id.toString() === req.params.orderid || isAdmin(req)) { */
     //order.products.id(req.params.orderid).remove();===> para eliminar solo la sección productos
     order.remove({ _id: req.params.orderid }, (err) => {
@@ -210,9 +197,6 @@ module.exports = (app, nextMain) => {
     order.find({}, (err, res) => {
       console.log(res)
     })
-    /*  } else {
-       resp.status(403).send({ message: 'No es ni admin o el mismo usuario' })
-     } */
 
   });
   nextMain();
