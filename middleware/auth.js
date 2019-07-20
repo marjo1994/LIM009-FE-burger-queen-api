@@ -3,6 +3,7 @@ const users = require('../models/modelUsers');
 
 
 module.exports = secret => (req, resp, next) => {
+
   const { authorization } = req.headers;
 
   if (!authorization) {
@@ -15,14 +16,13 @@ module.exports = secret => (req, resp, next) => {
     return next();
   }
   jwt.verify(token, secret, (err, decodedToken) => {
-    if (err) {      
-      return next(403, {message: err});
+    if (err) {
+      return next(403, { message: err });
     }
     // TODO: Verificar identidad del usuario usando `decodeToken.uid`
     users.findOne({ _id: decodedToken.uid }, (err, user) => {
-      if (err) { return next(500, { err }) }
+      if (err) { return next(500, err ) }
       req.headers.user = user;
-      console.log(req.headers.user)
       //resp.status(200);
       next();
     })
@@ -31,9 +31,9 @@ module.exports = secret => (req, resp, next) => {
 
 
 module.exports.isAuthenticated = req => (
-  // TODO: decidir por la informacion del request si la usuaria está atutenticada
-    (req.headers.user) ? true : false
-  
+  // TODO: decidir por la informacion del request si la usuaria está autenticada
+  (req.headers.user) ? true : false
+
 );
 
 
@@ -55,6 +55,15 @@ module.exports.requireAdmin = (req, resp, next) => (
   (!module.exports.isAuthenticated(req))
     ? next(401)
     : (!module.exports.isAdmin(req))
-      ? resp.status(403).send({message: 'No es administrador'}) //next(403)
+      ? next(403)
       : next()
 );
+
+
+module.exports.requireAdminOrUser = (req, resp, next) => {
+  (!module.exports.isAuthenticated(req))
+    ? next(401)
+    : (!module.exports.isAdmin(req) && !(req.headers.user._id.toString() === req.params.uid || req.headers.user.email === req.params.uid))
+      ? next(403)
+      : next()
+};
