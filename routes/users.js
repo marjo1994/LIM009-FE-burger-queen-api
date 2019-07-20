@@ -70,6 +70,8 @@ const initAdminUser = (app, next) => {
 
 /** @module users */
 module.exports = (app, next) => {
+
+
   /**
    * @name GET /users
    * @description Lista usuarios
@@ -82,21 +84,21 @@ module.exports = (app, next) => {
    * @response {Object} users[].email
    * @response {Object} users[].roles
    * @response {Boolean} users[].roles.admin
-   * @code {200} si la autenticación es correcta
+   * @code {200} si la autenticación es correcta  
    * @code {401} si no hay cabecera de autenticación
    * @code {403} si no es ni admin
    */
-  //marjo 5 5d28e0c8dad31f777cc03c51    
+
   app.get('/users', requireAdmin, (req, resp) => {
-/*     if (!req.query.limit && !req.query.page ) {
+    if (!req.query.limit && !req.query.page ) {
       users.find({}, (err, list) => {
         if (err) { resp.status(400).send(err) }
         resp.send(list)
-      })
-    } else { */
-      if(req.query.rel){
+      });
+    } else { 
+      /* if(req.query.rel){
           req.headers.URL = `link rel=${req.query.rel}`;
-      }
+      } */
       let perPage = parseInt(req.query.limit) || 10;  
       let page = parseInt(req.query.page) || 1;
 /* 
@@ -122,7 +124,10 @@ module.exports = (app, next) => {
               }) 
       } 
        */
-    console.log(page)    
+      users.find().skip((page-1) * perPage).limit(perPage).exec((err, result) => {
+      const perPage = parseInt(req.query.limit) || 10;
+      const page = parseInt(req.query.page) || 1;
+
       users.find().skip((page-1) * perPage).limit(perPage).exec((err, result) => {
         if (err) {
           return resp.status(400).send({ message: err })
@@ -130,9 +135,10 @@ module.exports = (app, next) => {
           resp.send(result)
         }
       });
-       req.headers.URL = `link rel=${req.query.rel}`;
+    })
+  }
   });
-
+  
   /**
    * @name GET /users/:uid
    * @description Obtiene información de un usuario
@@ -307,12 +313,5 @@ module.exports = (app, next) => {
 
 
 
-  /* users.remove(obj, (err, queryUser) => {
-     if (err || !queryUser) {
-       resp.status(404).send({ message: 'El usuario seleccionado no existe' })
-     }
-     
-   });*/
-
-  initAdminUser(app, next);
+    initAdminUser(app, next);
 };

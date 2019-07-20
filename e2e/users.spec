@@ -13,11 +13,10 @@ const {
 
 
 const parseLinkHeader = str => {
-  console.log(str)
   str.split(',')
     .reduce((memo, item) => {
       const [, value, key] = /^<(.*)>;\s+rel="(first|last|prev|next)"/.exec(item.trim());
-      console.log([, value, key])
+      console.log(value, key)
       return { ...memo, [key]: value };
     }, {});
 }
@@ -52,7 +51,7 @@ describe('GET /users', () => {
     fetchAsAdmin('/users?limit=1')
       .then((resp) => {
         expect(resp.status).toBe(200);
-        return resp.json().then(json => (console.log(resp.headers.URL, json), { headers: resp.headers, json }));//why headers
+        return resp.json().then(json => (console.log(resp.headers, json), { headers: resp.headers, json }));//why headers
       })
       .then(({ headers, json }) => {
         const linkHeader = parseLinkHeader(headers.get('link'));
@@ -170,6 +169,8 @@ describe('POST /users', () => {
         return resp.json();
       })
       .then((json) => {
+        console.log(json)
+        console.log(json._id)
         expect(typeof json._id).toBe('string');
         expect(typeof json.email).toBe('string');
         expect(typeof json.password).toBe('undefined');
@@ -308,7 +309,6 @@ describe('DELETE /users/:uid', () => {
   it('should fail with 404 when admin and not found', () => (
     fetchAsAdmin('/users/abc@def.ghi', { method: 'DELETE' })
       .then(resp => {
-        console.log(resp.status)
         expect(resp.status).toBe(404)
       })
   ));

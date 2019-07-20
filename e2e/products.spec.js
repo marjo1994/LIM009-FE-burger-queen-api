@@ -70,7 +70,6 @@ describe('GET /products/:productid', () => {
         return resp.json();
       })
       .then((json) => {
-        console.log(json)
         expect(Array.isArray(json)).toBe(true);
         expect(json.length > 0).toBe(true);
         json.forEach((product) => {
@@ -79,7 +78,8 @@ describe('GET /products/:productid', () => {
           expect(typeof product.price).toBe('number');
         });
         return fetchAsTestUser(`/products/${json[0]._id}`)
-          .then(resp => ({ resp, product: json[0] }));
+          .then(resp => 
+            ({ resp, product: json[0] }));
       })
       .then(({ resp, product }) => {
         expect(resp.status).toBe(200);
@@ -190,6 +190,7 @@ describe('DELETE /products/:productid', () => {
       body: { name: 'Test', price: 10 },
     })
       .then((resp) => {
+        console.log(resp.status)
         expect(resp.status).toBe(200);
         return resp.json();
       })
@@ -198,9 +199,13 @@ describe('DELETE /products/:productid', () => {
           .then(resp => ({ resp, _id })),
       )
       .then(({ resp, _id }) => {
+        console.log(resp.status)
         expect(resp.status).toBe(200);
         return fetchAsAdmin(`/products/${_id}`);
       })
-      .then(resp => expect(resp.status).toBe(404))
+      .then(resp => {
+        console.log(resp.status)
+        expect(resp.status).toBe(404)})
+      
   ));
 });
