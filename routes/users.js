@@ -195,9 +195,6 @@ module.exports = (app, next) => {
         if (!req.body.email || !req.body.password) {
             return resp.status(400).send({ message: 'No se proveen `email` o `password` o ninguno de los dos' })
         }
-        let newUser = new users();
-        newUser.email = req.body.email;
-        newUser.password = bcrypt.hashSync(req.body.password, 10);
 
         if (!req.body.email || !req.body.password) {
             return resp.status(400).send({ message: 'No se proveen `email` o `password` o ninguno de los dos' })
