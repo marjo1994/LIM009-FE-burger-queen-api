@@ -142,8 +142,12 @@ module.exports = (app, nextMain) => {
       if (req.body.type) {
         productById.type = req.body.type
       }
-      productById.save()
-      resp.send(productById)
+      productById.save((err, productStored) => {
+        if(err){
+          resp.status(400).send({message: "No es un propiedad correcta"})
+        }
+        resp.send(productStored)
+      });
     })
   });
 
@@ -166,13 +170,12 @@ module.exports = (app, nextMain) => {
    */
   app.delete('/products/:productId', requireAdmin, (req, resp, next) => {
     products.findByIdAndDelete({ _id: req.params.productId }, (err, doc) => {
-      if (!doc) {
+      if (err || !doc) {
         resp.status(404).send({ message: 'El producto seleccionado no existe' })
       }
      // console.log(resp.status)
       resp.status(200).send({ message: 'Se borro satisfactoriamente!' });
     })
   });
-
   nextMain();
 };
