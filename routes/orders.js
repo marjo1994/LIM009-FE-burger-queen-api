@@ -142,8 +142,11 @@ module.exports = (app, nextMain) => {
          * @code {404} si la orderId con `orderId` indicado no existe
          */
     app.put('/orders/:orderid', requireAuth, (req, resp, next) => {
-        if (!req.body || !req.body.status) {
-            return resp.status(400).send({ message: 'No se indican ninguna propiedad a modificar o la propiedad `status` no es valida' })
+        if (!req.body.state) {
+            return next(400);
+        }
+        if (req.body.state === 'canceled') {
+            return next(404)
         }
         order.findOneAndUpdate({ _id: req.params.orderid }, (err, orderById) => {
             if (err || !orderById) {
@@ -191,7 +194,7 @@ module.exports = (app, nextMain) => {
     app.delete('/orders/:orderid', requireAuth, (req, resp, next) => {
 
         order.remove({ _id: req.params.orderid }, (err, product) => {
-            if (err || !product) {
+            if (err) {
                 return next(404)
             }
             resp.send({ message: 'Se borro satisfactoriamente!' });
