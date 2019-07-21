@@ -2,43 +2,43 @@ const bcrypt = require('bcrypt');
 const users = require('../models/modelUsers');
 
 const {
-  requireAdmin,
-  isAdmin,
-  requireAdminOrUser
+    requireAdmin,
+    isAdmin,
+    requireAdminOrUser
 } = require('../middleware/auth');
 
 
 const initAdminUser = (app, next) => {
-  const { adminEmail, adminPassword } = app.get('config');
-  if (!adminEmail || !adminPassword) {
-    return next(400);
-  }
+    const { adminEmail, adminPassword } = app.get('config');
+    if (!adminEmail || !adminPassword) {
+        return next(400);
+    }
 
-  users.findOne({ email: adminEmail }, (err, res) => {
-    if (err) {
-      console.log(err)
-    }
-    if (res) {
-      next()
-    } else {
-      const adminUser = {
-        email: adminEmail,
-        password: bcrypt.hashSync(adminPassword, 10),
-        roles: { admin: true },
-      };
-      // TO DO: crear usuarix admin
-      let userAdmin = new users()
-      userAdmin.email = adminUser.email;
-      userAdmin.password = adminUser.password;
-      userAdmin.roles = adminUser.roles;
-      userAdmin.save((err, userStored) => {
+    users.findOne({ email: adminEmail }, (err, res) => {
         if (err) {
-          console.log(err);
+            console.log(err)
         }
-        next();
-      })
-    }
-  })
+        if (res) {
+            next()
+        } else {
+            const adminUser = {
+                email: adminEmail,
+                password: bcrypt.hashSync(adminPassword, 10),
+                roles: { admin: true },
+            };
+            // TO DO: crear usuarix admin
+            let userAdmin = new users()
+            userAdmin.email = adminUser.email;
+            userAdmin.password = adminUser.password;
+            userAdmin.roles = adminUser.roles;
+            userAdmin.save((err, userStored) => {
+                if (err) {
+                    console.log(err);
+                }
+                next();
+            })
+        }
+    })
 };
 
 /*
@@ -70,246 +70,248 @@ const initAdminUser = (app, next) => {
 
 /** @module users */
 module.exports = (app, next) => {
+    /**
+     * @name GET /users
+     * @description Lista usuarios
+     * @path {GET} /users
+     * @query {String} [page=1] Página del listado a consultar
+     * @query {String} [limit=10] Cantitad de elementos por página
+     * @auth Requiere `token` de autenticación y que el usuario sea **admin**
+     * @response {Array} users
+     * @response {String} users[]._id
+     * @response {Object} users[].email
+     * @response {Object} users[].roles
+     * @response {Boolean} users[].roles.admin
+     * @code {200} si la autenticación es correcta  
+     * @code {401} si no hay cabecera de autenticación
+     * @code {403} si no es ni admin
+     */
 
-
-  /**
-   * @name GET /users
-   * @description Lista usuarios
-   * @path {GET} /users
-   * @query {String} [page=1] Página del listado a consultar
-   * @query {String} [limit=10] Cantitad de elementos por página
-   * @auth Requiere `token` de autenticación y que el usuario sea **admin**
-   * @response {Array} users
-   * @response {String} users[]._id
-   * @response {Object} users[].email
-   * @response {Object} users[].roles
-   * @response {Boolean} users[].roles.admin
-   * @code {200} si la autenticación es correcta  
-   * @code {401} si no hay cabecera de autenticación
-   * @code {403} si no es ni admin
-   */
-
-  app.get('/users', requireAdmin, (req, resp) => {
-    if (!req.query.limit && !req.query.page ) {
-      users.find({}, (err, list) => {
-        if (err) { resp.status(400).send(err) }
-        resp.send(list)
-      });
-    } else { 
-      /* if(req.query.rel){
-          req.headers.URL = `link rel=${req.query.rel}`;
-      } */
-      let perPage = parseInt(req.query.limit) || 10;  
-      let page = parseInt(req.query.page) || 1;
-/* 
-        switch (req.query.rel) {
-        users.count({},(err,count)=>{
-
-        case firts:
-          page =  1;
-          break;
-        case last:
-          page = count-perPage;
-          break;
-        case prev:
-        if(page>1){
-          page = page-1;
-        }
-          break;
-        case next:
-        if(page<count){
-          page = page+1
-        }
-          break;  
-              }) 
-      } 
-       */
-      users.find().skip((page-1) * perPage).limit(perPage).exec((err, result) => {
-      const perPage = parseInt(req.query.limit) || 10;
-      const page = parseInt(req.query.page) || 1;
-
-      users.find().skip((page-1) * perPage).limit(perPage).exec((err, result) => {
-        if (err) {
-          return resp.status(400).send({ message: err })
+    app.get('/users', requireAdmin, (req, resp) => {
+        if (!req.query.limit && !req.query.page) {
+            users.find({}, (err, list) => {
+                if (err) { resp.status(400).send(err) }
+                resp.send(list)
+            });
         } else {
-          resp.send(result)
+            /* if(req.query.rel){
+                req.headers.URL = `link rel=${req.query.rel}`;
+            } */
+            let perPage = parseInt(req.query.limit) || 10;
+            let page = parseInt(req.query.page) || 1;
+            /* 
+                    switch (req.query.rel) {
+                    users.count({},(err,count)=>{
+
+                    case firts:
+                      page =  1;
+                      break;
+                    case last:
+                      page = count-perPage;
+                      break;
+                    case prev:
+                    if(page>1){
+                      page = page-1;
+                    }
+                      break;
+                    case next:
+                    if(page<count){
+                      page = page+1
+                    }
+                      break;  
+                          }) 
+                  } 
+                   */
+            users.find().skip((page - 1) * perPage).limit(perPage).exec((err, result) => {
+                const perPage = parseInt(req.query.limit) || 10;
+                const page = parseInt(req.query.page) || 1;
+
+                users.find().skip((page - 1) * perPage).limit(perPage).exec((err, result) => {
+                    if (err) {
+                        return resp.status(400).send({ message: err })
+                    } else {
+                        resp.send(result)
+                    }
+                });
+            })
         }
-      });
-    })
-  }
-  });
-  
-  /**
-   * @name GET /users/:uid
-   * @description Obtiene información de un usuario
-   * @path {GET} /users/:uid
-   * @params {String} :uid `id` o `email` del usuario a consultar
-   * @auth Requiere `token` de autenticación y que el usuario sea **admin** o el usuario a consultar
-   * @response {Object} user
-   * @response {String} user._id
-   * @response {Object} user.emai0l
-   * @response {Object} user.roles
-   * @response {Boolean} user.roles.admin
-   * @code {200} si la autenticación es correcta
-   * @code {401} si no hay cabecera de autenticación
-   * @code {403} si no es ni admin o el mismo usuario
-   * @code {404} si el usuario solicitado no existe
-   */
-  app.get('/users/:uid', requireAdminOrUser, (req, resp) => {
-    let obj = new Object();
-
-    if (req.params.uid.indexOf('@') < 0) {
-      obj._id = req.params.uid;
-    } else {
-      obj.email = req.params.uid;
-    }
-
-
-    users.findOne(obj, (err, user) => {
-      if (err || !user) {
-        return resp.status(404).send({ message: 'El usuario solicitado no existe' })
-      } else {
-        return resp.send(user)
-      }
     });
 
-  });
+    /**
+     * @name GET /users/:uid
+     * @description Obtiene información de un usuario
+     * @path {GET} /users/:uid
+     * @params {String} :uid `id` o `email` del usuario a consultar
+     * @auth Requiere `token` de autenticación y que el usuario sea **admin** o el usuario a consultar
+     * @response {Object} user
+     * @response {String} user._id
+     * @response {Object} user.emai0l
+     * @response {Object} user.roles
+     * @response {Boolean} user.roles.admin
+     * @code {200} si la autenticación es correcta
+     * @code {401} si no hay cabecera de autenticación
+     * @code {403} si no es ni admin o el mismo usuario
+     * @code {404} si el usuario solicitado no existe
+     */
+    app.get('/users/:uid', requireAdminOrUser, (req, resp) => {
+        let obj = new Object();
 
-  /**
-   * @name POST /users
-   * @description Crea un usuario
-   * @path {POST} /users
-   * @body {String} email Correo
-   * @body {String} password Contraseña
-   * @auth Requiere `token` de autenticación y que el usuario sea **admin**
-   * @response {Array} users
-   * @response {String} users[]._id
-   * @response {Object} users[].email
-   * @response {Object} users[].roles
-   * @response {Boolean} users[].roles.admin
-   * @code {200} si la autenticación es correcta
-   * @code {400} si no se proveen `email` o `password` o ninguno de los dos
-   * @code {401} si no hay cabecera de autenticación
-   * @code {403} si ya existe usuario con ese `email`
-   */
-  app.post('/users', requireAdmin, (req, resp, next) => {
+        if (req.params.uid.indexOf('@') < 0) {
+            obj._id = req.params.uid;
+        } else {
+            obj.email = req.params.uid;
+        }
 
-    if (!req.body.email || !req.body.password) {
-      return resp.status(400).send({ message: 'No se proveen `email` o `password` o ninguno de los dos' })
-    }
-    let newUser = new users();
-    newUser.email = req.body.email;
-    newUser.password = bcrypt.hashSync(req.body.password, 10);
-    if(req.body.roles && req.body.roles.admin) {
-      newUser.roles = {admin: true}
-    }
-    newUser.save((err, userStored) => {
-      if (err) {
-        return resp.status(403).send({ message: 'Ya existe usuarix con ese `email`' });
-      } else {
-        resp.send(
-          {roles: userStored.roles,
-          _id: userStored._id,
-          email: userStored.email
-          });
-      }
-    })
-  });
 
-  /**
-   * @name PUT /users
-   * @description Modifica un usuario
-   * @params {String} :uid `id` o `email` del usuario a modificar
-   * @path {PUT} /users
-   * @body {String} email Correo
-   * @body {String} password Contraseña
-   * @auth Requiere `token` de autenticación y que el usuario sea **admin** o el usuario a modificar
-   * @response {Object} user
-   * @response {String} user._id
-   * @response {Object} user.email
-   * @response {Object} user.roles
-   * @response {Boolean} user.roles.admin
-   * @code {200} si la autenticación es correcta
-   * @code {400} si no se proveen `email` y `password`
-   * @code {401} si no hay cabecera de autenticación
-   * @code {403} si no es ni admin o el mismo usuario
-   * @code {403} un usuario no admin intenta de modificar sus `roles`
-   * @code {404} si el usuario solicitado no existe
-   */
-  app.put('/users/:uid', requireAdminOrUser, (req, resp, next) => {
+        users.findOne(obj, (err, user) => {
+            if (err || !user) {
+                return resp.status(404).send({ message: 'El usuario solicitado no existe' })
+            } else {
+                return resp.send(user)
+            }
+        });
 
-    if (!isAdmin(req) && req.body.roles) {
-      return resp.status(403).send({ message: 'No puede modificar sus `roles`' })
-    }
-    // req.headers.user._id.toString() === req.params.uid
-    let obj = new Object();
-    if (req.params.uid.indexOf('@') < 0) {
-      obj._id = req.params.uid;
-    } else {
-      obj.email = req.params.uid;
-    }
-    users.findOne(obj, (err, queryUser) => {
-      if (err) {
-        resp.send(err)
-      }
-      if (!queryUser) {
-        return resp.status(404).send({ message: 'El usuario solicitado no existe' })
-      }
-      if (!req.body.email && !req.body.password && !isAdmin(req)) {
-        return resp.status(400).send({ message: 'no se provee ni email ni passsword' })
-      }
-      if (req.body.email) {
-        queryUser.email = req.body.email;
-      }
-      if (req.body.password) {
-        queryUser.password = bcrypt.hashSync(req.body.password, 10);
-      }
-      if (req.body.roles && isAdmin(req)) {
-        queryUser.body.roles.admin = req.body.admin
-      }
-      queryUser.save();
-      resp.send({ message: 'Cambios registrados satisfactoriamente' })
-    })
-  });
-  /**
-   * @name DELETE /users
-   * @description Elimina un usuario
-   * @params {String} :uid `id` o `email` del usuario a modificar
-   * @path {DELETE} /users
-   * @auth Requiere `token` de autenticación y que el usuario sea **admin** o el usuario a eliminar
-   * @response {Object} user
-   * @response {String} user._id
-   * @response {Object} user.email
-   * @response {Object} user.roles
-   * @response {Boolean} user.roles.admin
-   * @code {200} si la autenticación es correcta
-   * @code {401} si no hay cabecera de autenticación
-   * @code {403} si no es ni admin o el mismo usuario
-   * @code {404} si el usuario solicitado no existe
-   */
-  app.delete('/users/:uid', requireAdminOrUser, (req, resp, next) => {
-    /*     if (!req.headers.authorization) {
-          return resp.status(401).send({ message: 'No existe cabecera de autenticación' });
-        } */
-    if (req.headers.user._id.toString() === req.params.uid && isAdmin(req)) {
-      return resp.send({ message: 'Admin no puede autoeliminarse' })
-    }
-    let obj = new Object();
-    if (req.params.uid.indexOf('@') < 0) {
-      obj._id = req.params.uid;
-    } else {
-      obj.email = req.params.uid;
-    }
-    users.findOne(obj, (err, queryUser) => {
-      if (!queryUser) {
-        resp.status(404).send({ message: 'El usuario seleccionado no existe' })
-      } else {
-        users.remove(obj, (err) => {
-          resp.send({ message: 'Se borro satisfactoriamente!' });
+    });
+
+    /**
+     * @name POST /users
+     * @description Crea un usuario
+     * @path {POST} /users
+     * @body {String} email Correo
+     * @body {String} password Contraseña
+     * @auth Requiere `token` de autenticación y que el usuario sea **admin**
+     * @response {Array} users
+     * @response {String} users[]._id
+     * @response {Object} users[].email
+     * @response {Object} users[].roles
+     * @response {Boolean} users[].roles.admin
+     * @code {200} si la autenticación es correcta
+     * @code {400} si no se proveen `email` o `password` o ninguno de los dos
+     * @code {401} si no hay cabecera de autenticación
+     * @code {403} si ya existe usuario con ese `email`
+     */
+    app.post('/users', requireAdmin, (req, resp, next) => {
+
+        if (!req.body.email || !req.body.password) {
+            return resp.status(400).send({ message: 'No se proveen `email` o `password` o ninguno de los dos' })
+        }
+
+        if (!req.body.email || !req.body.password) {
+            return resp.status(400).send({ message: 'No se proveen `email` o `password` o ninguno de los dos' })
+        }
+        let newUser = new users();
+        newUser.email = req.body.email;
+        newUser.password = bcrypt.hashSync(req.body.password, 10);
+        if (req.body.roles && req.body.roles.admin) {
+            newUser.roles = { admin: true }
+        }
+        newUser.save((err, userStored) => {
+            if (err) {
+                return resp.status(403).send({ message: 'Ya existe usuarix con ese `email`' });
+            } else {
+                resp.send({
+                    roles: userStored.roles,
+                    _id: userStored._id,
+                    email: userStored.email
+                });
+            }
         })
-      }
-    })
-  });
+    });
+
+    /**
+     * @name PUT /users
+     * @description Modifica un usuario
+     * @params {String} :uid `id` o `email` del usuario a modificar
+     * @path {PUT} /users
+     * @body {String} email Correo
+     * @body {String} password Contraseña
+     * @auth Requiere `token` de autenticación y que el usuario sea **admin** o el usuario a modificar
+     * @response {Object} user
+     * @response {String} user._id
+     * @response {Object} user.email
+     * @response {Object} user.roles
+     * @response {Boolean} user.roles.admin
+     * @code {200} si la autenticación es correcta
+     * @code {400} si no se proveen `email` y `password`
+     * @code {401} si no hay cabecera de autenticación
+     * @code {403} si no es ni admin o el mismo usuario
+     * @code {403} un usuario no admin intenta de modificar sus `roles`
+     * @code {404} si el usuario solicitado no existe
+     */
+    app.put('/users/:uid', requireAdminOrUser, (req, resp, next) => {
+
+        if (!isAdmin(req) && req.body.roles) {
+            return resp.status(403).send({ message: 'No puede modificar sus `roles`' })
+        }
+        // req.headers.user._id.toString() === req.params.uid
+        let obj = new Object();
+        if (req.params.uid.indexOf('@') < 0) {
+            obj._id = req.params.uid;
+        } else {
+            obj.email = req.params.uid;
+        }
+        users.findOne(obj, (err, queryUser) => {
+            if (err) {
+                resp.send(err)
+            }
+            if (!queryUser) {
+                return resp.status(404).send({ message: 'El usuario solicitado no existe' })
+            }
+            if (!req.body.email && !req.body.password && !isAdmin(req)) {
+                return resp.status(400).send({ message: 'no se provee ni email ni passsword' })
+            }
+            if (req.body.email) {
+                queryUser.email = req.body.email;
+            }
+            if (req.body.password) {
+                queryUser.password = bcrypt.hashSync(req.body.password, 10);
+            }
+            if (req.body.roles && isAdmin(req)) {
+                queryUser.body.roles.admin = req.body.admin
+            }
+            queryUser.save();
+            resp.send({ message: 'Cambios registrados satisfactoriamente' })
+        })
+    });
+    /**
+     * @name DELETE /users
+     * @description Elimina un usuario
+     * @params {String} :uid `id` o `email` del usuario a modificar
+     * @path {DELETE} /users
+     * @auth Requiere `token` de autenticación y que el usuario sea **admin** o el usuario a eliminar
+     * @response {Object} user
+     * @response {String} user._id
+     * @response {Object} user.email
+     * @response {Object} user.roles
+     * @response {Boolean} user.roles.admin
+     * @code {200} si la autenticación es correcta
+     * @code {401} si no hay cabecera de autenticación
+     * @code {403} si no es ni admin o el mismo usuario
+     * @code {404} si el usuario solicitado no existe
+     */
+    app.delete('/users/:uid', requireAdminOrUser, (req, resp, next) => {
+        /*     if (!req.headers.authorization) {
+              return resp.status(401).send({ message: 'No existe cabecera de autenticación' });
+            } */
+        if (req.headers.user._id.toString() === req.params.uid && isAdmin(req)) {
+            return resp.send({ message: 'Admin no puede autoeliminarse' })
+        }
+        let obj = new Object();
+        if (req.params.uid.indexOf('@') < 0) {
+            obj._id = req.params.uid;
+        } else {
+            obj.email = req.params.uid;
+        }
+        users.findOne(obj, (err, queryUser) => {
+            if (!queryUser) {
+                resp.status(404).send({ message: 'El usuario seleccionado no existe' })
+            } else {
+                users.remove(obj, (err) => {
+                    resp.send({ message: 'Se borro satisfactoriamente!' });
+                })
+            }
+        })
+    });
 
 
 
