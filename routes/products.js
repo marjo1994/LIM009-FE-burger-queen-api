@@ -85,15 +85,17 @@ module.exports = (app, nextMain) => {
     if (!req.body.name || !req.body.price) {
       return resp.status(400).send({ message: 'No se indican `name` o `price`' })
     }
+    
     /*Primero, como administrador debo poder crear productos*/
-    let newProduct = new products();
-    newProduct.name = req.body.name
-    newProduct.price = req.body.price
-    newProduct.image = req.body.image
-    newProduct.type = req.body.type
+    let newProduct = new products({
+      name: req.body.name,
+      price: req.body.price,
+      image: req.body.image,
+      type: req.body.type
+    });    
     newProduct.save((err, productStored) => {
       if(err){
-        resp.send(err)
+        next(err)
       }
       resp.send(productStored)
     });
@@ -169,12 +171,16 @@ module.exports = (app, nextMain) => {
    * @code {404} si el producto con `productId` indicado no existe
    */
   app.delete('/products/:productId', requireAdmin, (req, resp, next) => {
-    products.findByIdAndDelete({ _id: req.params.productId }, (err, doc) => {
-      if (err || !doc) {
-        resp.status(404).send({ message: 'El producto seleccionado no existe' })
+    products.findByIdAndRemove(req.params.productId, (err, product) => {
+      if (err) {
+        next(404)
       }
      // console.log(resp.status)
-      resp.status(200).send({ message: 'Se borro satisfactoriamente!' });
+     return resp.status(200)
+     .send({
+        message: 'Se borro satisfactoriamente!',
+        id: product._id
+      });
     })
   });
   nextMain();

@@ -160,7 +160,7 @@ describe('PUT /products/:productid', () => {
 });
 
 
-describe('DELETE /products/:productid', () => {
+describe('DELETE /products/:productId', () => {
   it('should fail with 401 when no auth', () => (
     fetch('/products/xxx', { method: 'DELETE' })
       .then(resp => expect(resp.status).toBe(401))
@@ -181,13 +181,14 @@ describe('DELETE /products/:productid', () => {
 
   it('should fail with 404 when admin and not found', () => (
     fetchAsAdmin('/products/12345678901234567890', { method: 'DELETE' })
-      .then(resp => expect(resp.status).toBe(404))
+      .then(resp => {
+        expect(resp.status).toBe(404)})
   ));
 
   it('should delete other product as admin', () => (
     fetchAsAdmin('/products', {
       method: 'POST',
-      body: { name: 'Test', price: 10 },
+      body: { name: 'Testa', price: 10 },
     })
       .then((resp) => {
         console.log(resp.status)
@@ -195,7 +196,7 @@ describe('DELETE /products/:productid', () => {
         return resp.json();
       })
       .then(
-        ({ _id }) => fetchAsAdmin(`/products/${_id}`, { method: 'DELETE' })
+        ({ _id }) => console.log(_id) || fetchAsAdmin(`/products/${_id}`, { method: 'DELETE' })
           .then(resp => ({ resp, _id })),
       )
       .then(({ resp, _id }) => {
