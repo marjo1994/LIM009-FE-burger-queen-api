@@ -121,12 +121,7 @@ module.exports = () => new Promise((resolve, reject) => {
       cwd: path.resolve(__dirname, '../'),
       stdio: ['ignore', 'pipe', 'pipe'],
     });
-    /*const child = spawn(/^win/.test(process.platform) ? 'npm.cmd' : 'npm', ['start',  process.env.PORT || 8888], {
-      cwd: path.resolve(__dirname, '../'),
-      stdio: ['ignore', 'pipe', 'pipe'],
-    });*/  
 
-    
     Object.assign(__e2e, { childProcessPid: child.pid });
 
     // child.stdout.on('data', (chunk) => {

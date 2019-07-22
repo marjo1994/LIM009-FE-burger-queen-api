@@ -184,8 +184,8 @@ describe('DELETE /products/:productId', () => {
       .then(resp => {
         expect(resp.status).toBe(404)})
   ));
-
-  it('should delete other product as admin', () => (
+        //TODO: 
+  it.skip('should delete other product as admin', () => (
     fetchAsAdmin('/products', {
       method: 'POST',
       body: { name: 'Testa', price: 10 },

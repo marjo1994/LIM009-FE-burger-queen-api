@@ -179,7 +179,7 @@ module.exports = (app, nextMain) => {
      return resp.status(200)
      .send({
         message: 'Se borro satisfactoriamente!',
-        id: product._id
+       // id: product._id
       });
     })
   });
