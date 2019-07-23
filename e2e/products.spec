@@ -27,10 +27,10 @@ describe('POST /products', () => {
       body: { name: 'Test', price: 5 },
     })
       .then((resp) => {
-        expect(resp.status).toBe(200);        
-        return resp.json();        
-        })
-      .then((json) => {        
+        expect(resp.status).toBe(200);
+        return resp.json();
+      })
+      .then((json) => {
         expect(typeof json._id).toBe('string');
         expect(typeof json.name).toBe('string');
         expect(typeof json.price).toBe('number');
@@ -78,8 +78,7 @@ describe('GET /products/:productid', () => {
           expect(typeof product.price).toBe('number');
         });
         return fetchAsTestUser(`/products/${json[0]._id}`)
-          .then(resp => 
-            ({ resp, product: json[0] }));
+          .then(resp => ({ resp, product: json[0] }));
       })
       .then(({ resp, product }) => {
         expect(resp.status).toBe(200);
@@ -160,7 +159,7 @@ describe('PUT /products/:productid', () => {
 });
 
 
-describe('DELETE /products/:productId', () => {
+describe('DELETE /products/:productid', () => {
   it('should fail with 401 when no auth', () => (
     fetch('/products/xxx', { method: 'DELETE' })
       .then(resp => expect(resp.status).toBe(401))
@@ -181,32 +180,26 @@ describe('DELETE /products/:productId', () => {
 
   it('should fail with 404 when admin and not found', () => (
     fetchAsAdmin('/products/12345678901234567890', { method: 'DELETE' })
-      .then(resp => {
-        expect(resp.status).toBe(404)})
+      .then(resp => expect(resp.status).toBe(404))
   ));
-        //TODO: 
-  it.skip('should delete other product as admin', () => (
+//TO DO
+  it('should delete other product as admin', () => (
     fetchAsAdmin('/products', {
       method: 'POST',
-      body: { name: 'Testa', price: 10 },
+      body: { name: 'Test', price: 10 },
     })
       .then((resp) => {
-        console.log(resp.status)
         expect(resp.status).toBe(200);
         return resp.json();
       })
       .then(
-        ({ _id }) => console.log(_id) || fetchAsAdmin(`/products/${_id}`, { method: 'DELETE' })
+        ({ _id }) => fetchAsAdmin(`/products/${_id}`, { method: 'DELETE' })
           .then(resp => ({ resp, _id })),
       )
       .then(({ resp, _id }) => {
-        console.log(resp.status)
         expect(resp.status).toBe(200);
         return fetchAsAdmin(`/products/${_id}`);
       })
-      .then(resp => {
-        console.log(resp.status)
-        expect(resp.status).toBe(404)})
-      
+      .then(resp => expect(resp.status).toBe(404))
   ));
 });

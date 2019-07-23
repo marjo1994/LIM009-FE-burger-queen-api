@@ -105,6 +105,8 @@ describe('GET /orders', () => {
       fetchAsTestUser('/users/test@test.test'),
     ])
       .then((responses) => {
+        console.log(responses[0].status)
+        console.log(responses[1].status)
         expect(responses[0].status).toBe(200);
         expect(responses[1].status).toBe(200);
         return Promise.all([responses[0].json(), responses[1].json()]);
@@ -138,6 +140,7 @@ describe('GET /orders', () => {
             ? [...memo, order.userId]
             : memo
         ), []);
+        console.log(userId.length >= 1)
         expect(userIds.length >= 1).toBe(true);
       })
   ));

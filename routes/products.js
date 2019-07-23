@@ -173,11 +173,10 @@ module.exports = (app, nextMain) => {
   app.delete('/products/:productId', requireAdmin, (req, resp, next) => {
     products.findByIdAndRemove(req.params.productId, (err, product) => {
       if (err) {
-        next(404)
+        return next(404)
       }
      // console.log(resp.status)
-     return resp.status(200)
-     .send({
+     return resp.send({
         message: 'Se borro satisfactoriamente!',
        // id: product._id
       });
