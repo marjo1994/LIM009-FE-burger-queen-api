@@ -7,19 +7,15 @@ const productsSubcollection = new Schema({
 })
 
 const order = new Schema({
-    userId:
-    {
+    userId: {
         type: String,
-        required: true,
     },
     client: {
         type: String,
-        required: true,
     },
     products: [productsSubcollection],
     status: {
         type: String,
-        //required: true,
         default: 'pending',
         enum: ['pending', 'canceled', 'delivered']
     },
@@ -29,6 +25,5 @@ const order = new Schema({
         default: Date.now()
     },
     dateProcessed: Date,
-    versionKey: false 
 })
 module.exports = mongoose.model('Orders', order);

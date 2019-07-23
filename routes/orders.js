@@ -1,6 +1,7 @@
 const { requireAuth } = require('../middleware/auth');
 const order = require('../models/modelOrders')
 const products = require('../models/modelProducts');
+const pagination = require('../utils/pagination');
 
 /** @module orders */
 module.exports = (app, nextMain) => {
@@ -55,7 +56,6 @@ module.exports = (app, nextMain) => {
      * @code {404} si la orden con `orderId` indicado no existe
      */
     app.get('/orders/:orderid', requireAuth, (req, resp, next) => {
-
         order.findOne({ _id: req.params.orderid }, (err, orderById) => {
             if (err || !orderById) {
                 return next(404)
@@ -89,58 +89,61 @@ module.exports = (app, nextMain) => {
      * @code {400} no se indica `userId` o se intenta crear una orden sin productos
      * @code {401} si no hay cabecera de autenticación
      */
-
-    app.post('/orders', requireAuth, (req, resp, next) => {
-            if (!req.body.products || !req.body.userId) {
-                return next(400)
-            }
-            //{ product: product._id, qty: 25 }
-            products.findOne({ _id: req.body.products[0].product }, (err, productFound) => {
-                if (err || !productFound) {
-                    return next(400)
-                }
-                let newOrder = new order();
-                newOrder.userId = req.body.userId;
-                // newOrder.client = req.body.client;
-                //{ qty: req.body.products.qty, product: req.body.products.product }
-                newOrder.products.push(req.body.products[0]);
-                newOrder.save((err, orderStored) => {
-                        if (err) resp.send(err)
-                        resp.send({ message: 'se registro la orden exitosamente' })
-                    })
-                    /*   newOrder.status = req.body.status;
+    /*   newOrder.status = req.body.status;
                       if (req.body.status === 'delivered') 
                           newOrder.dateProcessed = new Date();
                       } */
+    app.post('/orders', requireAuth, (req, resp, next) => {
+        if (!req.body.products || !req.body.userId) {
+            return next(400)
+        }
+        //console.log(req.body.products.product)
+
+        products.findOne({ _id: req.body.products.product }, (err, productFound) => {
+            if (err || !productFound) {
+                console.log(err || 'no hay producto')
+                return next(400)
+            }
+            let newOrder = new order();
+            newOrder.userId = req.body.userId;
+            // newOrder.client = req.body.client;
+            newOrder.products.push(req.body.products);
+            newOrder.save((err, orderStored) => {
+                if (err) resp.send(err)
+                resp.send({ message: 'se registro la orden exitosamente' })
             })
         })
-        /**
-         * @name PUT /orders
-         * @description Modifica una orden
-         * @path {PUT} /products
-         * @params {String} :orderId `id` de la orden
-         * @auth Requiere `token` de autenticación
-         * @body {String} [userId] Id usuaria que creó la orden
-         * @body {String} [client] Clienta para quien se creó la orden
-         * @body {Array} [products] Productos
-         * @body {Object} products[] Producto
-         * @body {String} products[].productId Id de un producto
-         * @body {Number} products[].qty Cantidad de ese producto en la orden
-         * @body {String} [status] Estado: `pending`, `canceled`, `delivering` o `delivered`
-         * @response {Object} order
-         * @response {String} order.userId Id usuaria que creó la orden
-         * @response {Array} order.products Productos
-         * @response {Object} order.products[] Producto
-         * @response {Number} order.products[].qty Cantidad
-         * @response {Object} order.products[].product Producto
-         * @response {String} order.status Estado: `pending`, `canceled`, `delivering` o `delivered`
-         * @response {Date} order.dateEntry Fecha de creación
-         * @response {Date} order.dateProcessed Fecha de cambio de `status` a `delivered`
-         * @code {200} si la autenticación es correcta
-         * @code {400} si no se indican ninguna propiedad a modificar o la propiedad `status` no es valida
-         * @code {401} si no hay cabecera de autenticación
-         * @code {404} si la orderId con `orderId` indicado no existe
-         */
+
+    })
+
+
+    /**
+     * @name PUT /orders
+     * @description Modifica una orden
+     * @path {PUT} /products
+     * @params {String} :orderId `id` de la orden
+     * @auth Requiere `token` de autenticación
+     * @body {String} [userId] Id usuaria que creó la orden
+     * @body {String} [client] Clienta para quien se creó la orden
+     * @body {Array} [products] Productos
+     * @body {Object} products[] Producto
+     * @body {String} products[].productId Id de un producto
+     * @body {Number} products[].qty Cantidad de ese producto en la orden
+     * @body {String} [status] Estado: `pending`, `canceled`, `delivering` o `delivered`
+     * @response {Object} order
+     * @response {String} order.userId Id usuaria que creó la orden
+     * @response {Array} order.products Productos
+     * @response {Object} order.products[] Producto
+     * @response {Number} order.products[].qty Cantidad
+     * @response {Object} order.products[].product Producto
+     * @response {String} order.status Estado: `pending`, `canceled`, `delivering` o `delivered`
+     * @response {Date} order.dateEntry Fecha de creación
+     * @response {Date} order.dateProcessed Fecha de cambio de `status` a `delivered`
+     * @code {200} si la autenticación es correcta
+     * @code {400} si no se indican ninguna propiedad a modificar o la propiedad `status` no es valida
+     * @code {401} si no hay cabecera de autenticación
+     * @code {404} si la orderId con `orderId` indicado no existe
+     */
     app.put('/orders/:orderid', requireAuth, (req, resp, next) => {
         if (!req.body.state) {
             return next(400);
