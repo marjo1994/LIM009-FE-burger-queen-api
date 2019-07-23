@@ -108,6 +108,7 @@ module.exports = () => new Promise((resolve, reject) => {
         return resolve();
     }
 
+
     const mongod = new MongoMemoryServer();
 
     mongod.getConnectionString().then((mongoUrl) => {

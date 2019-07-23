@@ -62,7 +62,6 @@ module.exports = (app, nextMain) => {
         })
     });
 
-
     /**
      * @name POST /products
      * @description Crea un nuevo producto
@@ -84,46 +83,47 @@ module.exports = (app, nextMain) => {
      * @code {403} si no es admin
      */
     app.post('/products', requireAdmin, (req, resp, next) => {
-        if (!req.body.name || !req.body.price) {
-            return resp.status(400).send({ message: 'No se indican `name` o `price`' })
-        }
-        /*Primero, como administrador debo poder crear productos*/
-        let newProduct = new products();
-        newProduct.name = req.body.name
-        newProduct.price = req.body.price
-        newProduct.image = req.body.image
-        newProduct.type = req.body.type
-        newProduct.save((err, productStored) => {
-            if (err) {
-                resp.send(err)
+            if (!req.body.name || !req.body.price) {
+                return resp.status(400).send({ message: 'No se indican `name` o `price`' })
             }
-            resp.send(productStored)
-        });
-    })
 
+            /*Primero, como administrador debo poder crear productos*/
+            let newProduct = new products({
+                name: req.body.name,
+                price: req.body.price,
+                image: req.body.image,
+                type: req.body.type
+            });
+            newProduct.save((err, productStored) => {
+                if (err) {
+                    next(err)
+                }
+                resp.send(productStored)
+            });
 
-    /**
-     * @name PUT /products
-     * @description Modifica un producto
-     * @path {PUT} /products
-     * @params {String} :productId `id` del producto
-     * @auth Requiere `token` de autenticación y que el usuario sea **admin**
-     * @body {String} [name] Nombre
-     * @body {Number} [price] Precio
-     * @body {String} [imagen]  URL a la imagen
-     * @body {String} [type] Tipo/Categoría
-     * @response {Object} product
-     * @response {String} product.name Nombre
-     * @response {String} product.price Precio
-     * @response {URL} product.image URL a la imagen
-     * @response {String} product.type Tipo/Categoría
-     * @response {Date} product.dateEntry Fecha de creación
-     * @code {200} si la autenticación es correcta
-     * @code {400} si no se indican ninguna propiedad a modificar
-     * @code {401} si no hay cabecera de autenticación
-     * @code {403} si no es admin
-     * @code {404} si el producto con `productId` indicado no existe
-     */
+        })
+        /**
+         * @name PUT /products
+         * @description Modifica un producto
+         * @path {PUT} /products
+         * @params {String} :productId `id` del producto
+         * @auth Requiere `token` de autenticación y que el usuario sea **admin**
+         * @body {String} [name] Nombre
+         * @body {Number} [price] Precio
+         * @body {String} [imagen]  URL a la imagen
+         * @body {String} [type] Tipo/Categoría
+         * @response {Object} product
+         * @response {String} product.name Nombre
+         * @response {String} product.price Precio
+         * @response {URL} product.image URL a la imagen
+         * @response {String} product.type Tipo/Categoría
+         * @response {Date} product.dateEntry Fecha de creación
+         * @code {200} si la autenticación es correcta
+         * @code {400} si no se indican ninguna propiedad a modificar
+         * @code {401} si no hay cabecera de autenticación
+         * @code {403} si no es admin
+         * @code {404} si el producto con `productId` indicado no existe
+         */
     app.put('/products/:productId', requireAdmin, (req, resp, next) => {
         if (!req.body) {
             return resp.status(400).send({ message: 'No se indica ninguna propiedad a modificar' })
@@ -144,10 +144,14 @@ module.exports = (app, nextMain) => {
             if (req.body.type) {
                 productById.type = req.body.type
             }
-            productById.save()
-            resp.send(productById)
+            productById.save((err, productStored) => {
+                if (err) {
+                    resp.status(400).send({ message: "No es un propiedad correcta" })
+                }
+                resp.send(productStored)
+            });
         })
-    });
+    })
 
     /**
      * @name DELETE /products
@@ -167,14 +171,17 @@ module.exports = (app, nextMain) => {
      * @code {404} si el producto con `productId` indicado no existe
      */
     app.delete('/products/:productId', requireAdmin, (req, resp, next) => {
-        products.findByIdAndDelete({ _id: req.params.productId }, (err, doc) => {
-            if (!doc) {
-                resp.status(404).send({ message: 'El producto seleccionado no existe' })
+        products.findByIdAndRemove(req.params.productId, (err, product) => {
+            if (err) {
+                return next(404)
             }
             // console.log(resp.status)
-            resp.status(200).send({ message: 'Se borro satisfactoriamente!' });
+            return resp.send({
+                message: 'Se borro satisfactoriamente!',
+                // id: product._id
+            });
         })
-    });
 
+    })
     nextMain();
 };

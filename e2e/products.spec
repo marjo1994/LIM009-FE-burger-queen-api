@@ -27,10 +27,10 @@ describe('POST /products', () => {
       body: { name: 'Test', price: 5 },
     })
       .then((resp) => {
-        expect(resp.status).toBe(200);        
-        return resp.json();        
-        })
-      .then((json) => {        
+        expect(resp.status).toBe(200);
+        return resp.json();
+      })
+      .then((json) => {
         expect(typeof json._id).toBe('string');
         expect(typeof json.name).toBe('string');
         expect(typeof json.price).toBe('number');
@@ -78,8 +78,7 @@ describe('GET /products/:productid', () => {
           expect(typeof product.price).toBe('number');
         });
         return fetchAsTestUser(`/products/${json[0]._id}`)
-          .then(resp => 
-            ({ resp, product: json[0] }));
+          .then(resp => ({ resp, product: json[0] }));
       })
       .then(({ resp, product }) => {
         expect(resp.status).toBe(200);
@@ -183,14 +182,13 @@ describe('DELETE /products/:productid', () => {
     fetchAsAdmin('/products/12345678901234567890', { method: 'DELETE' })
       .then(resp => expect(resp.status).toBe(404))
   ));
-
+//TO DO
   it('should delete other product as admin', () => (
     fetchAsAdmin('/products', {
       method: 'POST',
       body: { name: 'Test', price: 10 },
     })
       .then((resp) => {
-        console.log(resp.status)
         expect(resp.status).toBe(200);
         return resp.json();
       })
@@ -199,13 +197,9 @@ describe('DELETE /products/:productid', () => {
           .then(resp => ({ resp, _id })),
       )
       .then(({ resp, _id }) => {
-        console.log(resp.status)
         expect(resp.status).toBe(200);
         return fetchAsAdmin(`/products/${_id}`);
       })
-      .then(resp => {
-        console.log(resp.status)
-        expect(resp.status).toBe(404)})
-      
+      .then(resp => expect(resp.status).toBe(404))
   ));
 });
