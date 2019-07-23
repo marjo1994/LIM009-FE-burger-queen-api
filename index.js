@@ -14,13 +14,13 @@ const app = express();
 // TO DO: Conección a la BD en mogodb
 //Aqui conectamos con la base de datos de mongodb
 mongoose.connect(dbUrl, { useNewUrlParser: true })
-  .then(() => {
-    console.log('connected'); //si consoleas esta pagina te sale este connected y puedes verificar en la consola de mongod.exe
-  }).catch((e) => {
-    console.log(e);
-  })
+    .then(() => {
+        console.log('connected'); //si consoleas esta pagina te sale este connected y puedes verificar en la consola de mongod.exe
+    }).catch((e) => {
+        console.log(e);
+    })
 
-  /* app.get('/users', (req, res) => {
+/* app.get('/users', (req, res) => {
   //  let userId = req.params._id
   Users.findOne({ email: req.body.email }, (err, user) => {
     if (err) {
@@ -45,19 +45,11 @@ app.use(authMiddleware(secret));
 //app.use(morgan('dev'))
 // Registrar rutas
 routes(app, (err) => {
-  if (err) {
-    throw err;
-  }
-  app.use(errorHandler);
-  app.listen(port, () => {
-    console.info(`App listening on port ${port}`);
-  });
+    if (err) {
+        throw err;
+    }
+    app.use(errorHandler);
+    app.listen(port, () => {
+        console.info(`App listening on port ${port}`);
+    });
 });
-
-
-
-
-
-
-
-
