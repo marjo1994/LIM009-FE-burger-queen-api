@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const users = require('../models/modelUsers');
+const pagination = require('../utils/pagination')
 
 const {
     requireAdmin,
@@ -94,46 +95,20 @@ module.exports = (app, next) => {
                 resp.send(list)
             });
         } else {
-            /* if(req.query.rel){
-                req.headers.URL = `link rel=${req.query.rel}`;
-            } */
-            let perPage = parseInt(req.query.limit) || 10;
+            let limitPage = parseInt(req.query.limit) || 10;
             let page = parseInt(req.query.page) || 1;
-            /* 
-                    switch (req.query.rel) {
-                    users.count({},(err,count)=>{
-
-                    case firts:
-                      page =  1;
-                      break;
-                    case last:
-                      page = count-perPage;
-                      break;
-                    case prev:
-                    if(page>1){
-                      page = page-1;
-                    }
-                      break;
-                    case next:
-                    if(page<count){
-                      page = page+1
-                    }
-                      break;  
-                          }) 
-                  } 
-                   */
-            users.find().skip((page - 1) * perPage).limit(perPage).exec((err, result) => {
-                const perPage = parseInt(req.query.limit) || 10;
-                const page = parseInt(req.query.page) || 1;
-
-                users.find().skip((page - 1) * perPage).limit(perPage).exec((err, result) => {
-                    if (err) {
-                        return resp.status(400).send({ message: err })
-                    } else {
-                        resp.send(result)
-                    }
-                });
+            users.find().count((err, number) => {
+                if (err) console.log(err)
+                    // console.log(pagination(page, limitPage, number))
+                resp.set('link', pagination(page, limitPage, number))
             })
+            users.find().skip((page - 1) * limitPage).limit(limitPage).exec((err, result) => {
+                if (err) {
+                    return resp.status(400).send({ message: err })
+                } else {
+                    resp.send(result)
+                }
+            });
         }
     });
 
