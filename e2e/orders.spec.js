@@ -103,26 +103,7 @@ describe('GET /orders', () => {
         .then(resp => expect(resp.status).toBe(401))
     ));
 
-<<<<<<< HEAD
     it('should get orders as user', () => (
-=======
-  it('should get orders as user', () => (
-    Promise.all([
-      fetchAsAdmin('/products', {
-        method: 'POST',
-        body: { name: 'Test', price: 10 },
-      }),
-      fetchAsTestUser('/users/test@test.test'),
-    ])
-      .then((responses) => {
-        console.log(responses[0].status)
-        console.log(responses[1].status)
-        expect(responses[0].status).toBe(200);
-        expect(responses[1].status).toBe(200);
-        return Promise.all([responses[0].json(), responses[1].json()]);
-      })
-      .then(([product, user]) => (
->>>>>>> 482fbbaae080ccaeba45a8949eb3fc51acf4b50f
         Promise.all([
             fetchAsAdmin('/products', {
                 method: 'POST',
@@ -133,7 +114,6 @@ describe('GET /orders', () => {
         .then((responses) => {
             expect(responses[0].status).toBe(200);
             expect(responses[1].status).toBe(200);
-<<<<<<< HEAD
             return Promise.all([responses[0].json(), responses[1].json()]);
         })
         .then(([product, user]) => (
@@ -169,27 +149,6 @@ describe('GET /orders', () => {
             expect(userIds.length >= 1).toBe(true);
         })
     ));
-=======
-            return fetchAsTestUser('/orders');
-          })
-          .then((resp) => {
-            expect(resp.status).toBe(200);
-            return resp.json();
-          })
-      ))
-      .then((orders) => {
-        expect(Array.isArray(orders)).toBe(true);
-        expect(orders.length > 0);
-        const userIds = orders.reduce((memo, order) => (
-          (memo.indexOf(order.userId) === -1)
-            ? [...memo, order.userId]
-            : memo
-        ), []);
-        console.log(userId.length >= 1)
-        expect(userIds.length >= 1).toBe(true);
-      })
-  ));
->>>>>>> 482fbbaae080ccaeba45a8949eb3fc51acf4b50f
 
     it('should get orders as admin', () => (
         Promise.all([
