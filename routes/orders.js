@@ -27,7 +27,16 @@ module.exports = (app, nextMain) => {
      * @code {401} si no hay cabecera de autenticación
      */
     app.get('/orders', requireAuth, (req, resp, next) => {
-        order.find({}, (err, orders) => {
+        let limitPage = parseInt(req.query.limit) || 10;
+        let page = parseInt(req.query.page) || 1;
+        let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
+        order.find().count((err, number) => {
+            if (err) console.log(err)
+                //console.log(pagination(protocolo, page, limitPage, number))
+            resp.set('link', pagination(protocolo, page, limitPage, number))
+        })
+
+        order.find().skip((page - 1) * limitPage).limit(limitPage).exec((err, orders) => {
             if (err || !orders) {
                 return next(400)
             }
@@ -95,11 +104,10 @@ module.exports = (app, nextMain) => {
                       } */
     app.post('/orders', requireAuth, (req, resp, next) => {
         if (!req.body.products || !req.body.userId) {
-            return next(400)
+            return next(400);
         }
-        //console.log(req.body.products.product)
-
-        products.findOne({ _id: req.body.products.product }, (err, productFound) => {
+        const subDocument = req.body.products;
+        products.findOne({ _id: subDocument.product }, (err, productFound) => {
             if (err || !productFound) {
                 console.log(err || 'no hay producto')
                 return next(400)
@@ -196,11 +204,11 @@ module.exports = (app, nextMain) => {
      */
     app.delete('/orders/:orderid', requireAuth, (req, resp, next) => {
 
-        order.remove({ _id: req.params.orderid }, (err, product) => {
+        order.findByIdAndRemove(req.params.orderid, (err, product) => {
             if (err) {
                 return next(404)
             }
-            resp.send({ message: 'Se borro satisfactoriamente!' });
+            return resp.send({ message: 'Se borro satisfactoriamente!' });
         });
     });
     nextMain();

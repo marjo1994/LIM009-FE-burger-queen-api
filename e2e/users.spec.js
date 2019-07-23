@@ -9,13 +9,10 @@ const {
     fetchWithAuth,
 } = process;
 
-const parseLinkHeader = str => {
-    str.split(',').reduce((memo, item) => {
-        const [, value, key] = /^<(.*)>;\s+rel="(first|last|prev|next)"/.exec(item.trim());
-        console.log({...memo, [key]: value });
-        return {...memo, [key]: value };
-    }, {});
-};
+const parseLinkHeader = str => str.split(',').reduce((memo, item) => {
+    const [, value, key] = /^<(.*)>;\s+rel="(first|last|prev|next)"/.exec(item.trim());
+    return {...memo, [key]: value }
+}, {});
 
 describe('GET /users', () => {
     it('should fail with 401 when no auth', () => (
@@ -46,7 +43,7 @@ describe('GET /users', () => {
         fetchAsAdmin('/users?limit=1')
         .then((resp) => {
             expect(resp.status).toBe(200);
-            return resp.json().then(json => ({ headers: resp.headers, json })); //why headers
+            return resp.json().then(json => ({ headers: resp.headers, json }));
         })
         .then(({ headers, json }) => {
             const linkHeader = parseLinkHeader(headers.get('link'));
@@ -68,13 +65,10 @@ describe('GET /users', () => {
         })
         .then((resp) => {
             expect(resp.status).toBe(200);
-            return resp.json().then(json => {
-                ({ headers: resp.headers, json })
-            })
+            return resp.json().then(json => ({ headers: resp.headers, json }))
         })
         .then(({ headers, json }) => {
             const linkHeader = parseLinkHeader(headers.get('link'));
-            console.log(linkHeader)
 
             const firstUrlObj = url.parse(linkHeader.first);
             const prevUrlObj = url.parse(linkHeader.prev);

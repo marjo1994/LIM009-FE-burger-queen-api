@@ -97,10 +97,11 @@ module.exports = (app, next) => {
         } else {
             let limitPage = parseInt(req.query.limit) || 10;
             let page = parseInt(req.query.page) || 1;
+            let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
             users.find().count((err, number) => {
                 if (err) console.log(err)
-                    // console.log(pagination(page, limitPage, number))
-                resp.set('link', pagination(page, limitPage, number))
+                console.log(pagination(protocolo, page, limitPage, number))
+                resp.set('link', pagination(protocolo, page, limitPage, number))
             })
             users.find().skip((page - 1) * limitPage).limit(limitPage).exec((err, result) => {
                 if (err) {
