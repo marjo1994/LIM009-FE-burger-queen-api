@@ -26,7 +26,7 @@ describe('POST /orders', () => {
       })
   ));
 
-  it.only('should create order as user (own order)', () => (
+  it('should create order as user (own order)', () => (
     Promise.all([
       fetchAsAdmin('/products', {
         method: 'POST',
@@ -281,12 +281,12 @@ describe('PUT /orders/:orderid', () => {
   it('should fail with 404 when not found', () => (
     fetchAsAdmin('/orders/xxx', {
       method: 'PUT',
-      body: { state: 'canceled' },
+      body: { statustatestates : 'canceled' },
     })
       .then(resp => expect(resp.status).toBe(404))
   ));
 
-  it('should fail with 400 when bad props', () => (
+  it.only('should fail with 400 when bad props', () => (
     Promise.all([
       fetchAsAdmin('/products', {
         method: 'POST',
@@ -312,7 +312,7 @@ describe('PUT /orders/:orderid', () => {
       .then(resp => expect(resp.status).toBe(400))
   ));
 
-  it('should fail with 400 when bad status', () => (
+  it.only('should fail with 400 when bad status', () => (
     Promise.all([
       fetchAsAdmin('/products', {
         method: 'POST',
@@ -333,10 +333,12 @@ describe('PUT /orders/:orderid', () => {
         expect(resp.status).toBe(200);
         return resp.json();
       })
-      .then(json => fetchAsAdmin(`/orders/${json._id}`, {
-        method: 'PUT',
+      .then(json => {
+        console.log(json._id)
+        fetchAsAdmin(`/orders/${json._id}`, {
+         method: 'PUT',
         body: { status: 'oh yeah!' },
-      }))
+      })})
       .then(resp => expect(resp.status).toBe(400))
   ));
 

@@ -23,8 +23,17 @@ module.exports = (app, nextMain) => {
      * @code {200} si la autenticación es correcta
      * @code {401} si no hay cabecera de autenticación
      */
+
     app.get('/products', requireAuth, (req, resp, next) => {
-        products.find({}, (err, res) => {
+        let limitPage = parseInt(req.query.limit) || 10;
+        let page = parseInt(req.query.page) || 1;
+        let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
+        products.find().count((err, number) => {
+            if (err) console.log(err)
+            resp.set('link', pagination(protocolo, page, limitPage, number))
+        })
+
+        products.find().skip((page - 1) * limitPage).limit(limitPage).exec((err, res) => {
             if (err) {
                 return resp.status(400).send({ message: 'error al obtener productos' })
             } else {
@@ -178,7 +187,6 @@ module.exports = (app, nextMain) => {
             // console.log(resp.status)
             return resp.send({
                 message: 'Se borro satisfactoriamente!',
-                // id: product._id
             });
         })
 

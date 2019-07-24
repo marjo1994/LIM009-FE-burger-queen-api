@@ -2,6 +2,7 @@ const { requireAuth } = require('../middleware/auth');
 const order = require('../models/modelOrders')
 const products = require('../models/modelProducts');
 const pagination = require('../utils/pagination');
+const mongodb = require('mongodb');
 
 /** @module orders */
 module.exports = (app, nextMain) => {
@@ -27,7 +28,16 @@ module.exports = (app, nextMain) => {
      * @code {401} si no hay cabecera de autenticación
      */
     app.get('/orders', requireAuth, (req, resp, next) => {
-        order.find({}, (err, orders) => {
+        let limitPage = parseInt(req.query.limit) || 10;
+        let page = parseInt(req.query.page) || 1;
+        let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
+        order.find().count((err, number) => {
+            if (err) console.log(err)
+                //console.log(pagination(protocolo, page, limitPage, number))
+            resp.set('link', pagination(protocolo, page, limitPage, number))
+        })
+
+        order.find().skip((page - 1) * limitPage).limit(limitPage).exec((err, orders) => {
             if (err || !orders) {
                 return next(400)
             }
@@ -93,30 +103,31 @@ module.exports = (app, nextMain) => {
                       if (req.body.status === 'delivered') 
                           newOrder.dateProcessed = new Date();
                       } */
+    const asyncFindById = (elem) => {
+        let objectId = mongodb.ObjectId(elem.product);
+        return products.find({ _id: objectId }).then(resolve => resolve._id)
+    };    
+
     app.post('/orders', requireAuth, (req, resp, next) => {
         if (!req.body.products || !req.body.userId) {
-            return next(400)
-        }
-        //console.log(req.body.products.product)
-
-        products.findOne({ _id: req.body.products.product }, (err, productFound) => {
-            if (err || !productFound) {
-                console.log(err || 'no hay producto')
-                return next(400)
-            }
-            let newOrder = new order();
-            newOrder.userId = req.body.userId;
-            // newOrder.client = req.body.client;
-            newOrder.products.push(req.body.products);
-            newOrder.save((err, orderStored) => {
-                if (err) resp.send(err)
-                resp.send({ message: 'se registro la orden exitosamente' })
+            return next(400);
+        };
+        let newOrder = new order();
+        newOrder.userId = req.body.userId;
+        const result = Promise.all(req.body.products.map(asyncFindById))
+        result.then((res) => {
+                newOrder.products = res
+                newOrder.save((err, orderStored) => {
+                    if (err) console.error(err)
+                    resp.send({ message: 'se registro la orden exitosamente' })
+                    console.error(orderStored)
+                })
             })
-        })
-
-    })
-
-
+            .catch((e) => {
+                console.error(e)
+            })
+            /*   */
+    });
     /**
      * @name PUT /orders
      * @description Modifica una orden
@@ -196,11 +207,11 @@ module.exports = (app, nextMain) => {
      */
     app.delete('/orders/:orderid', requireAuth, (req, resp, next) => {
 
-        order.remove({ _id: req.params.orderid }, (err, product) => {
+        order.findByIdAndRemove(req.params.orderid, (err, product) => {
             if (err) {
                 return next(404)
             }
-            resp.send({ message: 'Se borro satisfactoriamente!' });
+            return resp.send({ message: 'Se borro satisfactoriamente!' });
         });
     });
     nextMain();
