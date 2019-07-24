@@ -16,8 +16,8 @@ const order = new Schema({
     products: [productsSubcollection],
     status: {
         type: String,
-        default: 'pending',
-        enum: ['pending', 'canceled', 'delivered']
+        enum: ['pending', 'canceled', 'delivered'],
+        default: 'pending'
     },
     dateEntry: {
         type: Date,

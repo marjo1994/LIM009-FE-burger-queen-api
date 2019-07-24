@@ -269,7 +269,7 @@ describe('GET /orders/:orderid', () => {
 });
 
 
-describe.only('PUT /orders/:orderid', () => {
+describe('PUT /orders/:orderid', () => {
     it('should fail with 401 when no auth', () => (
         fetch('/orders/xxx', { method: 'PUT' })
         .then(resp => expect(resp.status).toBe(401))
@@ -404,7 +404,7 @@ describe.only('PUT /orders/:orderid', () => {
             expect(resp.status).toBe(200);
             return resp.json();
         })
-        .then(json => expect(json.status).toBe('delivering'))
+        .then(json => console.log(json.status) || expect(json.status).toBe('delivering'))
     ));
 
     it('should update order (set status to delivered)', () => (
