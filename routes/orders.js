@@ -2,6 +2,7 @@ const { requireAuth } = require('../middleware/auth');
 const order = require('../models/modelOrders')
 const products = require('../models/modelProducts');
 const pagination = require('../utils/pagination');
+const mongodb = require('mongodb');
 
 /** @module orders */
 module.exports = (app, nextMain) => {
@@ -105,26 +106,29 @@ module.exports = (app, nextMain) => {
     app.post('/orders', requireAuth, (req, resp, next) => {
         if (!req.body.products || !req.body.userId) {
             return next(400);
-        }
-        const subDocument = req.body.products;
-        products.findOne({ _id: subDocument.product }, (err, productFound) => {
-            if (err || !productFound) {
-                console.log(err || 'no hay producto')
-                return next(400)
-            }
-            let newOrder = new order();
-            newOrder.userId = req.body.userId;
-            // newOrder.client = req.body.client;
-            newOrder.products.push(req.body.products);
-            newOrder.save((err, orderStored) => {
-                if (err) resp.send(err)
-                resp.send({ message: 'se registro la orden exitosamente' })
+        };
+        let newOrder = new order();
+        newOrder.userId = req.body.userId;
+        req.body.products.forEach((orderElement) => {
+            let objectId = mongodb.ObjectId(orderElement.product);
+            products.findOne({ _id: objectId }, (err, productFound) => {
+                if (err || !productFound) {
+                    req.body.value = true;
+                } else {
+                    req.body.value = false;
+                }
             })
+            console.error(req.body.value);
+            if (req.body.value) {
+                newOrder.products.push(orderElement);
+            }
+        });
+        //console.error(newOrder)
+        newOrder.save((err, orderStored) => {
+            if (err) console.error(err)
+            resp.send({ message: 'se registro la orden exitosamente' })
         })
-
-    })
-
-
+    });
     /**
      * @name PUT /orders
      * @description Modifica una orden
