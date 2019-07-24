@@ -103,31 +103,30 @@ module.exports = (app, nextMain) => {
                       if (req.body.status === 'delivered') 
                           newOrder.dateProcessed = new Date();
                       } */
+    const asyncFindById = (elem) => {
+        let objectId = mongodb.ObjectId(elem.product);
+        return products.findOne({ _id: objectId }).then(resolve => elem.product)
+    };
+
     app.post('/orders', requireAuth, (req, resp, next) => {
         if (!req.body.products || !req.body.userId) {
             return next(400);
         };
         let newOrder = new order();
         newOrder.userId = req.body.userId;
-        req.body.products.forEach((orderElement) => {
-            let objectId = mongodb.ObjectId(orderElement.product);
-            products.findOne({ _id: objectId }, (err, productFound) => {
-                if (err || !productFound) {
-                    req.body.value = true;
-                } else {
-                    req.body.value = false;
-                }
+        const result = Promise.all(req.body.products.filter(asyncFindById))
+        result.then((res) => {
+                newOrder.products = res
+                newOrder.save((err, orderStored) => {
+                    if (err) console.error(err)
+                    resp.send({ message: 'se registro la orden exitosamente' })
+                    console.error(orderStored)
+                })
             })
-            console.error(req.body.value);
-            if (req.body.value) {
-                newOrder.products.push(orderElement);
-            }
-        });
-        //console.error(newOrder)
-        newOrder.save((err, orderStored) => {
-            if (err) console.error(err)
-            resp.send({ message: 'se registro la orden exitosamente' })
-        })
+            .catch((e) => {
+                console.error(e)
+            })
+            /*   */
     });
     /**
      * @name PUT /orders
