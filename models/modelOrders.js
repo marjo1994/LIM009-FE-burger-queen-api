@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const productsSubcollection = new Schema({
     qty: Number,
-    product: String,
+    product: Object,
 })
 
 const order = new Schema({

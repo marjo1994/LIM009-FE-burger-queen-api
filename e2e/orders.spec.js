@@ -35,20 +35,15 @@ describe('POST /orders', () => {
             fetchAsTestUser('/users/test@test.test'),
         ])
         .then((responses) => {
-            // console.log(responses[0])
             expect(responses[0].status).toBe(200);
             expect(responses[1].status).toBe(200);
             return Promise.all([responses[0].json(), responses[1].json()]);
         })
-        .then(([product, user]) => {
-            console.log(product._id, user._id)
-            fetchAsTestUser('/orders', {
-                method: 'POST',
-                body: { products: [{ product: product._id, qty: 5 }], userId: user._id },
-            })
-        })
+        .then(([product, user]) => fetchAsTestUser('/orders', {
+            method: 'POST',
+            body: { products: [{ product: product._id, qty: 5 }], userId: user._id },
+        }))
         .then((resp) => {
-            console.log(resp)
             expect(resp.status).toBe(200);
             return resp.json();
         })
@@ -75,13 +70,12 @@ describe('POST /orders', () => {
             expect(responses[1].status).toBe(200);
             return Promise.all([responses[0].json(), responses[1].json()]);
         })
-        .then(([product, user]) => {
-            fetchAsAdmin('/orders', {
-                method: 'POST',
-                body: { products: [{ product: product._id, qty: 25 }], userId: user._id },
-            })
-        })
+        .then(([product, user]) => fetchAsAdmin('/orders', {
+            method: 'POST',
+            body: { products: [{ product: product._id, qty: 25 }], userId: user._id },
+        }))
         .then((resp) => {
+            console.log(resp)
             expect(resp.status).toBe(200);
             return resp.json();
         })
@@ -134,7 +128,6 @@ describe('GET /orders', () => {
                 return fetchAsTestUser('/orders');
             })
             .then((resp) => {
-                console.log(resp[0].body.products)
                 expect(resp.status).toBe(200);
                 return resp.json();
             })
@@ -226,7 +219,6 @@ describe('GET /orders/:orderid', () => {
             body: { products: [{ product: product._id, qty: 5 }], userId: user._id },
         }))
         .then((resp) => {
-            //console.log(resp.body)
             expect(resp.status).toBe(200);
             return resp.json();
         })
@@ -277,7 +269,7 @@ describe('GET /orders/:orderid', () => {
 });
 
 
-describe('PUT /orders/:orderid', () => {
+describe.only('PUT /orders/:orderid', () => {
     it('should fail with 401 when no auth', () => (
         fetch('/orders/xxx', { method: 'PUT' })
         .then(resp => expect(resp.status).toBe(401))
@@ -286,7 +278,7 @@ describe('PUT /orders/:orderid', () => {
     it('should fail with 404 when not found', () => (
         fetchAsAdmin('/orders/xxx', {
             method: 'PUT',
-            body: { state: 'canceled' },
+            body: { status: 'canceled' },
         })
         .then(resp => expect(resp.status).toBe(404))
     ));
