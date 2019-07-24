@@ -26,7 +26,7 @@ describe('POST /orders', () => {
       })
   ));
 
-  it('should create order as user (own order)', () => (
+  it.only('should create order as user (own order)', () => (
     Promise.all([
       fetchAsAdmin('/products', {
         method: 'POST',

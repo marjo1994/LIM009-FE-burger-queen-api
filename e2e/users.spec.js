@@ -9,20 +9,17 @@ const {
     fetchWithAuth,
 } = process;
 
-
 const parseLinkHeader = str => {
-    str.split(',')
-        .reduce((memo, item) => {
-            const [, value, key] = /^<(.*)>;\s+rel="(first|last|prev|next)"/.exec(item.trim());
-            console.log(value, key)
-            return {...memo, [key]: value };
-        }, {});
-}
+    str.split(',').reduce((memo, item) => {
+        const [, value, key] = /^<(.*)>;\s+rel="(first|last|prev|next)"/.exec(item.trim());
+        console.log({...memo, [key]: value });
+        return {...memo, [key]: value };
+    }, {});
+};
 
 describe('GET /users', () => {
     it('should fail with 401 when no auth', () => (
         fetch('/users').then(resp => {
-            // console.log('hola', resp.status)
             expect(resp.status).toBe(401)
         })
     ));
@@ -49,11 +46,10 @@ describe('GET /users', () => {
         fetchAsAdmin('/users?limit=1')
         .then((resp) => {
             expect(resp.status).toBe(200);
-            return resp.json().then(json => (console.log(resp.headers, json), { headers: resp.headers, json })); //why headers
+            return resp.json().then(json => ({ headers: resp.headers, json })); //why headers
         })
         .then(({ headers, json }) => {
             const linkHeader = parseLinkHeader(headers.get('link'));
-
             const nextUrlObj = url.parse(linkHeader.next);
             const lastUrlObj = url.parse(linkHeader.last);
             const nextQuery = qs.parse(nextUrlObj.query);
@@ -72,10 +68,13 @@ describe('GET /users', () => {
         })
         .then((resp) => {
             expect(resp.status).toBe(200);
-            return resp.json().then(json => ({ headers: resp.headers, json }));
+            return resp.json().then(json => {
+                ({ headers: resp.headers, json })
+            })
         })
         .then(({ headers, json }) => {
             const linkHeader = parseLinkHeader(headers.get('link'));
+            console.log(linkHeader)
 
             const firstUrlObj = url.parse(linkHeader.first);
             const prevUrlObj = url.parse(linkHeader.prev);
@@ -167,8 +166,6 @@ describe('POST /users', () => {
                 return resp.json();
             })
             .then((json) => {
-                console.log(json)
-                console.log(json._id)
                 expect(typeof json._id).toBe('string');
                 expect(typeof json.email).toBe('string');
                 expect(typeof json.password).toBe('undefined');
