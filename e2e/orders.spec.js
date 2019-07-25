@@ -75,7 +75,6 @@ describe('POST /orders', () => {
             body: { products: [{ product: product._id, qty: 25 }], userId: user._id },
         }))
         .then((resp) => {
-            console.log(resp)
             expect(resp.status).toBe(200);
             return resp.json();
         })
@@ -124,7 +123,6 @@ describe('GET /orders', () => {
             .then((responses) => {
                 expect(responses[0].status).toBe(200);
                 expect(responses[1].status).toBe(200);
-                console.log(responses[0].body.products)
                 return fetchAsTestUser('/orders');
             })
             .then((resp) => {
@@ -269,7 +267,7 @@ describe('GET /orders/:orderid', () => {
 });
 
 
-describe.only('PUT /orders/:orderid', () => {
+describe('PUT /orders/:orderid', () => {
     it('should fail with 401 when no auth', () => (
         fetch('/orders/xxx', { method: 'PUT' })
         .then(resp => expect(resp.status).toBe(401))

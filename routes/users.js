@@ -100,7 +100,6 @@ module.exports = (app, next) => {
             let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
             users.find().count((err, number) => {
                 if (err) console.log(err)
-                console.log(pagination(protocolo, page, limitPage, number))
                 resp.set('link', pagination(protocolo, page, limitPage, number))
             })
             users.find().skip((page - 1) * limitPage).limit(limitPage).exec((err, result) => {
@@ -169,11 +168,11 @@ module.exports = (app, next) => {
     app.post('/users', requireAdmin, (req, resp, next) => {
 
         if (!req.body.email || !req.body.password) {
-            return resp.status(400).send({ message: 'No se proveen `email` o `password` o ninguno de los dos' })
+            return next(400)
         }
 
         if (!req.body.email || !req.body.password) {
-            return resp.status(400).send({ message: 'No se proveen `email` o `password` o ninguno de los dos' })
+            return next(400)
         }
         let newUser = new users();
         newUser.email = req.body.email;
@@ -217,7 +216,7 @@ module.exports = (app, next) => {
     app.put('/users/:uid', requireAdminOrUser, (req, resp, next) => {
 
         if (!isAdmin(req) && req.body.roles) {
-            return resp.status(403).send({ message: 'No puede modificar sus `roles`' })
+            return next(403)
         }
         // req.headers.user._id.toString() === req.params.uid
         let obj = new Object();
@@ -280,7 +279,7 @@ module.exports = (app, next) => {
         }
         users.findOne(obj, (err, queryUser) => {
             if (!queryUser) {
-                resp.status(404).send({ message: 'El usuario seleccionado no existe' })
+                return next(404)
             } else {
                 users.remove(obj, (err) => {
                     resp.send({ message: 'Se borro satisfactoriamente!' });
