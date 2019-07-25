@@ -99,34 +99,35 @@ module.exports = (app, nextMain) => {
      * @code {400} no se indica `userId` o se intenta crear una orden sin productos
      * @code {401} si no hay cabecera de autenticación
      */
-    /*   newOrder.status = req.body.status;
-                      if (req.body.status === 'delivered') 
-                          newOrder.dateProcessed = new Date();
-                      } */
-    const asyncFindById = (elem) => {
-        let objectId = mongodb.ObjectId(elem.product);
-        return products.find({ _id: objectId }).then(resolve => resolve._id)
-    };    
 
-    app.post('/orders', requireAuth, (req, resp, next) => {
+    app.post('/orders', requireAuth, async(req, resp, next) => {
         if (!req.body.products || !req.body.userId) {
             return next(400);
         };
         let newOrder = new order();
         newOrder.userId = req.body.userId;
-        const result = Promise.all(req.body.products.map(asyncFindById))
-        result.then((res) => {
-                newOrder.products = res
-                newOrder.save((err, orderStored) => {
-                    if (err) console.error(err)
-                    resp.send({ message: 'se registro la orden exitosamente' })
-                    console.error(orderStored)
-                })
+        const arrOfProducts = await products.find({ _id: { $in: req.body.products.map(p => mongodb.ObjectId(p.product)) } })
+        if (arrOfProducts.length !== req.body.products.length) {
+            req.body.products = req.body.products.filter((x) => {
+                return x !== null || undefined
             })
-            .catch((e) => {
-                console.error(e)
-            })
-            /*   */
+        }
+        const productsReales = req.body.products.map((p, index) => ({
+            product: {
+                id: mongodb.ObjectId(p.product),
+                name: arrOfProducts[index].name,
+                price: arrOfProducts[index].price
+            },
+            qty: p.qty
+
+        }));
+        //console.error(productsReales, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+        newOrder.products = productsReales;
+        newOrder.save((err, orderStored) => {
+            if (err) console.error(err)
+            resp.send(orderStored)
+        })
+
     });
     /**
      * @name PUT /orders
@@ -156,25 +157,18 @@ module.exports = (app, nextMain) => {
      * @code {404} si la orderId con `orderId` indicado no existe
      */
     app.put('/orders/:orderid', requireAuth, (req, resp, next) => {
-        if (!req.body.state) {
+        if (!req.body.status) {
             return next(400);
         }
-        if (req.body.state === 'canceled') {
+        if (req.body.status === 'canceled') {
             return next(404)
         }
-        order.findOneAndUpdate({ _id: req.params.orderid }, (err, orderById) => {
+        order.findOneAndUpdate({ _id: req.params.orderid }, { status: req.body.status }, (err, orderById) => {
             if (err || !orderById) {
                 return next(404)
             }
-            /*  if (req.body.client) {
-                 orderById.client = req.body.client;
-             } */
-            // if(req.body.qty||req.bod)
-            /*       if (req.body.product || req.body.qty || (req.body.product && req.body.qty)) {
-                    orderById.products.push({ product: req.body.product } || { qty: req.body.qty } || { qty: req.body.qty, product: req.body.product });
-                  }
-             */
-
+            console.error(orderById)
+            resp.send(orderById)
         });
     })
 
