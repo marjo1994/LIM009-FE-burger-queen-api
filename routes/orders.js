@@ -6,7 +6,6 @@ const mongodb = require('mongodb');
 
 /** @module orders */
 module.exports = (app, nextMain) => {
-    //app.use(requireAuth)
     /**
      * @name GET /orders
      * @description Lista órdenes
@@ -121,7 +120,6 @@ module.exports = (app, nextMain) => {
             qty: p.qty
 
         }));
-        //console.error(productsReales, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
         newOrder.products = productsReales;
         newOrder.save((err, orderStored) => {
             if (err) console.error(err)
@@ -173,7 +171,6 @@ module.exports = (app, nextMain) => {
             }
             return resp.send(orderStored)
         })
-
     });
 
     /**   
