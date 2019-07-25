@@ -32,7 +32,6 @@ module.exports = (app, nextMain) => {
             if (err) console.log(err)
             resp.set('link', pagination(protocolo, page, limitPage, number))
         })
-
         products.find().skip((page - 1) * limitPage).limit(limitPage).exec((err, res) => {
             if (err) {
                 return next(400)
@@ -155,7 +154,7 @@ module.exports = (app, nextMain) => {
             }
             productById.save((err, productStored) => {
                 if (err) {
-                return next(400)       
+                    return next(400)
                 }
                 resp.send(productStored)
             });

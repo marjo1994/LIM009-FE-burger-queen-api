@@ -1,29 +1,27 @@
 const mongoose = require('mongoose');
 const factory = require('../factories/systemFactory');
-const System = mongoose.model('System');
-const Celestial = mongoose.model('Celestial');
+const User = mongoose.model('Users');
+//const Celestial = mongoose.model('Celestial');
 
 process.env.TEST_SUITE = 'spacetime-systems-test';
 
-describe('Systems', () => {
+describe('Users', () => {
     beforeEach(() => {
-        System.ensureIndexes({ loc: '2d' });
+        User.ensureIndexes({ loc: '2d' });
     });
     describe('CREATE', () => {
-        let systems;
-
+        let users;
         beforeEach(async() => {
-            systems = await factory.makeSystems(50);
+            users = await factory.makeSystems(50);
         });
         test('can create a system', async() => {
-            await new System({
-                name: 'Sol',
-                type: 'white_star',
-                loc: [10, 10],
+            await new User({
+                email: 'marjorie@gmail.com',
+                password: '123456',
+                roles: { admin: false },
             }).save();
-            const system = await System.findOne({ name: 'Sol' });
-
-            expect(system.name).toEqual('Sol');
+            const findedUser = await User.findOne({ email: 'marjorie@gmail.com' });
+            expect(findedUser.email).toEqual('Sol');
         });
         test('can create random systems', async() => {
             const fetchedSystems = await System.find({});
