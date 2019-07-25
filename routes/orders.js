@@ -6,7 +6,6 @@ const mongodb = require('mongodb');
 
 /** @module orders */
 module.exports = (app, nextMain) => {
-    //app.use(requireAuth)
     /**
      * @name GET /orders
      * @description Lista órdenes
@@ -121,7 +120,6 @@ module.exports = (app, nextMain) => {
             qty: p.qty
 
         }));
-        //console.error(productsReales, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
         newOrder.products = productsReales;
         newOrder.save((err, orderStored) => {
             if (err) console.error(err)
@@ -160,26 +158,22 @@ module.exports = (app, nextMain) => {
         if (!req.body.status) {
             return next(400);
         }
-        if (req.body.status === 'canceled') {
-            return next(404)
-        }
-        order.findOneAndUpdate({ _id: req.params.orderid }, { status: req.body.status }, (err, orderById) => {
-            if (err || !orderById) {
+        /* let options = {};
+        if (req.body.status === 'delivered') {
+            options = { $set: { status: new Date() } };
+        } */
+        /*if (req.body.status !== 'pending' || 'delivering' || 'canceled' || 'delivered') {
+              return next(400)
+          }*/
+        order.findOneAndUpdate({ _id: req.params.orderid }, { $set: { status: req.body.status } }, { new: true }, (err, orderStored) => {
+            if (err || !orderStored) {
                 return next(404)
             }
-            console.error(orderById)
-            resp.send(orderById)
-        });
-    })
+            return resp.send(orderStored)
+        })
+    });
 
-    /**    if (req.body.status === 'delivered') {
-                orderById.status = 'delivered';
-                orderById.dateProcessed = new Date();
-            }
-            console.log(orderById)
-            orderById.save();
-            resp.status(200).send(orderById);
-        }) 
+    /**   
      * @name DELETE /orders
      * @description Elimina una orden
      * @path {DELETE} /orders

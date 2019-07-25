@@ -35,7 +35,7 @@ module.exports = (app, nextMain) => {
 
         products.find().skip((page - 1) * limitPage).limit(limitPage).exec((err, res) => {
             if (err) {
-                return resp.status(400).send({ message: 'error al obtener productos' })
+                return next(400)
             } else {
                 resp.send(res)
             }
@@ -65,7 +65,7 @@ module.exports = (app, nextMain) => {
     app.get('/products/:productId', requireAuth, (req, resp, next) => {
         products.findOne({ _id: req.params.productId }, (err, productById) => {
             if (err || !productById) {
-                return resp.status(404).send({ message: 'El producto con `productId` indicado no existe' })
+                return next(404)
             }
             resp.send(productById);
         })
@@ -93,7 +93,7 @@ module.exports = (app, nextMain) => {
      */
     app.post('/products', requireAdmin, (req, resp, next) => {
             if (!req.body.name || !req.body.price) {
-                return resp.status(400).send({ message: 'No se indican `name` o `price`' })
+                return next(400)
             }
 
             /*Primero, como administrador debo poder crear productos*/
@@ -135,11 +135,11 @@ module.exports = (app, nextMain) => {
          */
     app.put('/products/:productId', requireAdmin, (req, resp, next) => {
         if (!req.body) {
-            return resp.status(400).send({ message: 'No se indica ninguna propiedad a modificar' })
+            return next(400)
         }
         products.findOne({ _id: req.params.productId }, (err, productById) => {
             if (err) {
-                return resp.status(404).send({ message: 'El producto con `productId` indicado no existe' })
+                return next(404)
             }
             if (req.body.name) {
                 productById.name = req.body.name
@@ -155,7 +155,7 @@ module.exports = (app, nextMain) => {
             }
             productById.save((err, productStored) => {
                 if (err) {
-                    resp.status(400).send({ message: "No es un propiedad correcta" })
+                return next(400)       
                 }
                 resp.send(productStored)
             });
@@ -185,7 +185,7 @@ module.exports = (app, nextMain) => {
                 return next(404)
             }
             // console.log(resp.status)
-            return resp.send({
+            resp.send({
                 message: 'Se borro satisfactoriamente!',
             });
         })

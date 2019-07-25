@@ -75,7 +75,6 @@ describe('POST /orders', () => {
             body: { products: [{ product: product._id, qty: 25 }], userId: user._id },
         }))
         .then((resp) => {
-            console.log(resp)
             expect(resp.status).toBe(200);
             return resp.json();
         })
@@ -95,7 +94,6 @@ describe('GET /orders', () => {
     fetch('/orders')
       .then(resp => expect(resp.status).toBe(401))
   ));
-
   it('should get orders as user', () => (
     Promise.all([
         fetchAsAdmin('/products', {
@@ -123,7 +121,6 @@ describe('GET /orders', () => {
         .then((responses) => {
             expect(responses[0].status).toBe(200);
             expect(responses[1].status).toBe(200);
-            console.log(responses[0].body.products)
             return fetchAsTestUser('/orders');
         })
         .then((resp) => {
@@ -269,7 +266,7 @@ describe('GET /orders/:orderid', () => {
 });
 
 
-describe.only('PUT /orders/:orderid', () => {
+describe('PUT /orders/:orderid', () => {
     it('should fail with 401 when no auth', () => (
         fetch('/orders/xxx', { method: 'PUT' })
         .then(resp => expect(resp.status).toBe(401))
@@ -283,7 +280,7 @@ describe.only('PUT /orders/:orderid', () => {
         .then(resp => expect(resp.status).toBe(404))
     ));
 
-  it.only('should fail with 400 when bad props', () => (
+  it('should fail with 400 when bad props', () => (
     Promise.all([
       fetchAsAdmin('/products', {
         method: 'POST',
@@ -309,7 +306,7 @@ describe.only('PUT /orders/:orderid', () => {
       .then(resp => expect(resp.status).toBe(400))
   ));
 
-  it.only('should fail with 400 when bad status', () => (
+  it('should fail with 400 when bad status', () => (
     Promise.all([
       fetchAsAdmin('/products', {
         method: 'POST',

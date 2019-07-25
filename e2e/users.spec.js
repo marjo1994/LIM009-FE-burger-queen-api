@@ -218,7 +218,6 @@ describe('PUT /users/:uid', () => {
     it('should fail with 403 when not owner nor admin', () => ( // Cuando no es el propio usuario ni el adminstrador
         fetchAsTestUser(`/users/${config.adminEmail}`, { method: 'PUT' })
         .then(resp => {
-            console.log(resp.status) // 403
             expect(resp.status).toBe(403)
         })
     ));
@@ -226,7 +225,6 @@ describe('PUT /users/:uid', () => {
     it('should fail with 404 when admin and not found', () => ( //El usuario solicitado no existe
         fetchAsAdmin('/users/abc@def.gih', { method: 'PUT' })
         .then(resp => {
-            console.log(resp.status) // 404
             expect(resp.status).toBe(404)
         })
     ));
