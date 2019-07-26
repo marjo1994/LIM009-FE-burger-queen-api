@@ -162,13 +162,13 @@ module.exports = (app, nextMain) => {
         if (req.body.status === 'delivered') {
             options = { $set: { status: new Date() } };
         } */
-        /*if (req.body.status !== 'pending' || 'delivering' || 'canceled' || 'delivered') {
-              return next(400)
-          }*/
-        order.findOneAndUpdate({ _id: req.params.orderid }, { $set: { status: req.body.status } }, { new: true }, (err, orderStored) => {
-            if (err || !orderStored) {
+        order.findOneAndUpdate({ _id: req.params.orderid }, { $set: { status: req.body.status } }, { runValidators: true, new: true }, (error, orderStored) => {
+            if (error) {
+                console.error(error.errors)
+                    // if (err.status.kind === 'enum') return next(400)
                 return next(404)
             }
+
             return resp.send(orderStored)
         })
     });

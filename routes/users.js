@@ -91,7 +91,7 @@ module.exports = (app, next) => {
     app.get('/users', requireAdmin, (req, resp) => {
         if (!req.query.limit && !req.query.page) {
             users.find({}, (err, list) => {
-                if (err) { resp.status(400).send(err) }
+                if (err) { return next(400) }
                 resp.send(list)
             });
         } else {
@@ -104,7 +104,7 @@ module.exports = (app, next) => {
             })
             users.find().skip((page - 1) * limitPage).limit(limitPage).exec((err, result) => {
                 if (err) {
-                    return resp.status(400).send({ message: err })
+                    return next(400)
                 } else {
                     resp.send(result)
                 }
