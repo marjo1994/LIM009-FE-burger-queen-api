@@ -23,6 +23,7 @@ module.exports = secret => (req, resp, next) => {
         users.findOne({ _id: decodedToken.uid }, (err, user) => {
             if (err) { return next(500, err) }
             req.headers.user = user;
+            console.log(user)
             next();
         })
     });

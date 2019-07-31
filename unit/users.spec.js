@@ -1,70 +1,48 @@
 const mongoose = require('mongoose');
-const factory = require('../factories/systemFactory');
-const User = mongoose.model('Users');
-//const Celestial = mongoose.model('Celestial');
+const fetch = require('node-fetch')
+const config = require('../config');
 
-process.env.TEST_SUITE = 'spacetime-systems-test';
+//const User = mongoose.model('Users');
+const { requestOfPostUsers, responseOfPostUsers, requestOfGetUsers, responseOfGetUsers } = require('../_mocks_/dataUsers')
 
-describe('Users', () => {
-    beforeEach(() => {
-        User.ensureIndexes({ loc: '2d' });
-    });
-    describe('CREATE', () => {
-        let users;
-        beforeEach(async() => {
-            users = await factory.makeSystems(50);
-        });
-        test('can create a system', async() => {
-            await new User({
-                email: 'marjorie@gmail.com',
-                password: '123456',
-                roles: { admin: false },
-            }).save();
-            const findedUser = await User.findOne({ email: 'marjorie@gmail.com' });
-            expect(findedUser.email).toEqual('Sol');
-        });
-        test('can create random systems', async() => {
-            const fetchedSystems = await System.find({});
+const initPost = {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'authorization': requestOfPostUsers.headers.authorization,
+    },
+    body: requestOfPostUsers.body
+};
+console.log(initPost)
 
-            expect(fetchedSystems.length).toEqual(50);
-        });
-    });
-    /*   describe('READ', () => {
-        let systems;
-
-        beforeEach(async () => {
-          systems = await factory.makeSystems(50);
-        });
-        test('target system can find nearest system to it', async () => {
-          const nearest = await systems[0].findClosest();
-
-          expect(systems.map(system => system.name)).toContain(nearest.name);
-        });
-        test('target system can find nearest systems within specified range', async () => {
-          const noSystems = await systems[0].findWithinRange(0);
-          const someSystems = await systems[0].findWithinRange(50);
-
-          expect(systems.length).toEqual(50);
-          expect(noSystems.length).toEqual(0);
-          expect(someSystems.length).toBeGreaterThan(0);
-          expect(someSystems.length).toBeLessThan(50);
-        });
-      }); */
-    /*   describe('DELETE', () => {
-        let systems;
-
-        beforeEach(async () => {
-          const newSystems = await factory.makeSystems(2);
-          await Promise.all(newSystems.map(system => system.addCelestials(5)));
-          systems = await System.find({});
-        });
-        test('should delete system and associated celestials', async () => {
-          await systems[0].remove();
-          const remainingSystems = await System.find({});
-          const remainingCelestials = await Celestial.find({});
-
-          expect(remainingSystems.length).toEqual(1);
-          expect(remainingCelestials.length).toEqual(5);
-        });
-      }); */
+describe('POST /users', () => {
+    it('Debería retornar un objeto con las propiedades del usuario recièn creado', () => (
+        fetch(`http://localhost:8080/users`, initPost)
+        .then((res) => {
+            console.log(res);
+            expect(res).toBe(responseOfPostUsers);
+        })
+        .catch(e =>
+            console.error(e))
+    ));
 });
+/* const miInit = {
+    method: 'GET',
+    headers: requestOfGetUsers.headers,
+};
+console.log(miInit)
+describe('GET /users', () => {
+    it('Debera retornar un array de objetos con informaciòn de usuarios', () => (
+        fetch('http://localhost:3000/users', miInit)
+        .then((resp) => {
+            console.log(resp, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+            return expect(resp).toBe(responseOfGetUsers);
+            //  return resp.json();
+        }).catch(e => console.error(e))
+    ));
+}); */
+/*     .then((miBlob) => {
+        const objectURL = URL.createObjectURL(miBlob);
+        miImagen.src = objectURL;
+    }); */
+//http://localhost:8080/orders/5d317b6fcd315c360ca5785a

@@ -20,19 +20,6 @@ mongoose.connect(dbUrl, { useNewUrlParser: true })
         console.log(e);
     })
 
-/* app.get('/users', (req, res) => {
-  //  let userId = req.params._id
-  Users.findOne({ email: req.body.email }, (err, user) => {
-    if (err) {
-      return res.status(500).send('error al traer usuario: ' + err)
-    }
-    if (!user) {
-      return res.status(404).send('error al encontrar usuario')
-    }
-    console.log(user._id)
-    res.status(200).send(user)
-  });
-}); */
 app.set('config', config);
 app.set('pkg', pkg);
 
