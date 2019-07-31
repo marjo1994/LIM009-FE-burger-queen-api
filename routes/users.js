@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const users = require('../models/modelUsers');
 const pagination = require('../utils/pagination')
+const { findByModels } = require('../controller /users-functions')
 
 const {
     requireAdmin,
@@ -88,28 +89,14 @@ module.exports = (app, next) => {
      * @code {403} si no es ni admin
      */
 
-    app.get('/users', requireAdmin, (req, resp) => {
-        if (!req.query.limit && !req.query.page) {
-            users.find({}, (err, list) => {
-                if (err) { resp.status(400).send(err) }
-                resp.send(list)
-            });
-        } else {
-            let limitPage = parseInt(req.query.limit) || 10;
-            let page = parseInt(req.query.page) || 1;
-            let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
-            users.find().count((err, number) => {
-                if (err) console.log(err)
-                resp.set('link', pagination(protocolo, page, limitPage, number))
-            })
-            users.find().skip((page - 1) * limitPage).limit(limitPage).exec((err, result) => {
-                if (err) {
-                    return resp.status(400).send({ message: err })
-                } else {
-                    resp.send(result)
-                }
-            });
-        }
+    app.get('/users', requireAdmin, async(req, resp) => {
+
+        let limitPage = parseInt(req.query.limit) || 10;
+        let page = parseInt(req.query.page) || 1;
+        let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
+        const number = await users.find().count();
+        resp.set('link', pagination(protocolo, page, limitPage, number))
+        findByModels(users, page, limitPage).then((result) => resp.send(result)).catch((e) => next(400))
     });
 
     /**
@@ -265,9 +252,7 @@ module.exports = (app, next) => {
      * @code {404} si el usuario solicitado no existe
      */
     app.delete('/users/:uid', requireAdminOrUser, (req, resp, next) => {
-        /*     if (!req.headers.authorization) {
-              return resp.status(401).send({ message: 'No existe cabecera de autenticación' });
-            } */
+
         if (req.headers.user._id.toString() === req.params.uid && isAdmin(req)) {
             return resp.send({ message: 'Admin no puede autoeliminarse' })
         }

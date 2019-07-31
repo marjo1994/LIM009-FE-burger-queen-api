@@ -3,6 +3,8 @@ const order = require('../models/modelOrders')
 const products = require('../models/modelProducts');
 const pagination = require('../utils/pagination');
 const mongodb = require('mongodb');
+const { findByModels } = require('../controller /users-functions')
+
 
 /** @module orders */
 module.exports = (app, nextMain) => {
@@ -26,21 +28,13 @@ module.exports = (app, nextMain) => {
      * @code {200} si la autenticación es correcta
      * @code {401} si no hay cabecera de autenticación
      */
-    app.get('/orders', requireAuth, (req, resp, next) => {
+    app.get('/orders', requireAuth, async(req, resp, next) => {
         let limitPage = parseInt(req.query.limit) || 10;
         let page = parseInt(req.query.page) || 1;
         let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
-        order.find().count((err, number) => {
-            if (err) console.log(err)
-                //console.log(pagination(protocolo, page, limitPage, number))
-            resp.set('link', pagination(protocolo, page, limitPage, number))
-        })
-        order.find().skip((page - 1) * limitPage).limit(limitPage).exec((err, orders) => {
-            if (err || !orders) {
-                return next(400)
-            }
-            resp.send(orders);
-        })
+        const number = await order.find().count();
+        resp.set('link', pagination(protocolo, page, limitPage, number))
+        findByModels(order, page, limitPage).then((result) => resp.send(result)).catch((e) => next(400))
     });
 
     /**

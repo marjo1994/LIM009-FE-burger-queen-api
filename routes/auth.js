@@ -37,7 +37,6 @@ module.exports = (app, nextMain) => {
             bcrypt.compare(req.body.password, userStored.password, (err, res) => {
                 if (res) {
                     const token = jwt.sign({ uid: userStored._id }, secret);
-                    console.error(token)
                     resp.status(200).send({ token: token })
                 }
             });
