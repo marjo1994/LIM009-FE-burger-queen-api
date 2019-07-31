@@ -4,6 +4,7 @@ const {
 } = require('../middleware/auth');
 const products = require('../models/modelProducts');
 const pagination = require('../utils/pagination')
+const { findByModels } = require('../controller /users-functions')
 
 /** @module products */
 module.exports = (app, nextMain) => {
@@ -24,21 +25,13 @@ module.exports = (app, nextMain) => {
      * @code {401} si no hay cabecera de autenticación
      */
 
-    app.get('/products', requireAuth, (req, resp, next) => {
+    app.get('/products', requireAuth, async(req, resp, next) => {
         let limitPage = parseInt(req.query.limit) || 10;
         let page = parseInt(req.query.page) || 1;
         let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
-        products.find().count((err, number) => {
-            if (err) console.log(err)
-            resp.set('link', pagination(protocolo, page, limitPage, number))
-        })
-        products.find().skip((page - 1) * limitPage).limit(limitPage).exec((err, res) => {
-            if (err) {
-                return next(400)
-            } else {
-                resp.send(res)
-            }
-        });
+        const number = await products.find().count();
+        resp.set('link', pagination(protocolo, page, limitPage, number))
+        findByModels(products, page, limitPage).then((result) => resp.send(result)).catch((e) => next(400));
     });
 
     /**
