@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+/* const mongoose = require('mongoose');
 const fetch = require('node-fetch')
 const config = require('../config');
 const JWT = require('jsonwebtoken');
@@ -6,9 +6,9 @@ const JWT = require('jsonwebtoken');
 
 
 //const User = mongoose.model('Users');
-const { requestOfPostUsers, responseOfPostUsers, requestOfGetUsers, responseOfGetUsers, authorizationAdmin } = require('../_mocks_/dataUsers')
+const { requestOfPostUsers, responseOfPostUsers, requestOfGetUsers, responseOfGetUsers, authorizationAdmin } = require('../_mocks_/dataUsers') */
 
-const initPost = {
+/* const initPost = {
     method: 'POST',
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -36,7 +36,7 @@ describe('POST /auth', () => {
         .catch(e =>
             console.error(e))
     ));
-});
+}); */
 /* describe('POST /users', () => {
     it('Debería retornar un objeto con las propiedades del usuario recièn creado', () => (
         fetch(baseUrl, initPost)

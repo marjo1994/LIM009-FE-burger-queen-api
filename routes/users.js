@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const users = require('../models/modelUsers');
 const pagination = require('../utils/pagination')
+const { uidOrEmail } = require('../utils/utils')
 
 const {
     requireAdmin,
@@ -67,15 +68,7 @@ const initAdminUser = (app, next) => {
  * va pasando a través de las funciones, así como también la respuesta
  * (response).
  */
-const uidOrEmail = (param) => {
-    let obj = new Object();
-    if (param.indexOf('@') < 0) {
-        obj._id = param;
-    } else {
-        obj.email = param;
-    }
-    return obj
-}
+
 
 /** @module users */
 module.exports = (app, next) => {
@@ -96,29 +89,7 @@ module.exports = (app, next) => {
      * @code {403} si no es ni admin
      */
 
-    app.get('/users', requireAdmin, (req, resp) => {
-        if (!req.query.limit && !req.query.page) {
-            users.find({}, (err, list) => {
-                if (err) { return next(400) }
-                resp.send(list)
-            });
-        } else {
-            let limitPage = parseInt(req.query.limit) || 10;
-            let page = parseInt(req.query.page) || 1;
-            let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
-            users.find().count((err, number) => {
-                if (err) console.log(err)
-                resp.set('link', pagination(protocolo, page, limitPage, number))
-            })
-            users.find().skip((page - 1) * limitPage).limit(limitPage).exec((err, result) => {
-                if (err) {
-                    return next(400)
-                } else {
-                    resp.send(result)
-                }
-            });
-        }
-    });
+    app.get('/users', requireAdmin, (req, resp) => paginationAndFind(users, req, resp, next));
 
     /**
      * @name GET /users/:uid
@@ -171,7 +142,6 @@ module.exports = (app, next) => {
         if (!req.body.email || !req.body.password) {
             return next(400)
         }
-
         if (!req.body.email || !req.body.password) {
             return next(400)
         }
