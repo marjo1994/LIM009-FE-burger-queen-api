@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const users = require('../models/modelUsers');
 const pagination = require('../utils/pagination')
-const { uidOrEmail } = require('../utils/utils')
 
 const {
     requireAdmin,
@@ -89,7 +88,29 @@ module.exports = (app, next) => {
      * @code {403} si no es ni admin
      */
 
-    app.get('/users', requireAdmin, (req, resp) => paginationAndFind(users, req, resp, next));
+    app.get('/users', requireAdmin, (req, resp) => {
+        if (!req.query.limit && !req.query.page) {
+            users.find({}, (err, list) => {
+                if (err) { resp.status(400).send(err) }
+                resp.send(list)
+            });
+        } else {
+            let limitPage = parseInt(req.query.limit) || 10;
+            let page = parseInt(req.query.page) || 1;
+            let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
+            users.find().count((err, number) => {
+                if (err) console.log(err)
+                resp.set('link', pagination(protocolo, page, limitPage, number))
+            })
+            users.find().skip((page - 1) * limitPage).limit(limitPage).exec((err, result) => {
+                if (err) {
+                    return resp.status(400).send({ message: err })
+                } else {
+                    resp.send(result)
+                }
+            });
+        }
+    });
 
     /**
      * @name GET /users/:uid
@@ -108,7 +129,14 @@ module.exports = (app, next) => {
      * @code {404} si el usuario solicitado no existe
      */
     app.get('/users/:uid', requireAdminOrUser, (req, resp) => {
-        const obj = uidOrEmail(req.params.uid)
+        let obj = new Object();
+
+        if (req.params.uid.indexOf('@') < 0) {
+            obj._id = req.params.uid;
+        } else {
+            obj.email = req.params.uid;
+        }
+
 
         users.findOne(obj, (err, user) => {
             if (err || !user) {
@@ -138,10 +166,11 @@ module.exports = (app, next) => {
      * @code {403} si ya existe usuario con ese `email`
      */
     app.post('/users', requireAdmin, (req, resp, next) => {
-        console.error(req.body)
+
         if (!req.body.email || !req.body.password) {
             return next(400)
         }
+
         if (!req.body.email || !req.body.password) {
             return next(400)
         }
@@ -189,16 +218,22 @@ module.exports = (app, next) => {
         if (!isAdmin(req) && req.body.roles) {
             return next(403)
         }
-        if (!req.body.email && !req.body.password && !isAdmin(req)) {
-            return next(400);
+        // req.headers.user._id.toString() === req.params.uid
+        let obj = new Object();
+        if (req.params.uid.indexOf('@') < 0) {
+            obj._id = req.params.uid;
+        } else {
+            obj.email = req.params.uid;
         }
-        const obj = uidOrEmail(req.params.uid)
         users.findOne(obj, (err, queryUser) => {
             if (err) {
                 resp.send(err)
             }
             if (!queryUser) {
-                return next(404);
+                return resp.status(404).send({ message: 'El usuario solicitado no existe' })
+            }
+            if (!req.body.email && !req.body.password && !isAdmin(req)) {
+                return resp.status(400).send({ message: 'no se provee ni email ni passsword' })
             }
             if (req.body.email) {
                 queryUser.email = req.body.email;
@@ -230,10 +265,18 @@ module.exports = (app, next) => {
      * @code {404} si el usuario solicitado no existe
      */
     app.delete('/users/:uid', requireAdminOrUser, (req, resp, next) => {
+        /*     if (!req.headers.authorization) {
+              return resp.status(401).send({ message: 'No existe cabecera de autenticación' });
+            } */
         if (req.headers.user._id.toString() === req.params.uid && isAdmin(req)) {
             return resp.send({ message: 'Admin no puede autoeliminarse' })
         }
-        const obj = uidOrEmail(req.params.uid)
+        let obj = new Object();
+        if (req.params.uid.indexOf('@') < 0) {
+            obj._id = req.params.uid;
+        } else {
+            obj.email = req.params.uid;
+        }
         users.findOne(obj, (err, queryUser) => {
             if (!queryUser) {
                 return next(404)
@@ -244,6 +287,8 @@ module.exports = (app, next) => {
             }
         })
     });
+
+
 
     initAdminUser(app, next);
 };
