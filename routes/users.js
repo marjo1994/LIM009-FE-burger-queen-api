@@ -167,7 +167,7 @@ module.exports = (app, next) => {
      * @code {403} si ya existe usuario con ese `email`
      */
     app.post('/users', requireAdmin, (req, resp, next) => {
-
+        console.error(req.body)
         if (!req.body.email || !req.body.password) {
             return next(400)
         }
