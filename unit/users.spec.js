@@ -1,24 +1,12 @@
 const mongoose = require('mongoose');
 const fetch = require('node-fetch')
 const config = require('../config');
+const JWT = require('jsonwebtoken');
+//const { secret } = require('../config');
+
+
 //const User = mongoose.model('Users');
-const { requestOfPostUsers, responseOfPostUsers, requestOfGetUsers, responseOfGetUsers } = require('../_mocks_/dataUsers')
-const { MongoMemoryServer } = require('mongodb-memory-server');
-const port = process.env.PORT || 8888;
-const baseUrl = process.env.REMOTE_URL || `http://127.0.0.1:${port}/users`;
-
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
-
-let mongoServer;
-const opts = { useMongoClient: true }; // remove this option if you use mongoose 5 and above
-
-beforeAll(async() => {
-    mongoServer = new MongoMemoryServer();
-    const mongoUri = await mongoServer.getConnectionString();
-    await mongoose.connect(mongoUri, opts, (err) => {
-        if (err) console.error(err);
-    });
-});
+const { requestOfPostUsers, responseOfPostUsers, requestOfGetUsers, responseOfGetUsers, authorizationAdmin } = require('../_mocks_/dataUsers')
 
 const initPost = {
     method: 'POST',
@@ -28,9 +16,28 @@ const initPost = {
     },
     body: requestOfPostUsers.body
 };
-console.log(initPost)
-
-describe('POST /users', () => {
+//console.log(initPost)
+//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZDQxMzI0OWM3OTlhYzc2NTJmNDViZjkiLCJpYXQiOjE1NjQ1NTM4MDF9.qD3a3AATCFpp3FlufqhnjLWf7qHpZD18RTwAuWMwoMY
+const initPostAuthAdmin = {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: { email: 'admin@localhost', password: 'changeme' }
+};
+describe('POST /auth', () => {
+    it('Debería retornar un objeto con las propiedades del usuario recièn creado', () => (
+        fetch(baseUrlAuth, initPostAuthAdmin)
+        .then((res) => {
+            const newRes = JWT.decode(res, config.secret)
+            console.log(newRes + '\n' + authorizationAdmin);
+            expect(newRes.email).toBe(authorizationAdmin.email);
+        })
+        .catch(e =>
+            console.error(e))
+    ));
+});
+/* describe('POST /users', () => {
     it('Debería retornar un objeto con las propiedades del usuario recièn creado', () => (
         fetch(baseUrl, initPost)
         .then((res) => {
@@ -40,7 +47,7 @@ describe('POST /users', () => {
         .catch(e =>
             console.error(e))
     ));
-});
+}); */
 
 /* describe('...', () => {
     it('Debera retornar un array de objeto recien creado con informaciòn de usuarios', async() => {

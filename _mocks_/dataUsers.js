@@ -1,5 +1,19 @@
+const JWT = require('jsonwebtoken');
+const { secret } = require('../config');
+
+
 const authorizationUser = "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZDNiMGQwYTk5MzIwZTNmMGNlODBiOTYiLCJpYXQiOjE1NjQxNTEyMjV9.4TCrgHxoOvOQ_B4-1e5Iw7IZtogoJB1Uuj73Qm0IJoM";
-const authorizationAdmin = 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZDMxNTA2ZjU2OGJmODEwMzJmYTQzNzAiLCJpYXQiOjE1NjM1MTM4NzF9.mRqN3BFOT-zfPAqQFdmpEqCWEA_U09CM9AVYeoCmGTo';
+
+
+module.exports.requestOfAuth_admin = {
+    body: {
+        email: 'admin@localhost',
+        password: 'changeme',
+    }
+};
+const token = JWT.sign(module.exports.requestOfAuth_admin, secret);
+//const output = { "token": token };
+module.exports.authorizationAdmin = JWT.decode(token, secret)
 
 module.exports.requestOfPostUsers = {
     headers: {

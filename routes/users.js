@@ -219,16 +219,16 @@ module.exports = (app, next) => {
         if (!isAdmin(req) && req.body.roles) {
             return next(403)
         }
+        if (!req.body.email && !req.body.password && !isAdmin(req)) {
+            return next(400);
+        }
         const obj = uidOrEmail(req.params.uid)
         users.findOne(obj, (err, queryUser) => {
             if (err) {
                 resp.send(err)
             }
             if (!queryUser) {
-                return resp.status(404).send({ message: 'El usuario solicitado no existe' })
-            }
-            if (!req.body.email && !req.body.password && !isAdmin(req)) {
-                return resp.status(400).send({ message: 'no se provee ni email ni passsword' })
+                return next(404);
             }
             if (req.body.email) {
                 queryUser.email = req.body.email;
