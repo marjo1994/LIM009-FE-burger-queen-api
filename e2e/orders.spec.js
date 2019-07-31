@@ -305,7 +305,7 @@ describe('PUT /orders/:orderid', () => {
         .then(resp => expect(resp.status).toBe(400))
     ));
 
-    it.only('should fail with 400 when bad status', () => (
+    it('should fail with 400 when bad status', () => (
         Promise.all([
             fetchAsAdmin('/products', {
                 method: 'POST',

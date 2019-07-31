@@ -37,7 +37,9 @@ const fetch = (url, opts = {}) => nodeFetch(`${baseUrl}${url}`, {
         ...opts.headers,
     },
     ...(
-        opts.body && typeof opts.body !== 'string' ? { body: JSON.stringify(opts.body) } : {}
+        opts.body && typeof opts.body !== 'string' ?
+        { body: JSON.stringify(opts.body) } :
+        {}
     ),
 });
 
@@ -107,7 +109,6 @@ module.exports = () => new Promise((resolve, reject) => {
         console.info(`Running tests on remote server ${process.env.REMOTE_URL}`);
         return resolve();
     }
-
 
     const mongod = new MongoMemoryServer();
 
