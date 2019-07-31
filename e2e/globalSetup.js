@@ -29,6 +29,7 @@ const __e2e = {
     // testObjects: [],
 };
 
+
 const fetch = (url, opts = {}) => nodeFetch(`${baseUrl}${url}`, {
     ...opts,
     headers: {
@@ -36,9 +37,12 @@ const fetch = (url, opts = {}) => nodeFetch(`${baseUrl}${url}`, {
         ...opts.headers,
     },
     ...(
-        opts.body && typeof opts.body !== 'string' ? { body: JSON.stringify(opts.body) } : {}
+        opts.body && typeof opts.body !== 'string' ?
+        { body: JSON.stringify(opts.body) } :
+        {}
     ),
 });
+
 
 const fetchWithAuth = token => (url, opts = {}) => fetch(url, {
     ...opts,
@@ -77,6 +81,7 @@ const checkAdminCredentials = () => fetch('/auth', {
         if (resp.status !== 200) {
             throw new Error('Could not authenticate as admin user');
         }
+
         return resp.json();
     })
     .then(({ token }) => Object.assign(__e2e, { adminToken: token }));
@@ -104,7 +109,6 @@ module.exports = () => new Promise((resolve, reject) => {
         console.info(`Running tests on remote server ${process.env.REMOTE_URL}`);
         return resolve();
     }
-
 
     const mongod = new MongoMemoryServer();
 
@@ -151,6 +155,7 @@ module.exports = () => new Promise((resolve, reject) => {
 
 // Export globals - ugly... :-(
 global.__e2e = __e2e;
+
 // Export stuff to be used in tests!
 process.baseUrl = baseUrl;
 process.fetch = fetch;
