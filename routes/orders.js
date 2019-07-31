@@ -35,7 +35,6 @@ module.exports = (app, nextMain) => {
                 //console.log(pagination(protocolo, page, limitPage, number))
             resp.set('link', pagination(protocolo, page, limitPage, number))
         })
-
         order.find().skip((page - 1) * limitPage).limit(limitPage).exec((err, orders) => {
             if (err || !orders) {
                 return next(400)
@@ -118,14 +117,12 @@ module.exports = (app, nextMain) => {
                 price: arrOfProducts[index].price
             },
             qty: p.qty
-
         }));
         newOrder.products = productsReales;
         newOrder.save((err, orderStored) => {
             if (err) console.error(err)
             resp.send(orderStored)
         })
-
     });
     /**
      * @name PUT /orders
@@ -158,18 +155,18 @@ module.exports = (app, nextMain) => {
         if (!req.body.status) {
             return next(400);
         }
-        /* let options = {};
-        if (req.body.status === 'delivered') {
-            options = { $set: { status: new Date() } };
-        } */
         order.findOneAndUpdate({ _id: req.params.orderid }, { $set: { status: req.body.status } }, { runValidators: true, new: true }, (error, orderStored) => {
-            if (error) {
-                console.error(error.errors)
-                    // if (err.status.kind === 'enum') return next(400)
-                return next(404)
+            if (error || !orderStored) {
+                //console.error(error.kind !== 'enum')
+                //console.error(error.errors.status.kind)
+                console.error('aaaaaaaaaaa')
+                if (error.kind !== 'enum') {
+                    return next(404)
+                }
+                return next(400)
             }
-
-            return resp.send(orderStored)
+            console.error('bbbbbbbbbb')
+            resp.send(orderStored)
         })
     });
 

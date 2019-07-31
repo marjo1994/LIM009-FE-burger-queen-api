@@ -67,7 +67,15 @@ const initAdminUser = (app, next) => {
  * va pasando a través de las funciones, así como también la respuesta
  * (response).
  */
-
+const uidOrEmail = (param) => {
+    let obj = new Object();
+    if (param.indexOf('@') < 0) {
+        obj._id = param;
+    } else {
+        obj.email = param;
+    }
+    return obj
+}
 
 /** @module users */
 module.exports = (app, next) => {
@@ -129,14 +137,7 @@ module.exports = (app, next) => {
      * @code {404} si el usuario solicitado no existe
      */
     app.get('/users/:uid', requireAdminOrUser, (req, resp) => {
-        let obj = new Object();
-
-        if (req.params.uid.indexOf('@') < 0) {
-            obj._id = req.params.uid;
-        } else {
-            obj.email = req.params.uid;
-        }
-
+        const obj = uidOrEmail(req.params.uid)
 
         users.findOne(obj, (err, user) => {
             if (err || !user) {
@@ -218,13 +219,7 @@ module.exports = (app, next) => {
         if (!isAdmin(req) && req.body.roles) {
             return next(403)
         }
-        // req.headers.user._id.toString() === req.params.uid
-        let obj = new Object();
-        if (req.params.uid.indexOf('@') < 0) {
-            obj._id = req.params.uid;
-        } else {
-            obj.email = req.params.uid;
-        }
+        const obj = uidOrEmail(req.params.uid)
         users.findOne(obj, (err, queryUser) => {
             if (err) {
                 resp.send(err)
@@ -265,18 +260,10 @@ module.exports = (app, next) => {
      * @code {404} si el usuario solicitado no existe
      */
     app.delete('/users/:uid', requireAdminOrUser, (req, resp, next) => {
-        /*     if (!req.headers.authorization) {
-              return resp.status(401).send({ message: 'No existe cabecera de autenticación' });
-            } */
         if (req.headers.user._id.toString() === req.params.uid && isAdmin(req)) {
             return resp.send({ message: 'Admin no puede autoeliminarse' })
         }
-        let obj = new Object();
-        if (req.params.uid.indexOf('@') < 0) {
-            obj._id = req.params.uid;
-        } else {
-            obj.email = req.params.uid;
-        }
+        const obj = uidOrEmail(req.params.uid)
         users.findOne(obj, (err, queryUser) => {
             if (!queryUser) {
                 return next(404)
@@ -287,8 +274,6 @@ module.exports = (app, next) => {
             }
         })
     });
-
-
 
     initAdminUser(app, next);
 };

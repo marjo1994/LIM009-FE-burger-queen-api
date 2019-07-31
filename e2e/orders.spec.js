@@ -177,8 +177,7 @@ describe('GET /orders', () => {
             expect(Array.isArray(orders)).toBe(true);
             expect(orders.length > 0);
             const userIds = orders.reduce((memo, order) => (
-                (memo.indexOf(order.userId) === -1) ?
-                [...memo, order.userId] :
+                (memo.indexOf(order.userId) === -1) ? [...memo, order.userId] :
                 memo
             ), []);
             expect(userIds.length >= 1).toBe(true);
@@ -266,7 +265,7 @@ describe('GET /orders/:orderid', () => {
 });
 
 
-describe.only('PUT /orders/:orderid', () => {
+describe('PUT /orders/:orderid', () => {
     it('should fail with 401 when no auth', () => (
         fetch('/orders/xxx', { method: 'PUT' })
         .then(resp => expect(resp.status).toBe(401))
@@ -306,7 +305,7 @@ describe.only('PUT /orders/:orderid', () => {
         .then(resp => expect(resp.status).toBe(400))
     ));
 
-    it('should fail with 400 when bad status', () => (
+    it.only('should fail with 400 when bad status', () => (
         Promise.all([
             fetchAsAdmin('/products', {
                 method: 'POST',
@@ -328,13 +327,16 @@ describe.only('PUT /orders/:orderid', () => {
             return resp.json();
         })
         .then(json => {
-            console.log(json._id)
             fetchAsAdmin(`/orders/${json._id}`, {
                 method: 'PUT',
                 body: { status: 'oh yeah!' },
             })
         })
-        .then(resp => expect(resp.status).toBe(400))
+        .then(resp => {
+            console.log(resp);
+            expect(resp.status).toBe(400)
+        })
+
     ));
 
     it('should update order (set status to preparing)', () => (
