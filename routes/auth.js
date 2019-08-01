@@ -1,9 +1,5 @@
-const jwt = require('jsonwebtoken');
-const config = require('../config');
 const user = require('../models/modelUsers');
-const bcrypt = require('bcrypt');
-
-const { secret } = config;
+const { comparePassword } = require('../controller /auth-functions.js');
 
 /** @module auth */
 module.exports = (app, nextMain) => {
@@ -32,14 +28,11 @@ module.exports = (app, nextMain) => {
                 return next(500);
             };
             if (!userStored) {
-                return next(404)
+                return next(404);
             };
-            bcrypt.compare(req.body.password, userStored.password, (err, res) => {
-                if (res) {
-                    const token = jwt.sign({ uid: userStored._id }, secret);
-                    resp.status(200).send({ token: token })
-                }
-            });
+            comparePassword(req.body.password, userStored).then((token) => {
+                resp.status(200).send({ token: token });
+            })
         })
     });
     return nextMain();

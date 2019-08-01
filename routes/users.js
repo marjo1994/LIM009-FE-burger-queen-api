@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const users = require('../models/modelUsers');
 const pagination = require('../utils/pagination')
 const { findByModels } = require('../controller /users-functions')
-
+const { uidOrEmail } = require('../utils/utils')
 const {
     requireAdmin,
     isAdmin,
@@ -90,7 +90,6 @@ module.exports = (app, next) => {
      */
 
     app.get('/users', requireAdmin, async(req, resp) => {
-
         let limitPage = parseInt(req.query.limit) || 10;
         let page = parseInt(req.query.page) || 1;
         let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
@@ -116,15 +115,8 @@ module.exports = (app, next) => {
      * @code {404} si el usuario solicitado no existe
      */
     app.get('/users/:uid', requireAdminOrUser, (req, resp) => {
-        let obj = new Object();
 
-        if (req.params.uid.indexOf('@') < 0) {
-            obj._id = req.params.uid;
-        } else {
-            obj.email = req.params.uid;
-        }
-
-
+        const obj = uidOrEmail(req.params.uid);
         users.findOne(obj, (err, user) => {
             if (err || !user) {
                 return resp.status(404).send({ message: 'El usuario solicitado no existe' })
@@ -203,15 +195,11 @@ module.exports = (app, next) => {
     app.put('/users/:uid', requireAdminOrUser, (req, resp, next) => {
 
         if (!isAdmin(req) && req.body.roles) {
-            return next(403)
-        }
+            return next(403);
+        };
         // req.headers.user._id.toString() === req.params.uid
-        let obj = new Object();
-        if (req.params.uid.indexOf('@') < 0) {
-            obj._id = req.params.uid;
-        } else {
-            obj.email = req.params.uid;
-        }
+        let obj = uidOrEmail(req.params.uid);
+
         users.findOne(obj, (err, queryUser) => {
             if (err) {
                 resp.send(err)
@@ -256,12 +244,8 @@ module.exports = (app, next) => {
         if (req.headers.user._id.toString() === req.params.uid && isAdmin(req)) {
             return resp.send({ message: 'Admin no puede autoeliminarse' })
         }
-        let obj = new Object();
-        if (req.params.uid.indexOf('@') < 0) {
-            obj._id = req.params.uid;
-        } else {
-            obj.email = req.params.uid;
-        }
+        const obj = uidOrEmail(req.params.uid);
+
         users.findOne(obj, (err, queryUser) => {
             if (!queryUser) {
                 return next(404)
@@ -272,8 +256,5 @@ module.exports = (app, next) => {
             }
         })
     });
-
-
-
     initAdminUser(app, next);
 };
