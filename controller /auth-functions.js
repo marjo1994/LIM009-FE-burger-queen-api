@@ -9,6 +9,5 @@ module.exports.comparePassword = async(password, userStored) => {
         const token = jwt.sign({ uid: userStored._id }, secret);
         return token;
     }
-    console.log(res);
     return res;
 };

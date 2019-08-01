@@ -3,7 +3,6 @@ const { comparePassword } = require('../controller /auth-functions.js');
 
 /** @module auth */
 module.exports = (app, nextMain) => {
-
     /**
      * @name /auth
      * @description Crea token de autenticación.
@@ -19,6 +18,7 @@ module.exports = (app, nextMain) => {
 
     app.post('/auth', (req, resp, next) => {
         const { email, password } = req.body;
+        console.error(req.body)
         if (!email || !password) {
             return next(400);
         }

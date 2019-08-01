@@ -3,9 +3,7 @@ const { spawn } = require('child_process');
 const nodeFetch = require('node-fetch');
 const kill = require('tree-kill');
 const { MongoMemoryServer } = require('mongodb-memory-server');
-
 const config = require('../config');
-
 const port = process.env.PORT || 8888;
 const baseUrl = process.env.REMOTE_URL || `http://127.0.0.1:${port}`;
 
@@ -37,9 +35,7 @@ const fetch = (url, opts = {}) => nodeFetch(`${baseUrl}${url}`, {
         ...opts.headers,
     },
     ...(
-        opts.body && typeof opts.body !== 'string' ?
-        { body: JSON.stringify(opts.body) } :
-        {}
+        opts.body && typeof opts.body !== 'string' ? { body: JSON.stringify(opts.body) } : {}
     ),
 });
 

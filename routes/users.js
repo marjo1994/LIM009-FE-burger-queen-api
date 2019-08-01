@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt');
 const users = require('../models/modelUsers');
-const pagination = require('../utils/pagination')
-const { findByModels } = require('../controller /users-functions')
-const { uidOrEmail } = require('../utils/utils')
+const pagination = require('../utils/pagination');
+const { findByModels } = require('../controller /users-functions');
+const { uidOrEmail } = require('../utils/utils');
 const {
     requireAdmin,
     isAdmin,
@@ -115,7 +115,6 @@ module.exports = (app, next) => {
      * @code {404} si el usuario solicitado no existe
      */
     app.get('/users/:uid', requireAdminOrUser, (req, resp) => {
-
         const obj = uidOrEmail(req.params.uid);
         users.findOne(obj, (err, user) => {
             if (err || !user) {
@@ -145,11 +144,9 @@ module.exports = (app, next) => {
      * @code {403} si ya existe usuario con ese `email`
      */
     app.post('/users', requireAdmin, (req, resp, next) => {
-
         if (!req.body.email || !req.body.password) {
             return next(400)
         }
-
         if (!req.body.email || !req.body.password) {
             return next(400)
         }
@@ -193,13 +190,13 @@ module.exports = (app, next) => {
      * @code {404} si el usuario solicitado no existe
      */
     app.put('/users/:uid', requireAdminOrUser, (req, resp, next) => {
-
         if (!isAdmin(req) && req.body.roles) {
             return next(403);
         };
-        // req.headers.user._id.toString() === req.params.uid
         let obj = uidOrEmail(req.params.uid);
-
+        if (!req.body.email && !req.body.password && !isAdmin(req)) {
+            return resp.status(400).send({ message: 'no se provee ni email ni passsword' })
+        }
         users.findOne(obj, (err, queryUser) => {
             if (err) {
                 resp.send(err)
@@ -207,18 +204,15 @@ module.exports = (app, next) => {
             if (!queryUser) {
                 return resp.status(404).send({ message: 'El usuario solicitado no existe' })
             }
-            if (!req.body.email && !req.body.password && !isAdmin(req)) {
-                return resp.status(400).send({ message: 'no se provee ni email ni passsword' })
-            }
             if (req.body.email) {
                 queryUser.email = req.body.email;
             }
             if (req.body.password) {
                 queryUser.password = bcrypt.hashSync(req.body.password, 10);
             }
-            if (req.body.roles && isAdmin(req)) {
-                queryUser.body.roles.admin = req.body.admin
-            }
+            /*    if (req.body.roles && isAdmin(req)) {
+                   queryUser.body.roles.admin = req.body.admin
+               } */
             queryUser.save();
             resp.send({ message: 'Cambios registrados satisfactoriamente' })
         })

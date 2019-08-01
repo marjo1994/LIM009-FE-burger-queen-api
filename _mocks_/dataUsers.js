@@ -2,35 +2,41 @@ const JWT = require('jsonwebtoken');
 const { secret } = require('../config');
 
 
-const authorizationUser = "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZDNiMGQwYTk5MzIwZTNmMGNlODBiOTYiLCJpYXQiOjE1NjQxNTEyMjV9.4TCrgHxoOvOQ_B4-1e5Iw7IZtogoJB1Uuj73Qm0IJoM";
-
+const authorizationAdmin = "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZDNiMGQwYTk5MzIwZTNmMGNlODBiOTYiLCJpYXQiOjE1NjQxNTEyMjV9.4TCrgHxoOvOQ_B4-1e5Iw7IZtogoJB1Uuj73Qm0IJoM";
 
 module.exports.requestOfAuth_admin = {
+    method: 'POST',
     body: {
         email: 'admin@localhost',
         password: 'changeme',
     }
 };
+
 const token = JWT.sign(module.exports.requestOfAuth_admin, secret);
 //const output = { "token": token };
-module.exports.authorizationAdmin = JWT.decode(token, secret)
+const autorization = JWT.decode(token, secret);
+module.exports.authorizationAdministrador = { "token": token };
 
 module.exports.requestOfPostUsers = {
+    method: 'POST',
     headers: {
-        authorization: authorizationAdmin,
+        authorization: module.exports.authorizationAdministrador,
     },
     body: {
         email: 'marjorie@labo.la',
         password: '123456'
     },
 };
+
 module.exports.requestOfGetUsers = {
+    method: 'GET',
     headers: {
         authorization: authorizationAdmin
     }
 };
 
 module.exports.requestOfGetUsersById_admin = {
+    method: 'GET',
     headers: {
         authorization: authorizationAdmin,
     },
@@ -40,14 +46,17 @@ module.exports.requestOfGetUsersById_admin = {
 };
 
 module.exports.requestOfGetUsersById_user = {
-    headers: {
+    method: 'GET',
+    /* headers: {
         authorization: authorizationUser,
     },
+     */
     params: {
         uid: '5d3b0d0a99320e3f0ce80b96',
     }
 };
 module.exports.requestOfGetUsersByEmail_admin = {
+    method: 'GET',
     headers: {
         authorization: authorizationAdmin,
     },
@@ -57,15 +66,18 @@ module.exports.requestOfGetUsersByEmail_admin = {
 };
 
 module.exports.requestOfGetUsersByEmail_user = {
-    headers: {
+    method: 'GET',
+    /* headers: {
         authorization: authorizationUser,
     },
+     */
     params: {
         uid: 'marjorie@labo.la',
     }
 };
 
 module.exports.requestOfPutUsersById_admin = {
+    method: 'PUT',
     headers: {
         authorization: authorizationAdmin,
     },
@@ -79,9 +91,11 @@ module.exports.requestOfPutUsersById_admin = {
 };
 
 module.exports.requestOfPutUsersById_user = {
-    headers: {
+    method: 'PUT',
+    /* headers: {
         authorization: authorizationUser,
     },
+     */
     body: {
         email: 'marjorie009@labo.la',
         password: 'marjorie'
@@ -91,6 +105,7 @@ module.exports.requestOfPutUsersById_user = {
     }
 };
 module.exports.requestOfPutUsersByEmail_admin = {
+    method: 'PUT',
     headers: {
         authorization: authorizationAdmin,
     },
@@ -104,9 +119,11 @@ module.exports.requestOfPutUsersByEmail_admin = {
 };
 
 module.exports.requestOfPutUsersByEmail_user = {
-    headers: {
+    method: 'PUT',
+    /* headers: {
         authorization: authorizationUser,
     },
+     */
     body: {
         email: 'marjorie009@labo.la',
         password: 'marjorie'
@@ -117,6 +134,7 @@ module.exports.requestOfPutUsersByEmail_user = {
 };
 
 module.exports.requestOfDeleteUsersById_admin = {
+    method: 'DELETE',
     headers: {
         authorization: authorizationAdmin,
     },
@@ -129,9 +147,11 @@ module.exports.requestOfDeleteUsersById_admin = {
     }
 };
 module.exports.requestOfDeleteUsersById_user = {
-    headers: {
+    method: 'DELETE',
+    /* headers: {
         authorization: authorizationUser,
     },
+     */
     body: {
         email: 'marjorie009@labo.la',
         password: 'marjorie'
@@ -141,6 +161,7 @@ module.exports.requestOfDeleteUsersById_user = {
     }
 };
 module.exports.requestOfDeleteUsersByEmail_admin = {
+    method: 'DELETE',
     headers: {
         authorization: authorizationAdmin,
     },
@@ -153,9 +174,11 @@ module.exports.requestOfDeleteUsersByEmail_admin = {
     }
 };
 module.exports.requestOfDeleteUsersByEmail_user = {
-    headers: {
+    method: 'DELETE',
+    /* headers: {
         authorization: authorizationUser,
     },
+     */
     body: {
         email: 'marjorie009@labo.la',
         password: 'marjorie'
