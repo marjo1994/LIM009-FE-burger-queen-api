@@ -1,8 +1,7 @@
-const { gettingToken, postWithToken, getWithToken } = require('../utils/test')
+const { gettingToken, postWithToken, getWithToken } = require('../utils/test/superTest')
 
-
+const { responseOfGetUsersByIdorEmail } = require('../utils/test/dataUsers')
 describe('POST /users', () => {
-
     it('debería crear un nuevo usuario', () => (
         gettingToken('admin@localhost', 'changeme')
         .then(resp => {
@@ -29,3 +28,16 @@ describe('GET /users', () => {
         })
     ))
 });
+
+/* describe('GET /users:uid', () => {
+    it('debería traer informaciòn de usuario por id o email ', () => (
+        gettingToken('admin@localhost', 'changeme')
+        .then(resp => {
+            return getWithToken(resp.body.token, '/users/5d439680250f04203e664cb8')
+        }).then((result) => {
+            console.log(result.body);
+            expect(result.status).toBe(200);
+            expect(result.body).toBe(responseOfGetUsersByIdorEmail);
+        })
+    ))
+}); */

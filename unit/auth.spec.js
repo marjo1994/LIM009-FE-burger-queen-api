@@ -1,4 +1,4 @@
-const { gettingToken } = require('../utils/test')
+const { gettingToken } = require('../utils/test/superTest')
 
 describe('POST /auth', () => {
     it('debería retornar un token para el administrador', () => (
