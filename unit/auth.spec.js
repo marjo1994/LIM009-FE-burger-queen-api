@@ -14,6 +14,23 @@ describe('POST /auth', () => {
             expect(result.body).toHaveProperty('token');
         })
     ));
+
+    it('debería retornar un error 400 cuando no se provee email o password', () => (
+        gettingToken('admin@localhost', '').then(resp => {
+            expect(resp.status).toBe(400);
+        })
+    ));
+
+    it('debería retornar un error 401 con un email', () => (
+        gettingToken('abc@abc', '123456').then(resp => {
+            expect(resp.status).toBe(401);
+        })
+    ));
+    it('debería retornar un error 401 con password invàlido', () => (
+        gettingToken('test@test.test', 'changeme').then(resp => {
+            expect(resp.status).toBe(401);
+        })
+    ));
 });
 
 
