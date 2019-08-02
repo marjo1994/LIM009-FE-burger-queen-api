@@ -192,7 +192,7 @@ module.exports.responseOfPostUsers = {
     body: {
         roles: { admin: false },
         _id: '5d3b0d0a99320e3f0ce80b96',
-        uid: 'marjorie@labo.la',
+        uid: 'labo@labo.la',
     }
 };
 module.exports.responseOfGetUsers = {
