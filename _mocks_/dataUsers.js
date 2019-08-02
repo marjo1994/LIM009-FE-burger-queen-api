@@ -2,7 +2,7 @@ const JWT = require('jsonwebtoken');
 const { secret } = require('../config');
 
 
-const authorizationAdmin = "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZDNiMGQwYTk5MzIwZTNmMGNlODBiOTYiLCJpYXQiOjE1NjQxNTEyMjV9.4TCrgHxoOvOQ_B4-1e5Iw7IZtogoJB1Uuj73Qm0IJoM";
+// const authorizationAdmin = "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZDNiMGQwYTk5MzIwZTNmMGNlODBiOTYiLCJpYXQiOjE1NjQxNTEyMjV9.4TCrgHxoOvOQ_B4-1e5Iw7IZtogoJB1Uuj73Qm0IJoM";
 
 module.exports.requestOfAuth_admin = {
     method: 'POST',
@@ -12,12 +12,27 @@ module.exports.requestOfAuth_admin = {
     }
 };
 
-const token = JWT.sign(module.exports.requestOfAuth_admin, secret);
+const tokenAdmin = JWT.sign(module.exports.requestOfAuth_admin, secret);
 //const output = { "token": token };
-const autorization = JWT.decode(token, secret);
-module.exports.authorizationAdministrador = { "token": token };
+//const authorization = JWT.decode(token, secret);
+module.exports.authorizationAdministrador = { "token": tokenAdmin };
 
-module.exports.requestOfPostUsers = {
+
+module.exports.requestOfAuth_user = {
+    method: 'POST',
+    body: {
+        email: 'test@test.test',
+        password: '123456',
+    }
+};
+
+const tokenUser = JWT.sign(module.exports.requestOfAuth_user, secret);
+//const output = { "token": token };
+//const authorization = JWT.decode(token, secret);
+module.exports.authorizationUser = { "token": tokenUser };
+//console.log(authorizationAdministrador)
+
+/*module.exports.requestOfPostUsers = {
     method: 'POST',
     headers: {
         authorization: module.exports.authorizationAdministrador,
@@ -50,7 +65,7 @@ module.exports.requestOfGetUsersById_user = {
     /* headers: {
         authorization: authorizationUser,
     },
-     */
+     
     params: {
         uid: '5d3b0d0a99320e3f0ce80b96',
     }
@@ -67,10 +82,10 @@ module.exports.requestOfGetUsersByEmail_admin = {
 
 module.exports.requestOfGetUsersByEmail_user = {
     method: 'GET',
-    /* headers: {
+    headers: {
         authorization: authorizationUser,
     },
-     */
+     
     params: {
         uid: 'marjorie@labo.la',
     }
@@ -95,7 +110,7 @@ module.exports.requestOfPutUsersById_user = {
     /* headers: {
         authorization: authorizationUser,
     },
-     */
+     
     body: {
         email: 'marjorie009@labo.la',
         password: 'marjorie'
@@ -123,7 +138,7 @@ module.exports.requestOfPutUsersByEmail_user = {
     /* headers: {
         authorization: authorizationUser,
     },
-     */
+     
     body: {
         email: 'marjorie009@labo.la',
         password: 'marjorie'
@@ -151,7 +166,7 @@ module.exports.requestOfDeleteUsersById_user = {
     /* headers: {
         authorization: authorizationUser,
     },
-     */
+     
     body: {
         email: 'marjorie009@labo.la',
         password: 'marjorie'
@@ -178,7 +193,7 @@ module.exports.requestOfDeleteUsersByEmail_user = {
     /* headers: {
         authorization: authorizationUser,
     },
-     */
+     
     body: {
         email: 'marjorie009@labo.la',
         password: 'marjorie'
@@ -187,7 +202,7 @@ module.exports.requestOfDeleteUsersByEmail_user = {
         uid: 'marjorie@labo.la',
     }
 };
-/******* *RESPONSE*******************/
+/******* *RESPONSE******************
 module.exports.responseOfPostUsers = {
     body: {
         roles: { admin: false },
@@ -221,6 +236,6 @@ module.exports.responseOfDeleteUsersByIdorEmail = {
     body: {
         "message": "Se borro satisfactoriamente!"
     }
-};
+};*/
 
 //uid del admin 5d31506f568bf81032fa4370,
