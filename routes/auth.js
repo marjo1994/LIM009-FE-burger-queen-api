@@ -1,5 +1,5 @@
 const user = require('../models/modelUsers');
-const { comparePassword } = require('../controller /auth-functions.js');
+const { comparePassword } = require('../controller/auth-functions.js');
 
 /** @module auth */
 module.exports = (app, nextMain) => {
@@ -18,7 +18,7 @@ module.exports = (app, nextMain) => {
 
     app.post('/auth', (req, resp, next) => {
         const { email, password } = req.body;
-        console.error('de auth post', req.body)
+        //console.error('de auth post', req.body)
         if (!email || !password) {
             return next(400);
         }
@@ -31,6 +31,7 @@ module.exports = (app, nextMain) => {
                 return next(404);
             };
             comparePassword(req.body.password, userStored).then((token) => {
+                // console.error(req.body.password,'holaaa')
                 resp.status(200).send({ token: token });
             })
         })

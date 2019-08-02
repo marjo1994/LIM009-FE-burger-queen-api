@@ -4,7 +4,7 @@ const {
 } = require('../middleware/auth');
 const products = require('../models/modelProducts');
 const pagination = require('../utils/pagination')
-const { findByModels } = require('../controller /users-functions')
+const { findByModels } = require('../controller/users-functions')
 
 /** @module products */
 module.exports = (app, nextMain) => {

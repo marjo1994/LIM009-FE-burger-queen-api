@@ -3,13 +3,16 @@ const { gettingToken } = require('../utils/test/superTest')
 describe('POST /auth', () => {
     it('debería retornar un token para el administrador', () => (
         gettingToken('admin@localhost', 'changeme').then(resp => {
+            // console.log(resp)
             expect(resp.status).toBe(200);
             expect(resp.body).toHaveProperty('token');
+            
         })
     ));
 
     it('debería retornar un token para un usuario  ', () => (
-        gettingToken('test@test.test', '123456').then((result) => {
+        gettingToken('labo@labo.la', 'laboratori').then((result) => {
+            console.log(result)
             expect(result.status).toBe(200);
             expect(result.body).toHaveProperty('token');
         })
