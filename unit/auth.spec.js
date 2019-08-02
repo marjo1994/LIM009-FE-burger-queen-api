@@ -1,44 +1,4 @@
-/* const path = require('path');
-const fetch = require('node-fetch');
-jest.mock('express');
-
-const config = require('../config');
-const port = process.env.PORT || 8888;
-const baseUrl = process.env.REMOTE_URL || `http://127.0.0.1:${port}`;
-const { requestOfPostUsers, responseOfPostUsers, authorizationAdministrador } = require('../_mocks_/dataUsers')
-
- */
-const port = 8888;
-const baseUrl = `http://127.0.0.1:${port}`;
-
-const { responseOfGetUsers, responseOfPostUsers, authorizationAdministrador } = require('../_mocks_/dataUsers');
-
-let request = require('supertest');
-const express = require('express');
-const app = express();
-
-request = request('http://localhost:8888');
-
-const gettingToken = async(email, password) => {
-    return await request.post(`/auth`)
-        .send({
-            email: email,
-            password: password,
-        })
-        .set('Accept', 'application/json')
-        .then(resp => {
-            return resp;
-        });
-}
-const postWithToken = async(body, token, method) => {
-    return await request.post(method)
-        .send(body)
-        .set('Authorization', `bearer ${token}`)
-}
-const getWithToken = async(token, method) => {
-    return await request.get(method)
-        .set('Authorization', `bearer ${token}`)
-}
+const { gettingToken } = require('../utils/test')
 
 describe('POST /auth', () => {
     it('debería retornar un token para el administrador', () => (
@@ -56,34 +16,7 @@ describe('POST /auth', () => {
     ));
 });
 
-describe('POST /users', () => {
 
-    it('debería crear un nuevo usuario', () => (
-        gettingToken('admin@localhost', 'changeme')
-        .then(resp => {
-            return postWithToken({
-                email: 'labo@labo.la',
-                password: 'laboratoria',
-            }, resp.body.token, '/users')
-        }).then((result) => {
-            expect(result.status).toBe(200);
-            expect(result.body).toHaveProperty('_id');
-        }).catch(e => console.log(e))
-    ))
-});
-
-describe('GET /users', () => {
-    it('debería retornar un array de objetos con informacion de todos los usuarios', () => (
-        gettingToken('admin@localhost', 'changeme')
-        .then(resp => {
-            return getWithToken(resp.body.token, '/users')
-        }).then((result) => {
-            console.log(result.body);
-            expect(result.status).toBe(200);
-            expect(result.body).toHaveLength(3);
-        })
-    ))
-});
 
 
 /* const { Express } = require('jest-express/lib/express');
