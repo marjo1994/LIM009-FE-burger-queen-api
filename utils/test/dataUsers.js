@@ -30,11 +30,9 @@ module.exports.responseOfGetUsers = [{
 ];
 
 module.exports.responseOfGetUsersByIdorEmail = {
-    body: {
-        roles: { admin: false },
-        _id: '5d439680250f04203e664cb8',
-        email: 'labo@labo.la',
-    }
+    roles: { admin: false },
+    _id: '5d43b7a75f1c31356e4ad6dd',
+    email: 'labo@labo.la',
 };
 
 module.exports.requestOfPutUsersByIdorEmail = {

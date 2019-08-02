@@ -29,15 +29,32 @@ describe('GET /users', () => {
     ))
 });
 
-/* describe('GET /users:uid', () => {
-    it('debería traer informaciòn de usuario por id o email ', () => (
+describe('GET /users:uid', () => {
+    it('debería traer informaciòn de usuario por email ', () => (
         gettingToken('admin@localhost', 'changeme')
         .then(resp => {
-            return getWithToken(resp.body.token, '/users/5d439680250f04203e664cb8')
+            return getWithToken(resp.body.token, '/users/labo@labo.la')
         }).then((result) => {
             console.log(result.body);
             expect(result.status).toBe(200);
-            expect(result.body).toBe(responseOfGetUsersByIdorEmail);
+            expect(result.body).toHaveProperty('_id');
+            expect(result.body).toHaveProperty('roles.admin', responseOfGetUsersByIdorEmail.roles.admin);
+            expect(result.body).toHaveProperty('email', responseOfGetUsersByIdorEmail.email);
+        })
+    ))
+});
+
+/* describe('PUT /users:uid', () => {
+    it('debería traer informaciòn de usuario por email ', () => (
+        gettingToken('admin@localhost', 'changeme')
+        .then(resp => {
+            return getWithToken(resp.body.token, '/users/labo@labo.la')
+        }).then((result) => {
+            console.log(result.body);
+            expect(result.status).toBe(200);
+            expect(result.body).toHaveProperty('_id');
+            expect(result.body).toHaveProperty('roles.admin', responseOfGetUsersByIdorEmail.roles.admin);
+            expect(result.body).toHaveProperty('email', responseOfGetUsersByIdorEmail.email);
         })
     ))
 }); */
