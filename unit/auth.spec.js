@@ -11,7 +11,8 @@ const { requestOfPostUsers, responseOfPostUsers, authorizationAdministrador } = 
 const port = 8888;
 const baseUrl = `http://127.0.0.1:${port}`;
 
-const { requestOfPostUsers, responseOfPostUsers, authorizationAdministrador } = require('../_mocks_/dataUsers')
+const { responseOfGetUsers, responseOfPostUsers, authorizationAdministrador } = require('../_mocks_/dataUsers');
+
 let request = require('supertest');
 const express = require('express');
 const app = express();
@@ -29,77 +30,84 @@ const gettingToken = async(email, password) => {
             return resp;
         });
 }
+const postWithToken = async(body, token, method) => {
+    return await request.post(method)
+        .send(body)
+        .set('Authorization', `bearer ${token}`)
+}
+const getWithToken = async(token, method) => {
+    return await request.get(method)
+        .set('Authorization', `bearer ${token}`)
+}
 
 describe('POST /auth', () => {
-    it('debería retornar un token para el ', () => (
-        /*           request.post(`/auth`)
-                  .send({
-                      email: 'admin@localhost',
-                      password: 'changeme',
-                  })
-                  .set('Accept', 'application/json') */
+    it('debería retornar un token para el administrador', () => (
         gettingToken('admin@localhost', 'changeme').then(resp => {
             expect(resp.status).toBe(200);
             expect(resp.body).toHaveProperty('token');
-            return resp.body.token;
         })
-
     ));
 
     it('debería retornar un token para un usuario  ', () => (
-        gettingToken('admin@localhost', 'changeme')
-        .then(resp => {
-            return request.post(`/post`)
-                .send({
-                    email: 'labo@labo.la',
-                    password: 'laboratoria',
-                })
-                .set('Authorization', `bearer ${resp.body.token}`)
-        }).then((result) => {
-            console.log(result.body)
+        gettingToken('test@test.test', '123456').then((result) => {
             expect(result.status).toBe(200);
-        }).catch(e => console.log(e))
+            expect(result.body).toHaveProperty('token');
+        })
     ));
-})
+});
+
 describe('POST /users', () => {
 
-        it('debería crear un nuevo usuario', () => (
-            gettingToken('admin@localhost', 'changeme')
-            .then(resp => {
-                return request.post(`/users`)
-                    .send({
-                        email: 'labo@labo.la',
-                        password: 'laboratoria',
-                    })
-                    .set('Authorization', `bearer ${resp.body.token}`)
-            }).then((result) => {
-                console.log(result.body)
-                expect(result.status).toBe(200);
-            }).catch(e => console.log(e))
-        ));
-    })
-    /* const { Express } = require('jest-express/lib/express');
-    const { server } = require('./e2e/globalSetup.js');
+    it('debería crear un nuevo usuario', () => (
+        gettingToken('admin@localhost', 'changeme')
+        .then(resp => {
+            return postWithToken({
+                email: 'labo@labo.la',
+                password: 'laboratoria',
+            }, resp.body.token, '/users')
+        }).then((result) => {
+            expect(result.status).toBe(200);
+            expect(result.body).toHaveProperty('_id');
+        }).catch(e => console.log(e))
+    ))
+});
 
-    let app;
+describe('GET /users', () => {
+    it('debería retornar un array de objetos con informacion de todos los usuarios', () => (
+        gettingToken('admin@localhost', 'changeme')
+        .then(resp => {
+            return getWithToken(resp.body.token, '/users')
+        }).then((result) => {
+            console.log(result.body);
+            expect(result.status).toBe(200);
+            expect(result.body).toHaveLength(3);
+        })
+    ))
+});
 
-    describe('Server', () => {
-        beforeEach(() => {
-            app = new Express();
-        });
 
-        afterEach(() => {
-            app.resetMocked();
-        });
+/* const { Express } = require('jest-express/lib/express');
+const { server } = require('./e2e/globalSetup.js');
 
-        test('should setup server', () => {
-            const options = {
-                port: 3000,
-            };
-            server(app, options);
-            expect(app.set).toBeCalledWith('port', options.port);
-        });
-    }); */
+let app;
+
+describe('Server', () => {
+    beforeEach(() => {
+        app = new Express();
+    });
+
+    afterEach(() => {
+        app.resetMocked();
+    });
+
+    test('should setup server', () => {
+        const options = {
+            port: 3000,
+        };
+        server(app, options);
+        expect(app.set).toBeCalledWith('port', options.port);
+    });
+}); */
 
 /*     it('should respond with 400 when email is missing', () => (
         fetch('/auth', {

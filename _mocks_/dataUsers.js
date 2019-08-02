@@ -195,13 +195,28 @@ module.exports.responseOfPostUsers = {
         uid: 'labo@labo.la',
     }
 };
-module.exports.responseOfGetUsers = {
-    body: [{
+module.exports.responseOfGetUsers = [{
+        roles: { admin: true },
+        _id: '5d43967e250f04203e664cb6',
+        email: 'admin@localhost',
+        password: '$2b$10$kkS0/HImPdnaMlCqqE3xiuXHq4P08Cme12e8qq5OzvawozdxC6Lcq',
+        __v: 0
+    },
+    {
         roles: { admin: false },
-        _id: '5d3b0d0a99320e3f0ce80b96',
-        uid: 'marjorie@labo.la',
-    }]
-};
+        _id: '5d43967f250f04203e664cb7',
+        email: 'test@test.test',
+        password: '$2b$10$jAf8gASwkmH.MkhjFpgCe.wnBGSwRccueiZwTSc8atVCZMa/LfDpW',
+        __v: 0
+    },
+    {
+        roles: { admin: false },
+        _id: '5d439680250f04203e664cb8',
+        email: 'labo@labo.la',
+        password: '$2b$10$xE.J0B1A/QLerpTIFGOyeOGfpID6ZU1rhy/6F4c94IWfMhExaokU.',
+        __v: 0
+    }
+];
 
 module.exports.responseOfGetUsersByIdorEmail = {
     body: {
