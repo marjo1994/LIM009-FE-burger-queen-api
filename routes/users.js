@@ -1,17 +1,11 @@
 const bcrypt = require('bcrypt');
 const users = require('../models/modelUsers');
-const pagination = require('../utils/pagination');
-const { findByModels } = require('../utils/users-functions');
-const { uidOrEmail } = require('../utils/utils');
+const { getUsers, getUserUid, postUser, putUser, deleteUser } = require('../controllers/users');
 const {
     requireAdmin,
     isAdmin,
     requireAdminOrUser
 } = require('../middleware/auth');
-const { getUsers, getUserUid, postUser, putUser, deleteUser } = require('../controllers/users');
-const bcrypt = require('bcrypt');
-
-const users = require('../models/modelUsers');
 
 const initAdminUser = (app, next) => {
     const { adminEmail, adminPassword } = app.get('config');
