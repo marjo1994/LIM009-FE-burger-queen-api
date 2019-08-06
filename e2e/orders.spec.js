@@ -327,13 +327,12 @@ describe('PUT /orders/:orderid', () => {
             return resp.json();
         })
         .then(json => {
-            fetchAsAdmin(`/orders/${json._id}`, {
+            return fetchAsAdmin(`/orders/${json._id}`, {
                 method: 'PUT',
                 body: { status: 'oh yeah!' },
             })
         })
         .then(resp => {
-            console.log(resp);
             expect(resp.status).toBe(400)
         })
 

@@ -1,19 +1,22 @@
-const { findByModels } = require('../utils/users-functions')
 const bcrypt = require('bcrypt');
 const users = require('../models/modelUsers');
 const pagination = require('../utils/pagination');
 const { uidOrEmail } = require('../utils/utils');
+const { isAdmin } = require('../middleware/auth');
 
 module.exports.getUsers = async(req, resp) => {
     let limitPage = parseInt(req.query.limit) || 10;
     let page = parseInt(req.query.page) || 1;
     let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
-    console.log(req.protocol, req.get('host'), req.path)
-    const number = await users.find().count();
-    resp.set('link', pagination(protocolo, page, limitPage, number))
-    findByModels(users, page, limitPage).then((result) => resp.send(result)).catch((e) => next(400))
-}
+    console.error(protocolo)
+    users.find().count().then((number) => {
+        console.error(number);
+        resp.set('link', pagination(protocolo, page, limitPage, number))
+    });
+    const result = await users.find().skip((page - 1) * limitPage).limit(limitPage).exec()
+    return resp.send(result)
 
+}
 
 module.exports.getUserUid = (req, resp) => {
     const obj = uidOrEmail(req.params.uid);
@@ -27,7 +30,7 @@ module.exports.getUserUid = (req, resp) => {
 };
 
 
-module.exports.postUser = (req, resp, next) => {
+module.exports.postUser = async(req, resp, next) => {
 
     if (!req.body.email || !req.body.password) {
         return next(400)
@@ -39,18 +42,16 @@ module.exports.postUser = (req, resp, next) => {
     if (req.body.roles && req.body.roles.admin) {
         newUser.roles = { admin: true }
     }
-    newUser.save((err, userStored) => {
-        if (err) {
-            return resp.status(403).send({ message: 'Ya existe usuarix con ese `email`' });
-        } else {
-            resp.send({
-                roles: userStored.roles,
-                _id: userStored._id,
-                email: userStored.email
-            });
-        }
-    })
-}
+    const userStored = await newUser.save();
+    if (!userStored) {
+        return next(403);
+    }
+    return resp.send({
+        roles: userStored.roles,
+        _id: userStored._id,
+        email: userStored.email
+    });
+};
 
 
 module.exports.putUser = (req, resp, next) => {

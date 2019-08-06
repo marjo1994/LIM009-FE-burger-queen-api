@@ -18,17 +18,16 @@ module.exports = (app, nextMain) => {
 
     app.post('/auth', (req, resp, next) => {
         const { email, password } = req.body;
-        console.error('de auth post', req.body)
         if (!email || !password) {
             return next(400);
         }
         // TO DO: autenticar a la usuarix--------------
         user.findOne({ email: req.body.email }, (err, userStored) => {
             if (err) {
-                return resp.send(err)
+                return resp.send(err);
             };
             if (!userStored) {
-                return next(401);
+                return next(404);
             };
             comparePassword(req.body.password, userStored).then((token) => {
                 if (!token) {

@@ -1,6 +1,5 @@
 const authorizationUser = "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZDNiMGQwYTk5MzIwZTNmMGNlODBiOTYiLCJpYXQiOjE1NjQxNTEyMjV9.4TCrgHxoOvOQ_B4-1e5Iw7IZtogoJB1Uuj73Qm0IJoM";
 const authorizationAdmin = 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZDMxNTA2ZjU2OGJmODEwMzJmYTQzNzAiLCJpYXQiOjE1NjM1MTM4NzF9.mRqN3BFOT-zfPAqQFdmpEqCWEA_U09CM9AVYeoCmGTo';
-const port = process.env.PORT || 8888;
 module.exports.requestOfPostUsers = {
     headers: {
         authorization: authorizationAdmin,
@@ -10,18 +9,11 @@ module.exports.requestOfPostUsers = {
         password: '123456'
     },
 };
-module.exports.requestOfGetUsers = {
-    'headers': {
-        authorization: authorizationAdmin
-    },
-    'query': {
-        limit: 10,
-        page: 1,
-    },
-    'protocol': 'http',
-    'get': (host) => `localhost:${port}`,
-    'path': '/users',
-};
+
+/* [{
+    type: 'return',
+    value: `localhost:${port}`,
+}]; */
 //http localhost:8080 /users
 module.exports.requestOfGetUsersById_admin = {
     headers: {
@@ -164,14 +156,6 @@ module.exports.responseOfPostUsers = {
         _id: '5d3b0d0a99320e3f0ce80b96',
         uid: 'marjorie@labo.la',
     }
-};
-module.exports.responseOfGetUsers = {
-    /*     body: {
-            roles: { admin: false },
-            _id: '5d3b0d0a99320e3f0ce80b96',
-            uid: 'marjorie@labo.la',
-        } */
-    send: jest.fn()
 };
 
 
