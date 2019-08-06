@@ -1,5 +1,5 @@
 const user = require('../models/modelUsers');
-const { comparePassword } = require('../controller/auth-functions.js');
+const { comparePassword } = require('../utils/auth-functions.js');
 
 /** @module auth */
 module.exports = (app, nextMain) => {
@@ -17,21 +17,26 @@ module.exports = (app, nextMain) => {
      */
 
     app.post('/auth', (req, resp, next) => {
+      
         const { email, password } = req.body;
-        //console.error('de auth post', req.body)
+
         if (!email || !password) {
             return next(400);
         }
         // TO DO: autenticar a la usuarix--------------
         user.findOne({ email: req.body.email }, (err, userStored) => {
             if (err) {
-                return next(500);
+                return resp.send(err);
             };
             if (!userStored) {
                 return next(404);
             };
             comparePassword(req.body.password, userStored).then((token) => {
-                // console.error(req.body.password,'holaaa')
+
+                if (!token) {
+                    return next(401)
+                }
+
                 resp.status(200).send({ token: token });
             })
         })

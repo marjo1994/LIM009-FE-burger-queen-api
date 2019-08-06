@@ -8,7 +8,10 @@ const {
     isAdmin,
     requireAdminOrUser
 } = require('../middleware/auth');
+const { getUsers, getUserUid, postUser, putUser, deleteUser } = require('../controllers/users');
+const bcrypt = require('bcrypt');
 
+const users = require('../models/modelUsers');
 
 const initAdminUser = (app, next) => {
     const { adminEmail, adminPassword } = app.get('config');
@@ -89,14 +92,7 @@ module.exports = (app, next) => {
      * @code {403} si no es ni admin
      */
 
-    app.get('/users', requireAdmin, async(req, resp) => {
-        let limitPage = parseInt(req.query.limit) || 10;
-        let page = parseInt(req.query.page) || 1;
-        let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
-        const number = await users.find().count();
-        resp.set('link', pagination(protocolo, page, limitPage, number))
-        findByModels(users, page, limitPage).then((result) => resp.send(result)).catch((e) => next(400))
-    });
+    app.get('/users', requireAdmin, getUsers);
 
     /**
      * @name GET /users/:uid
@@ -114,17 +110,7 @@ module.exports = (app, next) => {
      * @code {403} si no es ni admin o el mismo usuario
      * @code {404} si el usuario solicitado no existe
      */
-    app.get('/users/:uid', requireAdminOrUser, (req, resp) => {
-        const obj = uidOrEmail(req.params.uid);
-        users.findOne(obj, (err, user) => {
-            if (err || !user) {
-                return resp.status(404).send({ message: 'El usuario solicitado no existe' })
-            } else {
-                return resp.send(user)
-            }
-        });
-
-    });
+    app.get('/users/:uid', requireAdminOrUser, getUserUid);
 
     /**
      * @name POST /users
@@ -143,33 +129,7 @@ module.exports = (app, next) => {
      * @code {401} si no hay cabecera de autenticación
      * @code {403} si ya existe usuario con ese `email`
      */
-    app.post('/users', requireAdmin, (req, resp, next) => {
-
-        if (!req.body.email || !req.body.password) {
-            return next(400)
-        }
-
-        if (!req.body.email || !req.body.password) {
-            return next(400)
-        }
-        let newUser = new users();
-        newUser.email = req.body.email;
-        newUser.password = bcrypt.hashSync(req.body.password, 10);
-        if (req.body.roles && req.body.roles.admin) {
-            newUser.roles = { admin: true }
-        }
-        newUser.save((err, userStored) => {
-            if (err) {
-                return resp.status(403).send({ message: 'Ya existe usuarix con ese `email`' });
-            } else {
-                resp.send({
-                    roles: userStored.roles,
-                    _id: userStored._id,
-                    email: userStored.email
-                });
-            }
-        })
-    });
+    app.post('/users', requireAdmin, postUser);
 
     /**
      * @name PUT /users
@@ -191,34 +151,7 @@ module.exports = (app, next) => {
      * @code {403} un usuario no admin intenta de modificar sus `roles`
      * @code {404} si el usuario solicitado no existe
      */
-    app.put('/users/:uid', requireAdminOrUser, (req, resp, next) => {
-        if (!isAdmin(req) && req.body.roles) {
-            return next(403);
-        };
-        let obj = uidOrEmail(req.params.uid);
-        if (!req.body.email && !req.body.password && !isAdmin(req)) {
-            return resp.status(400).send({ message: 'no se provee ni email ni passsword' })
-        }
-        users.findOne(obj, (err, queryUser) => {
-            if (err) {
-                resp.send(err)
-            }
-            if (!queryUser) {
-                return resp.status(404).send({ message: 'El usuario solicitado no existe' })
-            }
-            if (req.body.email) {
-                queryUser.email = req.body.email;
-            }
-            if (req.body.password) {
-                queryUser.password = bcrypt.hashSync(req.body.password, 10);
-            }
-            /*    if (req.body.roles && isAdmin(req)) {
-                   queryUser.body.roles.admin = req.body.admin
-               } */
-            queryUser.save();
-            resp.send({ message: 'Cambios registrados satisfactoriamente' })
-        })
-    });
+    app.put('/users/:uid', requireAdminOrUser, putUser);
     /**
      * @name DELETE /users
      * @description Elimina un usuario
@@ -235,22 +168,6 @@ module.exports = (app, next) => {
      * @code {403} si no es ni admin o el mismo usuario
      * @code {404} si el usuario solicitado no existe
      */
-    app.delete('/users/:uid', requireAdminOrUser, (req, resp, next) => {
-
-        if (req.headers.user._id.toString() === req.params.uid && isAdmin(req)) {
-            return resp.send({ message: 'Admin no puede autoeliminarse' })
-        }
-        const obj = uidOrEmail(req.params.uid);
-
-        users.findOne(obj, (err, queryUser) => {
-            if (!queryUser) {
-                return next(404)
-            } else {
-                users.remove(obj, (err) => {
-                    resp.send({ message: 'Se borro satisfactoriamente!' });
-                })
-            }
-        })
-    });
+    app.delete('/users/:uid', requireAdminOrUser, deleteUser);
     initAdminUser(app, next);
 };

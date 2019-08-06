@@ -3,8 +3,7 @@ const order = require('../models/modelOrders')
 const products = require('../models/modelProducts');
 const pagination = require('../utils/pagination');
 const mongodb = require('mongodb');
-const { findByModels } = require('../controller/users-functions')
-
+const { findByModels } = require('../utils/users-functions')
 
 /** @module orders */
 module.exports = (app, nextMain) => {
@@ -152,14 +151,9 @@ module.exports = (app, nextMain) => {
         order.findOneAndUpdate({ _id: req.params.orderid }, { $set: { status: req.body.status } }, { runValidators: true, new: true }, (error, orderStored) => {
             if (error || !orderStored) {
                 //console.error(error.kind !== 'enum')
-                //console.error(error.errors.status.kind)
-                console.error('aaaaaaaaaaa')
-                if (error.kind !== 'enum') {
-                    return next(404)
-                }
-                return next(400)
+                if (error.kind === 'enum' || !error.kind) return next(400)
+                return resp.status(404).send(error)
             }
-            console.error('bbbbbbbbbb')
             resp.send(orderStored)
         })
     });
@@ -194,4 +188,4 @@ module.exports = (app, nextMain) => {
         });
     });
     nextMain();
-};
+}
