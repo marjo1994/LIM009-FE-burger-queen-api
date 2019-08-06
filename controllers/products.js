@@ -36,8 +36,9 @@ module.exports.postProduct = async(req, resp, next) => {
         });
 
         const productSave = await newProduct.save()
+        console.log(productSave)
         return resp.send(productSave);
-
+        
     } catch(e) {
         return next(err)
     }

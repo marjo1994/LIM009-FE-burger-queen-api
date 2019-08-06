@@ -69,14 +69,17 @@ const next = jest.fn(json => json);
 
 describe('POST/ products', () => {
     it('Debería crear un nuevo producto', async() => {
-        const productSend = await postProduct(requestOfPostProduct, resp, next);
-        expect(productSend).toMatchObject(responseObjectOfProduct)
+        await postProduct(requestOfPostProduct, resp, next);
+        expect(resp.send.mock.results[0].value).toMatchObject(responseObjectOfProduct)
     })
+
+    // expect(mockCallback.mock.results[0].value).toBe(42);
+
     it('Debería retornar un error 400 si no se indican `name` o `price`', async() => {
-        const productSend = await postProduct(emptyRequesttoCreateProduct, resp, next);
-        const productSend2 = await postProduct(emptyRequest2toCreateProduct, resp, next);
-        expect(productSend).toBe(400);
-        expect(productSend2).toBe(400);
+        await postProduct(emptyRequesttoCreateProduct, resp, next);
+        await postProduct(emptyRequest2toCreateProduct, resp, next);
+        expect(next.mock.calls[0][0]).toBe(400);
+        expect(next.mock.calls[0][0]).toBe(400);
     })
 });
 
@@ -112,8 +115,16 @@ describe('GET/products', () => {
         const products = await getProducts(requestOfGetProducts, resp, next);
         expect(products).toHaveLength(responseOfGetProducts.length)
     })
-})
+});
 
+const requestOfGetProductsById = {
+    'headers': {
+        authorization: ''
+    },
+    params: {
+        uid: ''
+    }
+}
 
 /*const requestOfGetUsersById = {
     'headers': {
