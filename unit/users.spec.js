@@ -77,7 +77,7 @@ const requestOfPostUsersDuplicated = {
         password: 'contraseña'
     },
 }
-describe('POST/ users', () => {
+describe('POST/ users:uid', () => {
     it('Debería crear un nuevo usuario', async() => {
         const userSend = await postUser(requestOfPostUsers, resp, next);
         expect(JSON.parse(JSON.stringify(userSend))).toMatchObject(responseObjectOfUser);
@@ -89,7 +89,7 @@ describe('POST/ users', () => {
         expect(userSend2).toBe(400);
     })
     it('Debería retornar un error 403 si ya existe un usuario con ese email', async() => {
-        await postUser(requestOfPostUsers, resp, next);
+        await postUser(requestOfPostUsersDuplicated, resp, next);
         const userSend2 = await postUser(requestOfPostUsersDuplicated, resp, next);
         expect(userSend2).toBe(403);
     })

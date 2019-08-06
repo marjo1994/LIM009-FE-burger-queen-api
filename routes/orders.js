@@ -1,9 +1,5 @@
 const { requireAuth } = require('../middleware/auth');
-const order = require('../models/modelOrders')
-const products = require('../models/modelProducts');
-const pagination = require('../utils/pagination');
-const mongodb = require('mongodb');
-const { findByModels } = require('../utils/users-functions')
+const { getOrders, getOrdersById, postOrders, putOrders, deleteOrders } = require('../controllers/orders')
 
 /** @module orders */
 module.exports = (app, nextMain) => {
@@ -27,14 +23,7 @@ module.exports = (app, nextMain) => {
      * @code {200} si la autenticación es correcta
      * @code {401} si no hay cabecera de autenticación
      */
-    app.get('/orders', requireAuth, async(req, resp, next) => {
-        let limitPage = parseInt(req.query.limit) || 10;
-        let page = parseInt(req.query.page) || 1;
-        let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
-        const number = await order.find().count();
-        resp.set('link', pagination(protocolo, page, limitPage, number))
-        findByModels(order, page, limitPage).then((result) => resp.send(result)).catch((e) => next(400))
-    });
+    app.get('/orders', requireAuth, getOrders);
 
     /**
      * @name GET /orders/:orderId
@@ -56,14 +45,7 @@ module.exports = (app, nextMain) => {
      * @code {401} si no hay cabecera de autenticación
      * @code {404} si la orden con `orderId` indicado no existe
      */
-    app.get('/orders/:orderid', requireAuth, (req, resp, next) => {
-        order.findOne({ _id: req.params.orderid }, (err, orderById) => {
-            if (err || !orderById) {
-                return next(404)
-            }
-            resp.status(200).send(orderById);
-        })
-    });
+    app.get('/orders/:orderid', requireAuth, getOrdersById);
 
     /**
      * @name POST /orders
@@ -91,32 +73,7 @@ module.exports = (app, nextMain) => {
      * @code {401} si no hay cabecera de autenticación
      */
 
-    app.post('/orders', requireAuth, async(req, resp, next) => {
-        if (!req.body.products || !req.body.userId) {
-            return next(400);
-        };
-        let newOrder = new order();
-        newOrder.userId = req.body.userId;
-        const arrOfProducts = await products.find({ _id: { $in: req.body.products.map(p => mongodb.ObjectId(p.product)) } })
-        if (arrOfProducts.length !== req.body.products.length) {
-            req.body.products = req.body.products.filter((x) => {
-                return x !== null || undefined
-            })
-        }
-        const productsReales = req.body.products.map((p, index) => ({
-            product: {
-                id: mongodb.ObjectId(p.product),
-                name: arrOfProducts[index].name,
-                price: arrOfProducts[index].price
-            },
-            qty: p.qty
-        }));
-        newOrder.products = productsReales;
-        newOrder.save((err, orderStored) => {
-            if (err) console.error(err)
-            resp.send(orderStored)
-        })
-    });
+    app.post('/orders', requireAuth, postOrders);
     /**
      * @name PUT /orders
      * @description Modifica una orden
@@ -144,19 +101,7 @@ module.exports = (app, nextMain) => {
      * @code {401} si no hay cabecera de autenticación
      * @code {404} si la orderId con `orderId` indicado no existe
      */
-    app.put('/orders/:orderid', requireAuth, (req, resp, next) => {
-        if (!req.body.status) {
-            return next(400);
-        }
-        order.findOneAndUpdate({ _id: req.params.orderid }, { $set: { status: req.body.status } }, { runValidators: true, new: true }, (error, orderStored) => {
-            if (error || !orderStored) {
-                //console.error(error.kind !== 'enum')
-                if (error.kind === 'enum' || !error.kind) return next(400)
-                return resp.status(404).send(error)
-            }
-            resp.send(orderStored)
-        })
-    });
+    app.put('/orders/:orderid', requireAuth, putOrders);
 
     /**   
      * @name DELETE /orders
@@ -178,14 +123,6 @@ module.exports = (app, nextMain) => {
      * @code {401} si no hay cabecera de autenticación
      * @code {404} si el producto con `orderId` indicado no existe
      */
-    app.delete('/orders/:orderid', requireAuth, (req, resp, next) => {
-
-        order.findByIdAndRemove(req.params.orderid, (err, product) => {
-            if (err) {
-                return next(404)
-            }
-            return resp.send({ message: 'Se borro satisfactoriamente!' });
-        });
-    });
+    app.delete('/orders/:orderid', requireAuth, deleteOrders);
     nextMain();
 }

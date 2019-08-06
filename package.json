@@ -9,7 +9,7 @@
     "scripts": {
         "pretest": "eslint .",
         "start": "node index.js",
-        "test:e2e": "jest --verbose --testPathPattern e2e --globalSetup ./e2e/globalSetup --globalTeardown ./e2e/globalTeardown --runInBand",
+        "test:e2e": "jest --verbose --testPathPattern e2e/orders.spec.js --globalSetup ./e2e/globalSetup --globalTeardown ./e2e/globalTeardown --runInBand",
         "test:unit": "jest --verbose --testPathPattern unit/users.spec.js ",
         "test": "npm run test:e2e && npm run test:unit",
         "lint": "eslint .",
@@ -36,11 +36,7 @@
         "jest": "^24.7.1",
         "jsdoc": "^3.6.2",
         "jsdoc-http-plugin": "^0.3.0",
-<<<<<<< HEAD
-        "mockingoose": "^2.13.2",
-=======
         "mongodb-memory-server": "^5.1.9",
->>>>>>> 2f6f4a202cbd814ee3835b8aff31eaaa663965b6
         "node-fetch": "^2.3.0",
         "supertest": "^4.0.2",
         "tree-kill": "^1.2.1"

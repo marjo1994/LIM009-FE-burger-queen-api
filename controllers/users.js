@@ -29,29 +29,27 @@ module.exports.getUserUid = async(req, resp, next) => {
 };
 
 module.exports.postUser = async(req, resp, next) => {
-    try {
-        if (!req.body.email || !req.body.password) {
-            return next(400)
-        }
-
-        let newUser = new users();
-        newUser.email = req.body.email;
-        newUser.password = bcrypt.hashSync(req.body.password, 10);
-        if (req.body._id) {
-            newUser._id = req.body._id;
-        }
-        if (req.body.roles && req.body.roles.admin) {
-            newUser.roles = { admin: true }
-        }
-        const userStored = await newUser.save();
-        return resp.send({
-            roles: userStored.roles,
-            _id: userStored._id,
-            email: userStored.email
-        });
-    } catch (e) {
-        return next(403)
+    if (!req.body.email || !req.body.password) {
+        return next(400)
     }
+    const userInvalid = await users.findOne({ email: req.body.email });
+    if (userInvalid) return next(403);
+    let newUser = new users();
+    newUser.email = req.body.email;
+    newUser.password = bcrypt.hashSync(req.body.password, 10);
+    if (req.body._id) {
+        newUser._id = req.body._id;
+    }
+    if (req.body.roles && req.body.roles.admin) {
+        newUser.roles = { admin: true }
+    }
+    const userStored = await newUser.save();
+    return resp.send({
+        roles: userStored.roles,
+        _id: userStored._id,
+        email: userStored.email
+    });
+
 };
 
 module.exports.putUser = async(req, resp, next) => {
@@ -78,25 +76,6 @@ module.exports.putUser = async(req, resp, next) => {
     if (userSaved) {
         return resp.send({ message: 'Cambios registrados satisfactoriamente' });
     }
-    /* , (err, queryUser) => {
-        if (err) {
-            resp.send(err)
-        }
-        if (!queryUser) {
-            return resp.status(404).send({ message: 'El usuario solicitado no existe' })
-        }
-        if (req.body.email) {
-            queryUser.email = req.body.email;
-        }
-        if (req.body.password) {
-            queryUser.password = bcrypt.hashSync(req.body.password, 10);
-        }
-        /*    if (req.body.roles && isAdmin(req)) {
-               queryUser.body.roles.admin = req.body.admin
-           } 
-           queryUser.save();
-           return resp.send({ message: 'Cambios registrados satisfactoriamente' })
-       } */
 };
 
 
