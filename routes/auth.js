@@ -17,7 +17,9 @@ module.exports = (app, nextMain) => {
      */
 
     app.post('/auth', (req, resp, next) => {
+      
         const { email, password } = req.body;
+
         if (!email || !password) {
             return next(400);
         }
@@ -30,9 +32,11 @@ module.exports = (app, nextMain) => {
                 return next(404);
             };
             comparePassword(req.body.password, userStored).then((token) => {
+
                 if (!token) {
                     return next(401)
                 }
+
                 resp.status(200).send({ token: token });
             })
         })

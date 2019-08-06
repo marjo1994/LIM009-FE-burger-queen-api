@@ -5,7 +5,6 @@ const pagination = require('../utils/pagination');
 const mongodb = require('mongodb');
 const { findByModels } = require('../utils/users-functions')
 
-
 /** @module orders */
 module.exports = (app, nextMain) => {
     /**
