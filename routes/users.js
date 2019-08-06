@@ -1,3 +1,8 @@
+const bcrypt = require('bcrypt');
+const users = require('../models/modelUsers');
+const pagination = require('../utils/pagination');
+const { findByModels } = require('../controller/users-functions');
+const { uidOrEmail } = require('../utils/utils');
 const {
     requireAdmin,
     isAdmin,

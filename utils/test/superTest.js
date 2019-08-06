@@ -11,9 +11,9 @@ module.exports.gettingToken = async(email, password) => {
             password: password,
         })
         .set('Accept', 'application/json')
-        .then(resp => {
-            return resp;
-        });
+        /*.then(resp => {
+           return resp
+        });*/
 }
 module.exports.postWithToken = async(body, token, path) => {
     return await request.post(path)
