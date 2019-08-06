@@ -17,7 +17,7 @@ module.exports = secret => (req, resp, next) => {
     }
     jwt.verify(token, secret, (err, decodedToken) => {
         if (err) {
-            return next(403, { message: err });
+            return next(403);
         }
         // TODO: Verificar identidad del usuario usando `decodeToken.uid`
         users.findOne({ _id: decodedToken.uid }, (err, user) => {

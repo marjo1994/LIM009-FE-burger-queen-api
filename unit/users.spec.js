@@ -1,64 +1,254 @@
 const { getUsers, getUserUid, postUser, putUser, deleteUser } = require('../controllers/users');
 const mongoose = require('mongoose')
-const Users = require('../models/modelUsers');
+    //const Users = require('../models/modelUsers');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
 
 let mongoServer;
-const opts = { useMongoClient: true };
-
+let port;
 beforeEach(async() => {
-
     if (mongoServer) {
         await mongoose.disconnect();
         await mongoServer.stop();
     }
-
     mongoServer = new MongoMemoryServer();
+    port = await mongoServer.getPort();
     const mongoUri = await mongoServer.getConnectionString();
-    await mongoose.connect(mongoUri, opts, (err) => {
+    await mongoose.connect(mongoUri, (err) => {
         if (err) console.error(err);
     });
 });
+
+
 /* afterAll(async() => {
     await mongoose.disconnect();
     await mongoServer.stop();
 }); */
-
-
-
-
-
-
-
-
-
-
-/* const resp = {
-    send: jest.fn(json => json),
-    set: jest.fn(json => json)
-};
-
-
-const next = jest.fn(json => json);
-
 const requestOfPostUsers = {
     headers: {
         authorization: '',
     },
     body: {
+        _id: '5d4916541d4f9a3b2dcac66d',
         email: 'marjorie@labo.la',
         password: '123456'
     },
 };
 
-const responseOfPostUsers = {
+const responseObjectOfUser = {
     roles: { admin: false },
-    _id: '5d3b0d0a99320e3f0ce80b96',
+    _id: '5d4916541d4f9a3b2dcac66d', //5d4916541d4f9a3b2dcac66d,
     email: 'marjorie@labo.la',
 };
 
+const resp = {
+    send: jest.fn(json => json),
+    set: jest.fn(json => json)
+};
+
+const next = jest.fn(json => json);
+
+const emptyRequest = {
+    headers: {
+        authorization: '',
+    },
+    body: {
+        email: '',
+        password: '1234567'
+    },
+};
+const emptyRequest2 = {
+    headers: {
+        authorization: '',
+    },
+    body: {
+        email: '',
+        password: ''
+    },
+};
+
+const requestOfPostUsersDuplicated = {
+    headers: {
+        authorization: '',
+    },
+    body: {
+        email: 'marjorie@labo.la',
+        password: 'contraseña'
+    },
+}
+describe('POST/ users', () => {
+    it('Debería crear un nuevo usuario', async() => {
+        const userSend = await postUser(requestOfPostUsers, resp, next);
+        expect(JSON.parse(JSON.stringify(userSend))).toMatchObject(responseObjectOfUser);
+    })
+    it('Debería retornar un error 400 si no existe email o password', async() => {
+        const userSend = await postUser(emptyRequest, resp, next);
+        const userSend2 = await postUser(emptyRequest2, resp, next);
+        expect(userSend).toBe(400);
+        expect(userSend2).toBe(400);
+    })
+    it('Debería retornar un error 403 si ya existe un usuario con ese email', async() => {
+        await postUser(requestOfPostUsers, resp, next);
+        const userSend2 = await postUser(requestOfPostUsersDuplicated, resp, next);
+        expect(userSend2).toBe(403);
+    })
+});
+/* const mockPostUSer = mock.fn(res= postUser(requestOfPostUsers, resp, next))
+ */
+const requestOfGetUsers = {
+    'headers': {
+        authorization: ''
+    },
+    'query': {
+        limit: 10,
+        page: 1,
+    },
+    'protocol': 'http',
+    'get': jest.fn(res => `localhost:${port}`),
+    'path': '/users',
+};
+const requestOfPostUsers2 = {
+    headers: {
+        authorization: '',
+    },
+    body: {
+        _id: '5d5018581d4f9a3c7dcac77d',
+        email: 'mayte@labo.la',
+        password: 'samaniego'
+    },
+};
+
+let responseOfGetUsers = [];
+describe('GET/ users', () => {
+    it('Debería retornar el numero de usuarios creados', async() => {
+        const userSend1 = await postUser(requestOfPostUsers, resp, next);
+        const userSend2 = await postUser(requestOfPostUsers2, resp, next);
+        responseOfGetUsers.push(userSend1, userSend2);
+        const users = await getUsers(requestOfGetUsers, resp, next);
+        expect(users).toHaveLength(responseOfGetUsers.length);
+    });
+});
+
+
+const requestOfGetUsersById = {
+    'headers': {
+        authorization: ''
+    },
+    params: {
+        uid: '5d4916541d4f9a3b2dcac66d'
+    }
+};
+const requestOfGetUsersByEmail = {
+    'headers': {
+        authorization: ''
+    },
+    params: {
+        uid: 'marjorie@labo.la'
+    }
+};
+
+
+describe('GET/ users:uid', () => {
+    it('Debería retornar el usuario llamado por ID', async() => {
+        await postUser(requestOfPostUsers, resp, next);
+        const user = await getUserUid(requestOfGetUsersById, resp, next);
+        expect(JSON.parse(JSON.stringify(user))).toMatchObject(responseObjectOfUser);
+    });
+    it('Debería retornar el usuario llamado por Email', async() => {
+        await postUser(requestOfPostUsers, resp, next);
+        const user2 = await getUserUid(requestOfGetUsersByEmail, resp, next);
+        expect(JSON.parse(JSON.stringify(user2))).toMatchObject(responseObjectOfUser);
+    });
+});
+
+
+const requestOfPutUsersById = {
+    'headers': {
+        authorization: '',
+        user: {
+            roles: { admin: false },
+            _id: '5d4916541d4f9a3b2dcac66d', //5d4916541d4f9a3b2dcac66d,
+            email: 'marjorie@labo.la',
+        }
+    },
+    body: {
+        email: 'marjo@labo.la',
+    },
+    params: {
+        uid: '5d4916541d4f9a3b2dcac66d'
+    }
+};
+const requestOfPutUsersByEmail = {
+    'headers': {
+        authorization: '',
+        user: {
+            roles: { admin: false },
+            _id: '5d4916541d4f9a3b2dcac66d', //5d4916541d4f9a3b2dcac66d,
+            email: 'marjorie@labo.la',
+        }
+    },
+    body: {
+        email: 'marjo@labo.la',
+    },
+    params: {
+        uid: '5d4916541d4f9a3b2dcac66d'
+    }
+};
+
+describe('PUT/ users:uid', () => {
+    it('Debería retornar el usuario llamado por ID', async() => {
+        await postUser(requestOfPostUsers, resp, next);
+        const userCHange = await putUser(requestOfPutUsersById, resp, next);
+        console.log(userCHange)
+        expect(JSON.parse(JSON.stringify(userCHange))).toMatchObject({ message: 'Cambios registrados satisfactoriamente' });
+    });
+    it('Debería retornar el usuario llamado por Email', async() => {
+        await postUser(requestOfPostUsers, resp, next);
+        const userCHange2 = await putUser(requestOfPutUsersByEmail, resp, next);
+        expect(JSON.parse(JSON.stringify(userCHange2))).toMatchObject({ message: 'Cambios registrados satisfactoriamente' });
+    });
+});
+const requestDeleteUsersById = {
+    'headers': {
+        authorization: '',
+        user: {
+            roles: { admin: false },
+            _id: '5d4916541d4f9a3b2dcac66d', //5d4916541d4f9a3b2dcac66d,
+            email: 'marjorie@labo.la',
+        }
+    },
+    params: {
+        uid: '5d4916541d4f9a3b2dcac66d'
+    }
+};
+const requestDeleteUsersByEmail = {
+    'headers': {
+        authorization: '',
+        user: {
+            roles: { admin: false },
+            _id: '5d4916541d4f9a3b2dcac66d', //5d4916541d4f9a3b2dcac66d,
+            email: 'marjorie@labo.la',
+        }
+    },
+    params: {
+        uid: 'marjorie@labo.la'
+    }
+};
+
+describe('DELETE/ users:uid', () => {
+    it('Debería elimiar un usuario creado por uid', async() => {
+        await postUser(requestOfPostUsers, resp, next);
+        const userDeleted = await deleteUser(requestDeleteUsersById, resp, next);
+        expect(JSON.parse(JSON.stringify(userDeleted))).toMatchObject({ message: 'Se borro satisfactoriamente!' });
+    });
+    it('Debería elimiar un usuario creado por email', async() => {
+        await postUser(requestOfPostUsers, resp, next);
+        const userDeleted2 = await deleteUser(requestDeleteUsersByEmail, resp, next);
+        expect(JSON.parse(JSON.stringify(userDeleted2))).toMatchObject({ message: 'Se borro satisfactoriamente!' });
+    });
+});
+/*
 describe('POST/ users', () => {
     it('Debería crear un nuevo usuario', async() => {
         const userSend = await postUser(requestOfPostUsers, resp, next);
