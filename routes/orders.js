@@ -3,7 +3,7 @@ const order = require('../models/modelOrders')
 const products = require('../models/modelProducts');
 const pagination = require('../utils/pagination');
 const mongodb = require('mongodb');
-const { findByModels } = require('../controller /users-functions')
+const { findByModels } = require('../utils/users-functions')
 
 
 /** @module orders */
