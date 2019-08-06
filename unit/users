@@ -1,4 +1,77 @@
-const { gettingToken } = require('../utils/test/superTest')
+const mockingoose = require('mockingoose').default;
+const User = require('../models/modelUsers');
+const { getUsers, getUserUid, postUser, putUser, deleteUser } = require('../controllers/users');
+
+
+describe('test mongoose User model', () => {
+    /*     it('should return the doc with findById', () => {
+            const _doc = {
+                _id: '507f191e810c19729de860ea',
+                name: 'name',
+                email: 'name@email.com',
+            };
+
+            mockingoose(Users).toReturn(_doc, 'findOne');
+
+            return Users.findById({ _id: '507f191e810c19729de860ea' }).then(doc => {
+                expect(JSON.parse(JSON.stringify(doc))).toMatchObject(_doc);
+            });
+        }); */
+
+    it('should return the doc with update', () => {
+        const _doc = {
+            _id: '507f191e810c19729de860ea',
+            name: 'name',
+            email: 'name@email.com',
+        };
+        postUser(_doc).then((userStored)=>{
+            expect(JSON.parse(JSON.stringify(doc))).toMatchObject(_doc);
+        })
+/*         mockingoose(User).toReturn(_doc, 'save');
+        console.log(User)
+        return User.then(doc => {
+            expect(JSON.parse(JSON.stringify(doc))).toMatchObject(_doc);
+        }); */
+    });
+
+    /*     it('should return the doc with update', () => {
+        const _doc = {
+            _id: '507f191e810c19729de860ea',
+            name: 'name',
+            email: 'name@email.com',
+        };
+
+        mockingoose(model).toReturn(doc, 'update');
+
+        return model
+            .update({ name: 'changed' }) // this won't really change anything
+            .where({ _id: '507f191e810c19729de860ea' })
+            .then(doc => {
+                expect(JSON.parse(JSON.stringify(doc))).toMatchObject(_doc);
+            });
+    }); */
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* const { gettingToken } = require('../utils/test/superTest')
 
 describe('POST /auth', () => {
     it('debería retornar un token para el administrador', () => (
@@ -32,7 +105,7 @@ describe('POST /auth', () => {
         })
     ));
 });
-
+ */
 
 
 
