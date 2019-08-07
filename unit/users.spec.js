@@ -79,14 +79,15 @@ const requestOfPostUsersDuplicated = {
 }
 describe('POST/ users:uid', () => {
     it('Debería crear un nuevo usuario', async() => {
-        const userSend = await postUser(requestOfPostUsers, resp, next);
-        expect(JSON.parse(JSON.stringify(userSend))).toMatchObject(responseObjectOfUser);
+        await postUser(requestOfPostUsers, resp, next);
+        expect(resp.send.mock.results[0].value).toMatchObject(responseObjectOfUser);
+        //expect(userSend).toBe(responseObjectOfUser);
     })
     it('Debería retornar un error 400 si no existe email o password', async() => {
         const userSend = await postUser(emptyRequest, resp, next);
         const userSend2 = await postUser(emptyRequest2, resp, next);
-        expect(userSend).toBe(400);
-        expect(userSend2).toBe(400);
+        expect(next.calls[0][0]).toBe(400); //status code next(400) 
+        //expect(userSend2).toBe(400);
     })
     it('Debería retornar un error 403 si ya existe un usuario con ese email', async() => {
         await postUser(requestOfPostUsersDuplicated, resp, next);
@@ -209,25 +210,13 @@ describe('PUT/ users:uid', () => {
         expect(JSON.parse(JSON.stringify(userCHange2))).toMatchObject({ message: 'Cambios registrados satisfactoriamente' });
     });
 });
-const requestDeleteUsersById = {
-    'headers': {
-        authorization: '',
-        user: {
-            roles: { admin: false },
-            _id: '5d4916541d4f9a3b2dcac66d', //5d4916541d4f9a3b2dcac66d,
-            email: 'marjorie@labo.la',
-        }
-    },
-    params: {
-        uid: '5d4916541d4f9a3b2dcac66d'
-    }
-};
+
 const requestDeleteUsersByEmail = {
     'headers': {
         authorization: '',
         user: {
             roles: { admin: false },
-            _id: '5d4916541d4f9a3b2dcac66d', //5d4916541d4f9a3b2dcac66d,
+            _id: 'xxxxxxxxxxxxxxxxxxxx', //5d4916541d4f9a3b2dcac66d,
             email: 'marjorie@labo.la',
         }
     },
@@ -238,7 +227,21 @@ const requestDeleteUsersByEmail = {
 
 describe('DELETE/ users:uid', () => {
     it('Debería elimiar un usuario creado por uid', async() => {
-        await postUser(requestOfPostUsers, resp, next);
+        const userSaved = await postUser(requestOfPostUsers, resp, next);
+        console.log(userSaved._id)
+        const requestDeleteUsersById = {
+            'headers': {
+                authorization: '',
+                user: {
+                    roles: { admin: false },
+                    _id: userSaved._id.toString(),
+                    email: 'marjorie@labo.la',
+                }
+            },
+            params: {
+                uid: userSaved._id.toString(),
+            }
+        };
         const userDeleted = await deleteUser(requestDeleteUsersById, resp, next);
         expect(JSON.parse(JSON.stringify(userDeleted))).toMatchObject({ message: 'Se borro satisfactoriamente!' });
     });

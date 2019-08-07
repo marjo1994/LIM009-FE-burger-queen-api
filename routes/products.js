@@ -2,9 +2,7 @@ const {
     requireAuth,
     requireAdmin,
 } = require('../middleware/auth');
-const products = require('../models/modelProducts');
-const pagination = require('../utils/pagination')
-const { findByModels } = require('../utils/users-functions')
+const {getProducts, getProductById, postProduct, putProductById, deleteProductById} = require('../controllers/products')
 
 /** @module products */
 module.exports = (app, nextMain) => {
@@ -25,14 +23,7 @@ module.exports = (app, nextMain) => {
      * @code {401} si no hay cabecera de autenticación
      */
 
-    app.get('/products', requireAuth, async(req, resp, next) => {
-        let limitPage = parseInt(req.query.limit) || 10;
-        let page = parseInt(req.query.page) || 1;
-        let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
-        const number = await products.find().count();
-        resp.set('link', pagination(protocolo, page, limitPage, number))
-        findByModels(products, page, limitPage).then((result) => resp.send(result)).catch((e) => next(400));
-    });
+    app.get('/products', requireAuth, getProducts);
 
     /**
      * @name GET /products/:productId
@@ -54,14 +45,7 @@ module.exports = (app, nextMain) => {
      * @code {401} si no hay cabecera de autenticación
      * @code {404} si el producto con `productId` indicado no existe
      */
-    app.get('/products/:productId', requireAuth, (req, resp, next) => {
-        products.findOne({ _id: req.params.productId }, (err, productById) => {
-            if (err || !productById) {
-                return next(404)
-            }
-            resp.send(productById);
-        })
-    });
+    app.get('/products/:productId', requireAuth, getProductById );
 
     /**
      * @name POST /products
@@ -83,26 +67,7 @@ module.exports = (app, nextMain) => {
      * @code {401} si no hay cabecera de autenticación
      * @code {403} si no es admin
      */
-    app.post('/products', requireAdmin, (req, resp, next) => {
-            if (!req.body.name || !req.body.price) {
-                return next(400)
-            }
-
-            /*Primero, como administrador debo poder crear productos*/
-            let newProduct = new products({
-                name: req.body.name,
-                price: req.body.price,
-                image: req.body.image,
-                type: req.body.type
-            });
-            newProduct.save((err, productStored) => {
-                if (err) {
-                    next(err)
-                }
-                resp.send(productStored)
-            });
-
-        })
+    app.post('/products', requireAdmin, postProduct)
         /**
          * @name PUT /products
          * @description Modifica un producto
@@ -125,34 +90,7 @@ module.exports = (app, nextMain) => {
          * @code {403} si no es admin
          * @code {404} si el producto con `productId` indicado no existe
          */
-    app.put('/products/:productId', requireAdmin, (req, resp, next) => {
-        if (!req.body) {
-            return next(400)
-        }
-        products.findOne({ _id: req.params.productId }, (err, productById) => {
-            if (err) {
-                return next(404)
-            }
-            if (req.body.name) {
-                productById.name = req.body.name
-            }
-            if (req.body.price) {
-                productById.price = req.body.price
-            }
-            if (req.body.image) {
-                productById.image = req.body.image
-            }
-            if (req.body.type) {
-                productById.type = req.body.type
-            }
-            productById.save((err, productStored) => {
-                if (err) {
-                    return next(400)
-                }
-                resp.send(productStored)
-            });
-        })
-    })
+    app.put('/products/:productId', requireAdmin, putProductById)
 
     /**
      * @name DELETE /products
@@ -171,17 +109,6 @@ module.exports = (app, nextMain) => {
      * @code {403} si no es ni admin
      * @code {404} si el producto con `productId` indicado no existe
      */
-    app.delete('/products/:productId', requireAdmin, (req, resp, next) => {
-        products.findByIdAndRemove(req.params.productId, (err, product) => {
-            if (err) {
-                return next(404)
-            }
-            // console.log(resp.status)
-            resp.send({
-                message: 'Se borro satisfactoriamente!',
-            });
-        })
-
-    })
+    app.delete('/products/:productId', requireAdmin, deleteProductById)
     nextMain();
 };

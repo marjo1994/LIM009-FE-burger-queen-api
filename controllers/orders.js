@@ -61,11 +61,11 @@ module.exports.putOrders = async(req, resp, next) => {
         }
         return resp.send(orderFoundandUpdate);
     } catch (e) {
-        console.error(e.kind)
-        if (e.kind === 'enum' || !e.kind) {
-            return next(400);
+        console.error(e)
+        if (e.kind !== 'enum' && e.kind) {
+            return next(404);
         }
-        return next(404);
+        return next(400);
     }
 }
 

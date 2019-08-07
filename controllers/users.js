@@ -46,7 +46,7 @@ module.exports.postUser = async(req, resp, next) => {
     const userStored = await newUser.save();
     return resp.send({
         roles: userStored.roles,
-        _id: userStored._id,
+        _id: userStored._id.toString(),
         email: userStored.email
     });
 

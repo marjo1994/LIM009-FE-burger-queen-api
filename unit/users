@@ -73,7 +73,7 @@ describe('test mongoose User model', () => {
 
 /* const { gettingToken } = require('../utils/test/superTest')
 
-describe('POST /auth', () => {
+describe.only('POST /auth', () => {
     it('debería retornar un token para el administrador', () => (
         gettingToken('admin@localhost', 'changeme').then(resp => {
             // console.log(resp)
@@ -83,9 +83,9 @@ describe('POST /auth', () => {
         })
     ));
 
-    it('debería retornar un token para un usuario  ', () => (
-        gettingToken('labo@labo.la', 'laboratori').then((result) => {
-            console.log(result)
+    it.only('debería retornar un token para un usuario  ', () => (
+        gettingToken('labo@labo.la', 'labotori').then((result) => {
+            console.log(result.status)
             expect(result.status).toBe(200);
             expect(result.body).toHaveProperty('token');
         })
@@ -177,3 +177,4 @@ describe('Server', () => {
         he
         n(json => expect(json.email).toBe(config.adminEmail))
     )); */
+
