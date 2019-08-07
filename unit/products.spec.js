@@ -146,8 +146,13 @@ describe('GET/ products:uid', () => {
                 uid: mockUid._id.toString()
             }
         }
+
+        const resp = {
+            send: jest.fn(json => {
+                expect(resp.send.mock.calls).toHaveLength(1);
+            }),
+           }; 
         getProductById(requestOfGetProductByUid, resp, next)
-        expect(resp.send.mock.calls).toHaveLength(1);
     })
 
     it('Debería retornar 404 llamado por un Uid errado', () => {
@@ -166,7 +171,7 @@ describe('GET/ products:uid', () => {
         };*/
 
         getProductById(requestOfGetProductByUidWrong, resp, next)
-        
+
     })
 
 });
