@@ -64,9 +64,6 @@ module.exports.putUser = async(req, resp, next) => {
         let obj = uidOrEmail(req.params.uid);
 
         const userFounded = await users.findOne(obj);
-        if (!userFounded) {
-            return next(404)
-        }
         if (req.body.email) {
             userFounded.email = req.body.email;
         }
@@ -78,7 +75,6 @@ module.exports.putUser = async(req, resp, next) => {
             return resp.send({ message: 'Cambios registrados satisfactoriamente' });
         }
     } catch (e) {
-        console.error(e)
         return next(404)
     }
 };
@@ -86,8 +82,9 @@ module.exports.putUser = async(req, resp, next) => {
 
 module.exports.deleteUser = async(req, resp, next) => {
     try {
-        if (req.headers.user._id.toString() === req.params.uid && isAdmin(req)) {
-            return resp.send({ message: 'Admin no puede autoeliminarse' })
+        if (req.headers.user._id.toString() === req.params.uid || req.headers.user.email === req.params.uid) {
+            console.log('aaaaa')
+            return resp.send({ message: 'Usuario o administrador no pueden eliminarse a si mismo.' })
         }
         const obj = uidOrEmail(req.params.uid);
 
@@ -99,7 +96,6 @@ module.exports.deleteUser = async(req, resp, next) => {
         return resp.send({ message: 'Se borro satisfactoriamente!' });
 
     } catch (e) {
-        console.error(e)
         return next(404)
     }
 };

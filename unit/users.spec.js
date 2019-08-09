@@ -20,14 +20,7 @@ beforeEach(async() => {
     });
 });
 
-
-/* afterAll(async() => {
-    await mongoose.disconnect();
-    await mongoServer.stop();
-}); */
-
-
-const requestOfPostUsers = {
+let requestOfPostUsers = {
     headers: {
         authorization: '',
     },
@@ -61,6 +54,11 @@ const emptyRequest2 = {
         password: ''
     },
 };
+const responseObjectOfNewAdmin = {
+    roles: { admin: true },
+    _id: '5d4916541d4f9a3b2dcac66d', //5d4916541d4f9a3b2dcac66d,
+    email: 'marjorie@labo.la',
+};
 
 const requestOfPostUsersDuplicated = {
     headers: {
@@ -82,6 +80,12 @@ describe('POST/ users:uid', () => {
         await postUser(requestOfPostUsers, resp, next);
         expect(resp.send.mock.results[0].value).toEqual(responseObjectOfUser);
         //expect(userSend).toBe(responseObjectOfUser);
+    });
+    it('El administrador debería poder crear a otro administrador', async() => {
+        requestOfPostUsers.body.roles = { admin: true }
+        const newAdmin = await postUser(requestOfPostUsers, resp, next);
+        resp.send.mockReturnValue(newAdmin)
+        expect(resp.send()).toEqual(responseObjectOfNewAdmin);
     })
     it('Debería retornar un error 400 si no existe email o password', async() => {
         await postUser(emptyRequest, resp, next);
@@ -140,7 +144,6 @@ describe('GET/ users', () => {
         expect(res.send.mock.calls[2].length).toBe(1)
     });
 });
-
 
 
 const requestOfGetUsersByEmail = {
@@ -271,7 +274,7 @@ describe('PUT/ users:uid', () => {
     const next2 = jest.fn(json => json);
 
 
-    it('Debería retornar el usuario llamado por ID', async() => {
+    it('Debería editar usuario llamado por ID', async() => {
         const userFromTestPut = await postUser(requestOfPostUsersFromPut, response, next2);
         const requestOfPutUsersById = {
             'headers': {
@@ -284,6 +287,7 @@ describe('PUT/ users:uid', () => {
             },
             body: {
                 email: 'marjo@labo.la',
+                password: 'abcdefg'
             },
             params: {
                 uid: userFromTestPut._id.toString()
@@ -317,13 +321,8 @@ describe('PUT/ users:uid', () => {
         await putUser(emptyOfPostUsersFromPut, response, next2);
         expect(next2.mock.calls[2][0]).toBe(400);
     });
-    /*     it('Debería retornar un error 404 si se ingresa un parametro uid invalido', async() => {
-            const user = await postUser(requestOfPostUsers3, resp, next);
-            requestOfGetUsersById.params.uid = '5d4916541d4f9a3b2dcac66d';
-            await getUserUid(requestOfGetUsersById, resp, next);
-            expect(next.mock.calls[0][0]).toBe(404);
-        });
-       */
+
+
 });
 
 const requestDeleteUsersByEmail = {
@@ -340,79 +339,95 @@ const requestDeleteUsersByEmail = {
         uid: 'delete@labo.la'
     }
 };
-const requestOfPostUsersFromDelete = {
+const requestAdminToDelete = {
+    'headers': {
+        authorization: '',
+        user: {
+            roles: { admin: true },
+            _id: 'xxxxxxxxxxxxxxxxxxxx', //5d4916541d4f9a3b2dcac66d,
+            email: 'delete@labo.la',
+        }
+    },
+    params: {
+        uid: 'delete@labo.la'
+    }
+};
+let requestOfPostUsersFromDelete = {
     headers: {
         authorization: '',
     },
     body: {
         email: 'delete@labo.la',
-        password: '123456'
+        password: '123456',
     },
+};
+const requestAdminToDeleteAuto = {
+    'headers': {
+        authorization: '',
+        user: {
+            roles: { admin: true },
+            _id: '12345678910111213141',
+            email: 'admin@gmail',
+        }
+    },
+    params: {
+        uid: 'admin@gmail',
+    }
 };
 
 describe('DELETE/ users:uid', () => {
-    const resp = {
+    const respon = {
         send: jest.fn(json => json),
     };
 
     const next = jest.fn(json => json);
 
     it('Debería elimiar un usuario creado por uid', async() => {
-        const userSaved = await postUser(requestOfPostUsersFromDelete, resp, next);
+        const userSaved = await postUser(requestOfPostUsersFromDelete, respon, next);
         const requestDeleteUsersById = {
             'headers': {
                 authorization: '',
                 user: {
                     roles: { admin: false },
-                    _id: userSaved._id.toString(),
-                    email: 'delete@labo.la',
+                    _id: 'xxxxxxxxxxxxxxxxxx',
+                    email: 'admin@labo.la',
                 }
             },
             params: {
                 uid: userSaved._id.toString(),
             }
         };
-        const userDeleted = await deleteUser(requestDeleteUsersById, resp, next);
-        resp.send.mockReturnValue(userDeleted);
-        expect(resp.send()).toEqual({ message: 'Se borro satisfactoriamente!' });
+        const userDeleted = await deleteUser(requestDeleteUsersById, respon, next);
+        respon.send.mockReturnValue(userDeleted);
+        expect(respon.send()).toEqual({ message: 'Se borro satisfactoriamente!' });
     });
     it('Debería elimiar un usuario creado por email', async() => {
-        await postUser(requestOfPostUsersFromDelete, resp, next);
-        const userDeleted2 = await deleteUser(requestDeleteUsersByEmail, resp, next);
-        resp.send.mockReturnValue(userDeleted2);
-        expect(resp.send()).toEqual({ message: 'Se borro satisfactoriamente!' });
+        await postUser(requestOfPostUsersFromDelete, respon, next);
+        const userDeleted2 = await deleteUser(requestAdminToDelete, respon, next);
+        respon.send.mockReturnValue(userDeleted2);
+        expect(respon.send()).toEqual({ message: 'Se borro satisfactoriamente!' });
     });
+
     it('Debería retornar un error 404 si se ingresa un id invalid', async() => {
-        await postUser(requestOfPostUsersFromDelete, resp, next);
+        await postUser(requestOfPostUsersFromDelete, respon, next);
         requestDeleteUsersByEmail.params.uid = '5d3b0d0a99320e3f0ce80b96';
-        await getUserUid(requestDeleteUsersByEmail, resp, next);
+        await deleteUser(requestDeleteUsersByEmail, respon, next);
         expect(next.mock.calls[0][0]).toBe(404);
     });
-});
-/*
-describe('POST/ users', () => {
-    it('Debería crear un nuevo usuario', async() => {
-        const userSend = await postUser(requestOfPostUsers, resp, next);
-        // await Users.count();
-        expect(userSend).toHaveProperty('_id');
-        expect(userSend).toHaveProperty('roles.admin', responseOfPostUsers.roles.admin);
-        expect(userSend).toHaveProperty('email', responseOfPostUsers.email);
-    }) */
-;
-//});
 
-/* const requestOfGetUsers = {
-    'headers': {
-        authorization: ''
-    },
-    'query': {
-        limit: 10,
-        page: 1,
-    },
-    'protocol': 'http',
-    'get': '',
-    'path': '/users',
-}; */
+    it('Usuario no puede eliminarse a si mismo', async() => {
+        await deleteUser(requestAdminToDeleteAuto, respon, next);
+        expect(respon.send.mock.calls[7][0]).toEqual({ message: 'Usuario o administrador no pueden eliminarse a si mismo.' });
+    });
+    it('Debería retornar un error 404 si se ingresa un mal dato', async() => {
+        await postUser(requestOfPostUsersFromDelete, respon, next);
+        requestDeleteUsersByEmail.params.uid = 'xxxxxxxxxxxxxx';
+        await deleteUser(requestDeleteUsersByEmail, respon, next);
+        console.log(next.mock.calls)
+        expect(next.mock.calls[1][0]).toBe(404);
+    });
+
+});
 /* {
     roles: { admin: true },
     _id: '5d3b0d0a99320e3f0ce80b96',
@@ -593,4 +608,5 @@ describe('DELETE /users:uid', () => {
             expect(result.body).toEqual(responseOfDeleteUsersByIdorEmail);
         })
     ))
+    
 }); */
