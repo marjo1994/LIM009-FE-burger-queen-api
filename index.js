@@ -5,6 +5,8 @@ const errorHandler = require('./middleware/error');
 const routes = require('./routes');
 const pkg = require('./package.json');
 const mongoose = require('mongoose');
+const cors = require('cors')
+
 //const morgan = require('morgan');
 
 const { port, dbUrl, secret } = config;
