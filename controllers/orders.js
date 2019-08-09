@@ -30,6 +30,8 @@ module.exports.postOrders = async(req, resp, next) => {
     };
     let newOrder = new order();
     newOrder.userId = req.body.userId;
+    newOrder.client = req.body.client;
+
     const arrOfProducts = await products.find({ _id: { $in: req.body.products.map(p => mongodb.ObjectId(p.product)) } })
     if (arrOfProducts.length !== req.body.products.length) {
         req.body.products = req.body.products.filter((x) => {
@@ -54,7 +56,7 @@ module.exports.putOrders = async(req, resp, next) => {
         if (!req.body.status) {
             return next(400);
         }
-        const orderFoundandUpdate = await order.findOneAndUpdate({ _id: req.params.orderid }, { $set: { status: req.body.status } }, { runValidators: true, new: true });
+        const orderFoundandUpdate = await order.findOneAndUpdate({ _id: req.params.orderid }, { $set: { status: req.body.status, userId: req.body.userId, client: req.body.client  } }, { runValidators: true, new: true });
         if (orderFoundandUpdate.status === 'canceled' || !orderFoundandUpdate) {
             return next(404);
         }

@@ -1,5 +1,5 @@
 TN:
-SF:/home/mayte/LIM009-FE-burger-queen-api/controllers/products.js
+SF:D:\Documents\LIM009-FE-burger-queen-api\controllers\products.js
 FN:4,(anonymous_0)
 FN:8,(anonymous_1)
 FN:15,(anonymous_2)
@@ -102,7 +102,7 @@ BRF:28
 BRH:12
 end_of_record
 TN:
-SF:/home/mayte/LIM009-FE-burger-queen-api/controllers/users.js
+SF:D:\Documents\LIM009-FE-burger-queen-api\controllers\users.js
 FN:7,(anonymous_0)
 FN:11,(anonymous_1)
 FN:18,(anonymous_2)
@@ -228,7 +228,7 @@ BRF:41
 BRH:31
 end_of_record
 TN:
-SF:/home/mayte/LIM009-FE-burger-queen-api/middleware/auth.js
+SF:D:\Documents\LIM009-FE-burger-queen-api\middleware\auth.js
 FN:5,(anonymous_0)
 FN:5,(anonymous_1)
 FN:18,(anonymous_2)
@@ -308,7 +308,7 @@ BRF:26
 BRH:2
 end_of_record
 TN:
-SF:/home/mayte/LIM009-FE-burger-queen-api/models/modelProducts.js
+SF:D:\Documents\LIM009-FE-burger-queen-api\models\modelProducts.js
 FNF:0
 FNH:0
 DA:1,1
@@ -321,7 +321,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:/home/mayte/LIM009-FE-burger-queen-api/models/modelUsers.js
+SF:D:\Documents\LIM009-FE-burger-queen-api\models\modelUsers.js
 FNF:0
 FNH:0
 DA:1,1
@@ -334,7 +334,7 @@ BRF:0
 BRH:0
 end_of_record
 TN:
-SF:/home/mayte/LIM009-FE-burger-queen-api/utils/pagination.js
+SF:D:\Documents\LIM009-FE-burger-queen-api\utils\pagination.js
 FN:1,(anonymous_0)
 FNF:1
 FNH:1
@@ -357,7 +357,7 @@ BRF:6
 BRH:3
 end_of_record
 TN:
-SF:/home/mayte/LIM009-FE-burger-queen-api/utils/utils.js
+SF:D:\Documents\LIM009-FE-burger-queen-api\utils\utils.js
 FN:1,(anonymous_0)
 FNF:1
 FNH:1
