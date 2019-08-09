@@ -3,8 +3,6 @@ services:
   db:
     image: mongo
     restart: always
-    ports:
-      - "27017:27017" 
     networks:
       - private
   node:
@@ -22,7 +20,7 @@ services:
     expose:
       - "8080" # nuestra app corre en el puerto 8080
     ports:
-      - "80:8080" # mapeamos el puerto 8080 de nuestro contenedor al puerto 80 de nuestra maquina
+      - "81:8080" # mapeamos el puerto 8080 de nuestro contenedor al puerto 80 de nuestra maquina
     command: "npm start"
     depends_on:
       - db
