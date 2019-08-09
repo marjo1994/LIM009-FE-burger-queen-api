@@ -11,6 +11,8 @@ const { port, dbUrl, secret } = config;
 
 const app = express();
 
+app.use(cors());
+
 // TO DO: Conección a la BD en mogodb
 //Aqui conectamos con la base de datos de mongodb
 mongoose.connect(dbUrl, { useNewUrlParser: true })

@@ -55,13 +55,11 @@ module.exports.putOrders = async(req, resp, next) => {
             return next(400);
         }
         const orderFoundandUpdate = await order.findOneAndUpdate({ _id: req.params.orderid }, { $set: { status: req.body.status } }, { runValidators: true, new: true });
-
         if (orderFoundandUpdate.status === 'canceled' || !orderFoundandUpdate) {
             return next(404);
         }
         return resp.send(orderFoundandUpdate);
     } catch (e) {
-        console.error(e)
         if (e.kind !== 'enum' && e.kind) {
             return next(404);
         }
