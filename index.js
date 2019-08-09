@@ -5,11 +5,15 @@ const errorHandler = require('./middleware/error');
 const routes = require('./routes');
 const pkg = require('./package.json');
 const mongoose = require('mongoose');
+const cors = require('cors')
+
 //const morgan = require('morgan');
 
 const { port, dbUrl, secret } = config;
 
 const app = express();
+
+app.use(cors());
 
 // TO DO: Conección a la BD en mogodb
 //Aqui conectamos con la base de datos de mongodb

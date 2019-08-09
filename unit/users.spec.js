@@ -146,7 +146,6 @@ describe('GET/ users', () => {
 });
 
 
-
 const requestOfGetUsersByEmail = {
     'headers': {
         authorization: ''

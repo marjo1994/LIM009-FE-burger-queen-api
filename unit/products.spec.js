@@ -195,7 +195,7 @@ describe('PUT/products:uid',()=> {
      mockUid2 = resp.send.mock.calls[0][0];     
     })
 
-    it('Debe retornar el producto editado que ha sido llamado por su Uid',() => {
+        it('Debe retornar el producto editado que ha sido llamado por su Uid',() => {
         const productUpdate = {
             name: 'product4Updated',
             price: '6',
@@ -242,46 +242,10 @@ describe('PUT/products:uid',()=> {
         putProductById(requestOfPutProductByUid, resp, next)
 
     })
+});
+
+
+describe('DELETE/products:uid', () => {
+it('Debería eliminar un ')
+
 })
-
-
-/*  const mockResp = {
-    send: jest.fn(json => json),
-    sendStatus: jest.fn(code => code),
-  };
-
-  const mockNext = jest.fn(code => code);
-
-
-mockId1 = mockResp.send.mock.calls[0][0];*/
-
-/*const requestOfGetUsersById = {
-    'headers': {
-        authorization: ''
-    },
-    params: {
-        uid: '5d4916541d4f9a3b2dcac66d'
-    }
-};
-const requestOfGetUsersByEmail = {
-    'headers': {
-        authorization: ''
-    },
-    params: {
-        uid: 'marjorie@labo.la'
-    }
-};
-
-
-describe('GET/ users:uid', () => {
-    it('Debería retornar el usuario llamado por ID', async() => {
-        await postUser(requestOfPostUsers, resp, next);
-        const user = await getUserUid(requestOfGetUsersById, resp, next);
-        expect(JSON.parse(JSON.stringify(user))).toMatchObject(responseObjectOfUser);
-    });
-    it('Debería retornar el usuario llamado por Email', async() => {
-        await postUser(requestOfPostUsers, resp, next);
-        const user2 = await getUserUid(requestOfGetUsersByEmail, resp, next);
-        expect(JSON.parse(JSON.stringify(user2))).toMatchObject(responseObjectOfUser);
-    });
-});*/
