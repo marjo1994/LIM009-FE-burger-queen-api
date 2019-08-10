@@ -180,19 +180,19 @@ describe('GET/ products:uid', () => {
 describe('PUT/products:uid',()=> {
     let mockUid2 = '';
     beforeAll(async() => {
-     const requestOfPostProduct = {
-         headers: '',
-         body: {
-           name: 'product4',
-           price: '6',
-           type: 'dinner',
-         },
-       };
-       const resp = {
-         send: jest.fn(json => json),
-        }; 
-     await postProduct(requestOfPostProduct, resp, next);        
-     mockUid2 = resp.send.mock.calls[0][0];     
+        const requestOfPostProduct = {
+            headers: '',
+            body: {
+            name: 'product4',
+            price: '6',
+            type: 'dinner',
+            },
+        };
+        const resp = {
+            send: jest.fn(json => json),
+            }; 
+        await postProduct(requestOfPostProduct, resp, next);        
+        mockUid2 = resp.send.mock.calls[0][0];     
     })
 
         it('Debe retornar el producto editado que ha sido llamado por su Uid',() => {

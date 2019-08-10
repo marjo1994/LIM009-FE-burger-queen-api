@@ -7,8 +7,6 @@ const pkg = require('./package.json');
 const mongoose = require('mongoose');
 const cors = require('cors')
 
-//const morgan = require('morgan');
-
 const { port, dbUrl, secret } = config;
 
 const app = express();
