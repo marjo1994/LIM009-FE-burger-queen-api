@@ -56,12 +56,17 @@ module.exports.putOrders = async(req, resp, next) => {
         if (!req.body.status) {
             return next(400);
         }
+
         const orderFindOne = await order.findOne({ _id: req.params.orderid });
         const item = {
             status: req.body.status || orderFindOne.status,
             userId: req.body.userId || orderFindOne.userId,
-            client: req.body.client || orderFindOne.client
+            client: req.body.client || orderFindOne.client,
         };
+        //            dateProcessed: fecha,
+        if (req.body.status === 'delivered') {
+            item.dateProcessed = new Date();
+        }
         console.log(item)
         const orderSaved = await order.findOneAndUpdate({ _id: req.params.orderid }, { $set: item }, { runValidators: true, new: true }) //,(err,order)=>{
         if (orderSaved.status === 'canceled' || !orderSaved) {
