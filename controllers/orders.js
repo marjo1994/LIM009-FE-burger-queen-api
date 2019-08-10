@@ -38,7 +38,6 @@ module.exports.postOrders = async(req, resp, next) => {
             return x !== null || undefined
         })
     }
-    console.log(arrOfProducts)
     const productsReales = req.body.products.map((p, index) => ({
         product: {
             id: mongodb.ObjectId(p.product),
@@ -54,26 +53,32 @@ module.exports.postOrders = async(req, resp, next) => {
 
 module.exports.putOrders = async(req, resp, next) => {
     try {
-        if (!req.body.status) {
+        console.error(req.body)
+        if (!req.body) {
             return next(400);
         }
-        const orderFindOne =await order.findOne({ _id: req.params.orderid });
+
+        const orderFindOne = await order.findOne({ _id: req.params.orderid });
+
         const item = {
             status: req.body.status || orderFindOne.status,
             userId: req.body.userId || orderFindOne.userId,
-            client: req.body.client || orderFindOne.client
+            client: req.body.client || orderFindOne.client,
+            products: req.body.products || orderFindOne.products,
         };
-        console.log(item)
-        const orderSaved=await order.findOneAndUpdate({ _id: req.params.orderid }, { $set: item }, {runValidators: true, new: true })//,(err,order)=>{
-            if (orderSaved.status === 'canceled' || !orderSaved) {
+
+
+        if (req.body.status === 'delivered') {
+            item.dateProcessed = new Date();
+        }
+        
+        const orderSaved = await order.findOneAndUpdate({ _id: req.params.orderid }, { $set: item }, { runValidators: true, new: true }) //,(err,order)=>{
+        if (orderSaved.status === 'canceled' || !orderSaved) {
             return next(404);
         };
         resp.send(orderSaved);
-   
-
     } catch (e) {
-        console.error(e)
-        if (e.kind !== 'enum' && e.kind) {
+         if (e.kind !== 'enum' && e.kind) {
             return next(404);
         }
         return next(400);
@@ -81,7 +86,6 @@ module.exports.putOrders = async(req, resp, next) => {
 }
 
 module.exports.deleteOrders = (req, resp, next) => {
-
     order.findByIdAndRemove(req.params.orderid, (err, product) => {
         if (err) {
             return next(404)
