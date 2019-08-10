@@ -22,11 +22,11 @@ module.exports.getProductById = (req, resp, next) => {
 }
 
 module.exports.postProduct = async(req, resp, next) => {
-    try{
+    try {
         if (!req.body.name || !req.body.price) {
+            console.log('aaaaaaaaaaaaaaaaaaaaaa')
             return next(400)
         }
-
         /*Primero, como administrador debo poder crear productos*/
         let newProduct = new products({
             name: req.body.name,
@@ -37,9 +37,9 @@ module.exports.postProduct = async(req, resp, next) => {
 
         const productSave = await newProduct.save()
         return resp.send(productSave);
-        
-    } catch(e) {
-        return next(err)
+
+    } catch (e) {
+        return next(404)
     }
 }
 
@@ -85,8 +85,3 @@ module.exports.deleteProductById = (req, resp, next) => {
     })
 
 }
-
-
-
-
-
