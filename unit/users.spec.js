@@ -423,7 +423,6 @@ describe('DELETE/ users:uid', () => {
         await postUser(requestOfPostUsersFromDelete, respon, next);
         requestDeleteUsersByEmail.params.uid = 'xxxxxxxxxxxxxx';
         await deleteUser(requestDeleteUsersByEmail, respon, next);
-        console.log(next.mock.calls)
         expect(next.mock.calls[1][0]).toBe(404);
     });
 
