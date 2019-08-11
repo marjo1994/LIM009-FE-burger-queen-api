@@ -24,7 +24,6 @@ module.exports.getProductById = (req, resp, next) => {
 module.exports.postProduct = async(req, resp, next) => {
     try {
         if (!req.body.name || !req.body.price) {
-            console.log('aaaaaaaaaaaaaaaaaaaaaa')
             return next(400)
         }
         /*Primero, como administrador debo poder crear productos*/

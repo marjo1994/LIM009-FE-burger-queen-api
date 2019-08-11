@@ -35,7 +35,7 @@ module.exports.postOrders = async(req, resp, next) => {
     const arrOfProducts = await products.find({ _id: { $in: req.body.products.map(p => mongodb.ObjectId(p.product)) } })
     if (arrOfProducts.length !== req.body.products.length) {
         req.body.products = req.body.products.filter((x) => {
-            return x !== null || undefined
+            return x !== null || undefined;
         })
     };
     const productsReales = req.body.products.map((p, index) => ({
@@ -70,6 +70,7 @@ module.exports.putOrders = async(req, resp, next) => {
             status: req.body.status || orderFindOne.status,
             userId: req.body.userId || orderFindOne.userId,
             client: req.body.client || orderFindOne.client,
+            products: req.body.products || orderFindOne.products
         };
         /*     if (req.body.products) {
                 console.log(putSubcollection(req.body.products, req.body.productId))
