@@ -1,4 +1,4 @@
-const { order, productsSubcollection } = require('../models/modelOrders')
+const order  = require('../models/modelOrders')
 const products = require('../models/modelProducts');
 const pagination = require('../utils/pagination');
 const mongodb = require('mongodb');
@@ -28,6 +28,7 @@ module.exports.postOrders = async(req, resp, next) => {
     if (!req.body.products || !req.headers.user._id) {
         return next(400);
     };
+
     let newOrder = new order();
     newOrder.userId = req.headers.user._id;
     newOrder.client = req.body.client;
