@@ -1,4 +1,4 @@
-const order  = require('../models/modelOrders')
+const order = require('../models/modelOrders')
 const products = require('../models/modelProducts');
 const pagination = require('../utils/pagination');
 const mongodb = require('mongodb');
@@ -25,7 +25,7 @@ module.exports.getOrdersById = async(req, resp, next) => {
 };
 
 module.exports.postOrders = async(req, resp, next) => {
-    if (!req.body.products || !req.headers.user._id) {
+    if (!req.body.products || req.body.products.length === 0) {
         return next(400);
     };
 
@@ -71,7 +71,7 @@ module.exports.putOrders = async(req, resp, next) => {
             status: req.body.status || orderFindOne.status,
             userId: req.body.userId || orderFindOne.userId,
             client: req.body.client || orderFindOne.client,
-            products: req.body.products || orderFindOne.products
+            /// products: req.body.products || orderFindOne.products
         };
         /*     if (req.body.products) {
                 console.log(putSubcollection(req.body.products, req.body.productId))
