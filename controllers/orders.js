@@ -28,6 +28,7 @@ module.exports.postOrders = async(req, resp, next) => {
     if (!req.body.products || req.body.products.length === 0) {
         return next(400);
     };
+
     let newOrder = new order();
     newOrder.userId = req.headers.user._id;
     newOrder.client = req.body.client;
