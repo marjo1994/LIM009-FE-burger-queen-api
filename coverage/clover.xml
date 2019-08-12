@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1565480389163" clover="3.2.0">
-  <project timestamp="1565480389163" name="All files">
-    <metrics statements="103" coveredstatements="86" conditionals="73" coveredconditionals="42" methods="17" coveredmethods="9" elements="193" coveredelements="137" complexity="0" loc="103" ncloc="103" packages="4" files="5" classes="5"/>
+<coverage generated="1565637386574" clover="3.2.0">
+  <project timestamp="1565637386574" name="All files">
+    <metrics statements="100" coveredstatements="83" conditionals="69" coveredconditionals="38" methods="17" coveredmethods="9" elements="186" coveredelements="130" complexity="0" loc="100" ncloc="100" packages="4" files="5" classes="5"/>
     <package name="controllers">
-      <metrics statements="61" coveredstatements="61" conditionals="39" coveredconditionals="35" methods="6" coveredmethods="6"/>
+      <metrics statements="58" coveredstatements="58" conditionals="35" coveredconditionals="31" methods="6" coveredmethods="6"/>
       <file name="users.js" path="/home/mayte/LIM009-FE-burger-queen-api/controllers/users.js">
-        <metrics statements="61" coveredstatements="61" conditionals="39" coveredconditionals="35" methods="6" coveredmethods="6"/>
+        <metrics statements="58" coveredstatements="58" conditionals="35" coveredconditionals="31" methods="6" coveredmethods="6"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
@@ -56,17 +56,14 @@
         <line num="75" count="2" type="stmt"/>
         <line num="78" count="1" type="stmt"/>
         <line num="83" count="1" type="stmt"/>
-        <line num="84" count="5" type="stmt"/>
-        <line num="85" count="5" type="cond" truecount="4" falsecount="0"/>
-        <line num="86" count="2" type="stmt"/>
-        <line num="87" count="2" type="stmt"/>
-        <line num="89" count="3" type="stmt"/>
-        <line num="91" count="3" type="stmt"/>
-        <line num="92" count="2" type="cond" truecount="2" falsecount="0"/>
-        <line num="93" count="1" type="stmt"/>
-        <line num="95" count="1" type="stmt"/>
-        <line num="96" count="1" type="stmt"/>
-        <line num="99" count="1" type="stmt"/>
+        <line num="84" count="4" type="stmt"/>
+        <line num="85" count="4" type="stmt"/>
+        <line num="86" count="4" type="stmt"/>
+        <line num="87" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="88" count="1" type="stmt"/>
+        <line num="90" count="2" type="stmt"/>
+        <line num="91" count="2" type="stmt"/>
+        <line num="94" count="1" type="stmt"/>
       </file>
     </package>
     <package name="middleware">
@@ -125,11 +122,11 @@
       <file name="utils.js" path="/home/mayte/LIM009-FE-burger-queen-api/utils/utils.js">
         <metrics statements="6" coveredstatements="6" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
-        <line num="2" count="9" type="stmt"/>
-        <line num="3" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="2" count="10" type="stmt"/>
+        <line num="3" count="10" type="cond" truecount="2" falsecount="0"/>
         <line num="4" count="7" type="stmt"/>
-        <line num="6" count="2" type="stmt"/>
-        <line num="8" count="9" type="stmt"/>
+        <line num="6" count="3" type="stmt"/>
+        <line num="8" count="10" type="stmt"/>
       </file>
     </package>
   </project>

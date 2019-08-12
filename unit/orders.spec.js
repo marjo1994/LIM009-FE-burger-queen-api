@@ -1,5 +1,5 @@
 const { getOrders, getOrdersById, postOrders, putOrders, deleteOrders } = require('../controllers/orders')
-const {postProduct} = require('../controllers/products')
+const { postProduct } = require('../controllers/products')
 const mongoose = require('mongoose')
     //const Users = require('../models/modelUsers');
 const { MongoMemoryServer } = require('mongodb-memory-server');
@@ -7,7 +7,6 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
 
 let mongoServer;
-let port;
 
 beforeEach(async() => {
     if (mongoServer) {
@@ -28,32 +27,33 @@ describe('POST/orders', () => {
         const requestOfPostProduct = {
             headers: '',
             body: {
-              name: 'productToOrder',
-              price: '10',
-              type: 'breakfast',
+                name: 'productToOrder',
+                price: '10',
+                type: 'breakfast',
             },
-          };
+        };
         const resp = {
             send: jest.fn(json => json),
-        }; 
+        };
         const next = jest.fn(code => code);
 
-        await postProduct(requestOfPostProduct, resp, next);        
+        await postProduct(requestOfPostProduct, resp, next);
         mockUid = resp.send.mock.calls[0][0]._id
-       })
-       
+    })
+
 
     it('Debería crear una nueva orden', async() => {
         const obj = {
             client: 'Maria',
             status: 'pending',
             userId: 'abc',
-          };
+        };
 
         const requestOfPostOrders = {
             headers: {
-                authorization: '',  
-            }, body: {
+                authorization: '',
+            },
+            body: {
                 userId: 'abc',
                 client: 'Maria',
                 products: [{ product: mockUid, qty: 5 }]
@@ -61,9 +61,9 @@ describe('POST/orders', () => {
         }
 
         const resp = {
-            send: jest.fn(json => json)               
-          };
-      
+            send: jest.fn(json => json)
+        };
+
         const next = jest.fn(code => code);
 
         await postOrders(requestOfPostOrders, resp, next);
