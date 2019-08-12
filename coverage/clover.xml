@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1565641949989" clover="3.2.0">
-  <project timestamp="1565641949989" name="All files">
+<coverage generated="1565652583531" clover="3.2.0">
+  <project timestamp="1565652583532" name="All files">
     <metrics statements="5" coveredstatements="5" conditionals="11" coveredconditionals="8" methods="0" coveredmethods="0" elements="16" coveredelements="13" complexity="0" loc="5" ncloc="5" packages="1" files="1" classes="1"/>
     <file name="config.js" path="/home/marjorie/Documentos/burgen-queen-api/LIM009-FE-burger-queen-api/config.js">
       <metrics statements="5" coveredstatements="5" conditionals="11" coveredconditionals="8" methods="0" coveredmethods="0"/>
