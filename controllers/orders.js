@@ -89,7 +89,7 @@ module.exports.putOrders = async(req, resp, next) => {
         };
 
         if (req.body.status === 'delivered') {
-            item.dateProcessed = new Date();
+            item.dateProcessed = Date.now();
         }
         const orderSaved = await order.findOneAndUpdate({ _id: req.params.orderid }, { $set: item }, { runValidators: true, new: true }) //,(err,order)=>{
         if (orderSaved.status === 'canceled' || !orderSaved) {
