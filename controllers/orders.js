@@ -58,7 +58,6 @@ module.exports.postOrders = async(req, resp, next) => {
     const orderFind = await orderSub.find({ _id: { $in: req.body.products.map(p => p.product._id == productId) } })
     return orderFind;
     // productsSubcollection.findOneAndUpdate()
-
 } */
 
 module.exports.putOrders = async(req, resp, next) => {
@@ -66,16 +65,29 @@ module.exports.putOrders = async(req, resp, next) => {
         if (!req.body.status) {
             return next(400);
         }
+        let obj;
+        if (req.body.products) {
+            const arrOfProducts = await products.find({ _id: { $in: req.body.products.map(p => mongodb.ObjectId(p.product)) } })
+            obj = req.body.products.map((p, index) => {
+                return {
+                    product: {
+                        _id: p.product,
+                        name: arrOfProducts[index].name,
+                        price: arrOfProducts[index].price
+                    },
+                    qty: p.qty
+                }
+            });
+        }
         const orderFindOne = await order.findOne({ _id: req.params.orderid });
+        if (!orderFindOne) return next(404)
         const item = {
             status: req.body.status || orderFindOne.status,
             userId: req.body.userId || orderFindOne.userId,
             client: req.body.client || orderFindOne.client,
-            /// products: req.body.products || orderFindOne.products
+            products: obj || orderFindOne.products
         };
-        /*     if (req.body.products) {
-                console.log(putSubcollection(req.body.products, req.body.productId))
-            } */
+
         if (req.body.status === 'delivered') {
             item.dateProcessed = new Date();
         }
@@ -85,10 +97,10 @@ module.exports.putOrders = async(req, resp, next) => {
         };
         resp.send(orderSaved);
     } catch (e) {
-        if (e.kind !== 'enum' && e.kind) {
-            return next(404);
+        if (e.kind === 'enum' || !e.kind) {
+            return next(400);
         }
-        return next(400);
+        return next(404);
     }
 }
 
