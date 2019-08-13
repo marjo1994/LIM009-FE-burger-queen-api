@@ -54,14 +54,6 @@ module.exports.postOrders = async(req, resp, next) => {
     return resp.send(orderStored)
 };
 
-/* const putSubcollection = async(orderSub, productId) => {
-    //const orderFind = await order.findOne({ _id: req.body.productsSub.product._id });
-    //const orderFindOne = await order.findOne({ _id: req.params.orderid });
-    const orderFind = await orderSub.find({ _id: { $in: req.body.products.map(p => p.product._id == productId) } })
-    return orderFind;
-    // productsSubcollection.findOneAndUpdate()
-} */
-
 module.exports.putOrders = async(req, resp, next) => {
     try {
         if (!req.body.status) {
@@ -92,6 +84,7 @@ module.exports.putOrders = async(req, resp, next) => {
 
         if (req.body.status === 'delivered') {
             item.dateProcessed = Date.now();
+          }
         }
 
         const orderSaved = await order.findOneAndUpdate({ _id: req.params.orderid }, { $set: item }, { runValidators: true, new: true }) //,(err,order)=>{
