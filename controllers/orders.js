@@ -56,7 +56,8 @@ module.exports.postOrders = async(req, resp, next) => {
 
 module.exports.putOrders = async(req, resp, next) => {
     try {
-        if (!req.body.status) {
+       //console.error(req.body)
+        if (!req.body.userId && !req.body.client && !req.body.products && !req.body.status) {
             return next(400);
         }
         let obj;
@@ -85,20 +86,21 @@ module.exports.putOrders = async(req, resp, next) => {
         if (req.body.status === 'delivered') {
             item.dateProcessed = Date.now();
           }
-        }
 
-        const orderSaved = await order.findOneAndUpdate({ _id: req.params.orderid }, { $set: item }, { runValidators: true, new: true }) //,(err,order)=>{
-        if (orderSaved.status === 'canceled' || !orderSaved) {
-            return next(404);
-        };
-        resp.send(orderSaved);
-    } catch (e) {
+          const orderSaved = await order.findOneAndUpdate({ _id: req.params.orderid }, { $set: item }, { runValidators: true, new: true }) //,(err,order)=>{
+            if (orderSaved.status === 'canceled' || !orderSaved) {
+                return next(404);
+            };
+            resp.send(orderSaved);
+        }catch (e) {
         if (e.kind === 'enum' || !e.kind) {
             return next(400);
         }
         return next(404);
     }
+
 }
+
 
 module.exports.deleteOrders = (req, resp, next) => {
     order.findByIdAndRemove(req.params.orderid, (err, product) => {

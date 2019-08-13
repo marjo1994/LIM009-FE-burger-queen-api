@@ -20,9 +20,9 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">34.85% </span>
+        <span class="strong">35.38% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>23/66</span>
+        <span class='fraction'>23/65</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">11.9% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>3/11</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">35% </span>
+        <span class="strong">35.59% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>21/60</span>
+        <span class='fraction'>21/59</span>
       </div>
     </div>
     <p class="quiet">
@@ -155,7 +155,9 @@
 <a name='L107'></a><a href='#L107'>107</a>
 <a name='L108'></a><a href='#L108'>108</a>
 <a name='L109'></a><a href='#L109'>109</a>
-<a name='L110'></a><a href='#L110'>110</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -241,7 +243,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -250,10 +251,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -322,7 +326,7 @@ module.exports.postOrders = async(req, resp, next) =&gt; {
 &nbsp;
 module.exports.putOrders = <span class="fstat-no" title="function not covered" >as</span>ync(req, resp, next) =&gt; {
 <span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >        if (!req.body.status) {</span>
+<span class="cstat-no" title="statement not covered" >        if (!req.body) {</span>
 <span class="cstat-no" title="statement not covered" >            return next(400);</span>
         }
         let obj;
@@ -350,21 +354,23 @@ module.exports.putOrders = <span class="fstat-no" title="function not covered" >
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        if (req.body.status === 'delivered') {</span>
 <span class="cstat-no" title="statement not covered" >            item.dateProcessed = Date.now();</span>
-<span class="cstat-no" title="statement not covered" >            console.log(item.dateProcessed)</span>
-        }
+          }
 &nbsp;
-        const orderSaved = <span class="cstat-no" title="statement not covered" >await order.findOneAndUpdate({ _id: req.params.orderid }, { $set: item }, { runValidators: true, new: true }) </span>//,(err,order)=&gt;{
-<span class="cstat-no" title="statement not covered" >        if (orderSaved.status === 'canceled' || !orderSaved) {</span>
-<span class="cstat-no" title="statement not covered" >            return next(404);</span>
-        };
-<span class="cstat-no" title="statement not covered" >        resp.send(orderSaved);</span>
-    } catch (e) {
+          const orderSaved = <span class="cstat-no" title="statement not covered" >await order.findOneAndUpdate({ _id: req.params.orderid }, { $set: item }, { runValidators: true, new: true }) </span>//,(err,order)=&gt;{
+<span class="cstat-no" title="statement not covered" >            if (orderSaved.status === 'canceled' || !orderSaved) {</span>
+<span class="cstat-no" title="statement not covered" >                return next(404);</span>
+            };
+<span class="cstat-no" title="statement not covered" >            resp.send(orderSaved);</span>
+        }
+        catch (e) {
 <span class="cstat-no" title="statement not covered" >        if (e.kind === 'enum' || !e.kind) {</span>
 <span class="cstat-no" title="statement not covered" >            return next(400);</span>
         }
 <span class="cstat-no" title="statement not covered" >        return next(404);</span>
     }
+&nbsp;
 }
+&nbsp;
 &nbsp;
 module.exports.deleteOrders = <span class="fstat-no" title="function not covered" >(r</span>eq, resp, next) =&gt; {
 <span class="cstat-no" title="statement not covered" >    order.findByIdAndRemove(req.params.orderid, <span class="fstat-no" title="function not covered" >(e</span>rr, product) =&gt; {</span>
@@ -379,7 +385,7 @@ module.exports.deleteOrders = <span class="fstat-no" title="function not covered
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Tue Aug 13 2019 01:02:32 GMT-0500 (-05)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Tue Aug 13 2019 16:22:18 GMT-0500 (-05)
 </div>
 </div>
 <script src="../prettify.js"></script>
