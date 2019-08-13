@@ -56,20 +56,22 @@ module.exports.postOrders = async(req, resp, next) => {
 
 module.exports.putOrders = async(req, resp, next) => {
     try {
-        if (!req.body||!req.body.status) {
+        if (!req.body.status) {
             return next(400);
         }
         let obj;
         if (req.body.products) {
             const arrOfProducts = await products.find({ _id: { $in: req.body.products.map(p => mongodb.ObjectId(p.product)) } })
-            obj = req.body.products.map((p, index) => ({
+            obj = req.body.products.map((p, index) => {
+                return {
                     product: {
                         _id: p.product,
                         name: arrOfProducts[index].name,
                         price: arrOfProducts[index].price
                     },
                     qty: p.qty
-                }));
+                }
+            });
         }
         const orderFindOne = await order.findOne({ _id: req.params.orderid });
         if (!orderFindOne) return next(404)
@@ -83,12 +85,12 @@ module.exports.putOrders = async(req, resp, next) => {
         if (req.body.status === 'delivered') {
             item.dateProcessed = Date.now();
           }
+        }
 
         const orderSaved = await order.findOneAndUpdate({ _id: req.params.orderid }, { $set: item }, { runValidators: true, new: true }) //,(err,order)=>{
         if (orderSaved.status === 'canceled' || !orderSaved) {
             return next(404);
         };
-        console.log(orderSaved)
         resp.send(orderSaved);
     } catch (e) {
         if (e.kind === 'enum' || !e.kind) {
