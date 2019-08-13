@@ -21,7 +21,7 @@ mongoose.connect(dbUrl, { useNewUrlParser: true })
     }).catch((e) => {
         console.log(e);
     })
-
+mongoose.set('useFindAndModify', false);
 app.set('config', config);
 app.set('pkg', pkg);
 

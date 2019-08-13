@@ -21,8 +21,7 @@ const order = new Schema({
     },
     dateEntry: {
         type: Date,
-        required: true,
-        default: Date.now()
+        required: true
     },
     dateProcessed: Date,
 })

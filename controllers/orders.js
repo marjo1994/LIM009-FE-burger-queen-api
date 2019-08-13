@@ -7,7 +7,7 @@ module.exports.getOrders = async(req, resp, next) => {
     let limitPage = parseInt(req.query.limit) || 10;
     let page = parseInt(req.query.page) || 1;
     let protocolo = `${req.protocol}://${req.get('host')}${req.path}`;
-    const number = await order.find().count();
+    const number = await order.find().countDocuments();
     resp.set('link', pagination(protocolo, page, limitPage, number))
     const orderFound = await order.find().skip((page - 1) * limitPage).limit(limitPage).exec();
     if (!orderFound) return next(400)
@@ -30,6 +30,7 @@ module.exports.postOrders = async(req, resp, next) => {
     };
 
     let newOrder = new order();
+    newOrder.dateEntry = Date.now();
     newOrder.userId = req.headers.user._id;
     newOrder.client = req.body.client;
 
@@ -47,18 +48,11 @@ module.exports.postOrders = async(req, resp, next) => {
         },
         qty: p.qty
     }));
+
     newOrder.products = productsReales;
     const orderStored = await newOrder.save();
     return resp.send(orderStored)
 };
-
-/* const putSubcollection = async(orderSub, productId) => {
-    //const orderFind = await order.findOne({ _id: req.body.productsSub.product._id });
-    //const orderFindOne = await order.findOne({ _id: req.params.orderid });
-    const orderFind = await orderSub.find({ _id: { $in: req.body.products.map(p => p.product._id == productId) } })
-    return orderFind;
-    // productsSubcollection.findOneAndUpdate()
-} */
 
 module.exports.putOrders = async(req, resp, next) => {
     try {
@@ -89,8 +83,10 @@ module.exports.putOrders = async(req, resp, next) => {
         };
 
         if (req.body.status === 'delivered') {
-            item.dateProcessed = new Date();
+            item.dateProcessed = Date.now();
+            console.log(item.dateProcessed)
         }
+
         const orderSaved = await order.findOneAndUpdate({ _id: req.params.orderid }, { $set: item }, { runValidators: true, new: true }) //,(err,order)=>{
         if (orderSaved.status === 'canceled' || !orderSaved) {
             return next(404);
