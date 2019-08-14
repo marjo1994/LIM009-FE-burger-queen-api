@@ -27,6 +27,11 @@ entregada por nuestra clienta, la API debe exponer los siguientes endpoints:
 * POST /products
 * PUT /products/:productid
 * DELETE /products/:productid
+
+La siguiente imagen ejemplifica una petición con el método POST para crear un nuevo producto en la base de datos.
+
+
+
 #### 1.5 /orders
 * GET /orders
 * GET /orders/:orderid
