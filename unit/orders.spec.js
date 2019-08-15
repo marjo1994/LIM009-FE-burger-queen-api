@@ -8,6 +8,7 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
 
 let mongoServer;
 let port;
+
 beforeEach(async() => {
     if (mongoServer) {
         await mongoose.disconnect();
@@ -78,6 +79,7 @@ describe('POST/ orders', () => {
         expect(next.mock.calls[0][0]).toBe(400);
     });
 });
+
 const requestOfPostOrders2 = {
     headers: {
         authorization: '',
@@ -94,7 +96,7 @@ const requestOfPostOrders2 = {
         products: [{ qty: 1 }]
     }
 }
-const requestOfGetOrders = {
+const requestOfPutOrders = {
     headers: {
         authorization: '',
         user: {
@@ -103,13 +105,32 @@ const requestOfGetOrders = {
             roles: { admin: true }
         }
     },
-    query: {
-        limit: 10,
-        page: 1
+    body: {
+        status: 'preparing'
     },
-    get: jest.fn(json => json)
+    params: {
+        uid: '5d4916541d4f9a3b2dcac66d',
+    }
 };
 
+describe('PUT/ orders:uid', () => {
+    const resp = {
+        send: jest.fn(json => json),
+    };
+
+    const next = jest.fn(json => json);
+
+    it('Debería crear una nueva orden', async() => {
+        const createdProduct = await postProduct(requestOfPostOrders2, resp, next);
+        requestOfPostOrders.body.products[0].product = createdProduct._id;
+        await putOrders(requestOfPutOrders, resp, next);
+        expect(resp.send.mock.results[1].value).toHaveProperty('_id');
+    });
+    /*    it('Debería retornar 400 si no se ingresan datos', async() => {
+           await postOrders(requestEmptyPostOrders, resp, next);
+           expect(next.mock.calls[0][0]).toBe(400);
+       }); */
+});
 /* describe('GET/ orders', () => {
     const resp = {
         send: jest.fn(json => json),

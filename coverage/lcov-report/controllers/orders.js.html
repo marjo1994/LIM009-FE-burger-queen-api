@@ -20,24 +20,24 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">35.38% </span>
+        <span class="strong">44.62% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>23/65</span>
+        <span class='fraction'>29/65</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">11.9% </span>
+        <span class="strong">26.09% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>5/42</span>
+        <span class='fraction'>12/46</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">27.27% </span>
+        <span class="strong">36.36% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>3/11</span>
+        <span class='fraction'>4/11</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">35.59% </span>
+        <span class="strong">44.07% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>21/59</span>
+        <span class='fraction'>26/59</span>
       </div>
     </div>
     <p class="quiet">
@@ -214,24 +214,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -241,6 +230,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -250,7 +251,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -324,13 +324,14 @@ module.exports.postOrders = async(req, resp, next) =&gt; {
     return resp.send(orderStored)
 };
 &nbsp;
-module.exports.putOrders = <span class="fstat-no" title="function not covered" >as</span>ync(req, resp, next) =&gt; {
-<span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >        if (!req.body) {</span>
+module.exports.putOrders = async(req, resp, next) =&gt; {
+    try {
+       //console.error(req.body)
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!req.body.userId &amp;&amp; !req.body.client &amp;&amp; !req.body.products &amp;&amp; !req.body.status) {
 <span class="cstat-no" title="statement not covered" >            return next(400);</span>
         }
         let obj;
-<span class="cstat-no" title="statement not covered" >        if (req.body.products) {</span>
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (req.body.products) {
             const arrOfProducts = <span class="cstat-no" title="statement not covered" >await products.find({ _id: { $in: req.body.products.map(<span class="fstat-no" title="function not covered" >p </span>=&gt; <span class="cstat-no" title="statement not covered" >mongodb.ObjectId(p.product))</span> } })</span>
 <span class="cstat-no" title="statement not covered" >            obj = req.body.products.map(<span class="fstat-no" title="function not covered" >(p</span>, index) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >                return {</span>
@@ -343,8 +344,8 @@ module.exports.putOrders = <span class="fstat-no" title="function not covered" >
                 }
             });
         }
-        const orderFindOne = <span class="cstat-no" title="statement not covered" >await order.findOne({ _id: req.params.orderid });</span>
-<span class="cstat-no" title="statement not covered" >        if (!orderFindOne) <span class="cstat-no" title="statement not covered" >return next(404)</span></span>
+        const orderFindOne = await order.findOne({ _id: req.params.orderid });
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (!orderFindOne) return next(404)
         const item = <span class="cstat-no" title="statement not covered" >{</span>
             status: req.body.status || orderFindOne.status,
             userId: req.body.userId || orderFindOne.userId,
@@ -361,8 +362,7 @@ module.exports.putOrders = <span class="fstat-no" title="function not covered" >
 <span class="cstat-no" title="statement not covered" >                return next(404);</span>
             };
 <span class="cstat-no" title="statement not covered" >            resp.send(orderSaved);</span>
-        }
-        catch (e) {
+        }catch (e) {
 <span class="cstat-no" title="statement not covered" >        if (e.kind === 'enum' || !e.kind) {</span>
 <span class="cstat-no" title="statement not covered" >            return next(400);</span>
         }
@@ -385,7 +385,7 @@ module.exports.deleteOrders = <span class="fstat-no" title="function not covered
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Tue Aug 13 2019 16:22:18 GMT-0500 (-05)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Wed Aug 14 2019 00:57:49 GMT-0500 (-05)
 </div>
 </div>
 <script src="../prettify.js"></script>
