@@ -33,8 +33,8 @@ module.exports.postProduct = async(req, resp, next) => {
             image: req.body.image,
             type: req.body.type
         });
-        return resp.send(await newProduct.save());
-
+        const saved = await newProduct.save()
+        return resp.send(saved);
     } catch (e) {
         return next(404)
     }
@@ -44,13 +44,12 @@ module.exports.postProduct = async(req, resp, next) => {
 module.exports.putProductById = async(req, resp, next) => {
     try {
 
-        if (req.body == {} || !req.body) {
-            return next(400)
+        if (req.body === {} || !req.body) {
+            return next(400);
         }
 
         const productById = await products.findOne({ _id: req.params.productId });
-        console.error(productById)
-
+        console.log(productById)
         if (!productById) {
             return next(404)
         }
@@ -69,7 +68,6 @@ module.exports.putProductById = async(req, resp, next) => {
         const productStored = await productById.save();
         return resp.send(productStored)
     } catch (e) {
-        console.error(e)
         if (e.kind === 'ObjectId') return next(404)
         return next(400)
     }

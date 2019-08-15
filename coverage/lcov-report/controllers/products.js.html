@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">71.43% </span>
+        <span class="strong">77.55% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>35/49</span>
+        <span class='fraction'>38/49</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">56.67% </span>
+        <span class="strong">60% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>17/30</span>
+        <span class='fraction'>18/30</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">75% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>6/8</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">72.92% </span>
+        <span class="strong">77.08% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>35/48</span>
+        <span class='fraction'>37/48</span>
       </div>
     </div>
     <p class="quiet">
@@ -141,9 +141,7 @@
 <a name='L93'></a><a href='#L93'>93</a>
 <a name='L94'></a><a href='#L94'>94</a>
 <a name='L95'></a><a href='#L95'>95</a>
-<a name='L96'></a><a href='#L96'>96</a>
-<a name='L97'></a><a href='#L97'>97</a>
-<a name='L98'></a><a href='#L98'>98</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L96'></a><a href='#L96'>96</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -167,19 +165,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -187,17 +185,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -214,8 +211,7 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -275,8 +271,8 @@ module.exports.postProduct = async(req, resp, next) =&gt; {
             image: req.body.image,
             type: req.body.type
         });
-        return resp.send(await newProduct.save());
-&nbsp;
+        const saved = await newProduct.save()
+        return resp.send(saved);
     } catch (e) {
 <span class="cstat-no" title="statement not covered" >        return next(404)</span>
     }
@@ -286,15 +282,14 @@ module.exports.postProduct = async(req, resp, next) =&gt; {
 module.exports.putProductById = async(req, resp, next) =&gt; {
     try {
 &nbsp;
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (req.body == {} || !req.body) {
-<span class="cstat-no" title="statement not covered" >            return next(400)</span>
+        if (req.body === {} || !req.body) {
+            return next(400);
         }
 &nbsp;
         const productById = await products.findOne({ _id: req.params.productId });
-        console.error(productById)
-&nbsp;
-        if (!productById) {
-            return next(404)
+        console.log(productById)
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (!productById) {
+<span class="cstat-no" title="statement not covered" >            return next(404)</span>
         }
         <span class="missing-if-branch" title="else path not taken" >E</span>if (req.body.name) {
             productById.name = req.body.name
@@ -311,8 +306,7 @@ module.exports.putProductById = async(req, resp, next) =&gt; {
         const productStored = await productById.save();
         return resp.send(productStored)
     } catch (e) {
-<span class="cstat-no" title="statement not covered" >        console.error(e)</span>
-<span class="cstat-no" title="statement not covered" >        if (e.kind === 'ObjectId') <span class="cstat-no" title="statement not covered" >return next(404)</span></span>
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (e.kind === 'ObjectId') return next(404)
 <span class="cstat-no" title="statement not covered" >        return next(400)</span>
     }
 &nbsp;
@@ -343,7 +337,7 @@ module.exports.deleteProductById = <span class="fstat-no" title="function not co
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu Aug 15 2019 11:58:59 GMT-0500 (-05)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu Aug 15 2019 15:22:27 GMT-0500 (-05)
 </div>
 </div>
 <script src="../prettify.js"></script>

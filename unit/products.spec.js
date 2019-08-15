@@ -206,12 +206,12 @@ const requestOfPutProductByUid = {
         name: 'productUpdate'
     }
 }
-const requestOfPutEmpty = {
+const requestOfPutBadUid = {
     header: '',
     params: {
-        productId: ''
+        productId: 'badProductId123'
     },
-    body: {}
+    body: { name: 'papas' },
 }
 describe('PUT/products:productId', () => {
     const resp = {
@@ -224,35 +224,20 @@ describe('PUT/products:productId', () => {
         const productPost = await postProduct(requestOfPostProduct3, resp, next);
         requestOfPutProductByUid.params.productId = productPost._id.toString();
         const producto = await putProductById(requestOfPutProductByUid, resp, next);
-        resp.send.mockReturnValue(producto)
+        resp.send.mockReturnValue(producto);
         expect(resp.send()).toHaveProperty('_id');
         expect(resp.send()).toHaveProperty('name', productUpdate.name);
         expect(resp.send()).toHaveProperty('type', productUpdate.type);
     })
 
     it('Debe retornar 400 sino existe ningún campo a editar', async() => {
-        const productPost = await postProduct(requestOfPostProduct4, resp, next);
-        console.log(postProduct)
-        requestOfPutEmpty.params.productId = productPost._id.toString();
-        console.log(requestOfPutEmpty)
-        resp.send.mockReturnValue(await putProductById(requestOfPutEmpty, resp, next))
-        expect(resp.send()).toBe(400);
-
-        /*             const resp = {
-                        send: jest.fn(json => json)
-                    };
-
-                    const next = jest.fn(json => {
-                        expect(next.mock.calls[0][0]).toBe(400);
-                    })                    putProductById(requestOfPutProductByUid, resp, next) */
-
-
-
+        requestOfPutProductByUid.body = '';
+        console.log(requestOfPutProductByUid)
+        await putProductById(requestOfPutProductByUid, resp, next)
+        expect(next.mock.calls[0][0]).toBe(400);
+    });
+    it('Debe retornar 404 si se ingres un id inválido', async() => {
+        await putProductById(requestOfPutBadUid, resp, next)
+        expect(next.mock.calls[1][0]).toBe(404);
     })
 });
-
-/* 
-describe('DELETE/products:uid', () => {
-it('Debería eliminar un ')
-
-}) */
