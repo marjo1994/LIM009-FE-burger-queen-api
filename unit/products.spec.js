@@ -106,6 +106,7 @@ const requestOfPostProduct2 = {
         type: 'papas fritas'
     },
 };
+
 describe('GET/products', () => {
     it('Debería obtener un array con los productos', async() => {
         const resp = {
@@ -166,9 +167,6 @@ describe('GET/ products:uid', () => {
         const next = jest.fn(json => {
             expect(next.mock.calls[0][0]).toBe(404);
         });
-        /*const resp = {
-            send: jest.fn(json => json),
-        };*/
 
         getProductById(requestOfGetProductByUidWrong, resp, next)
 
@@ -180,7 +178,7 @@ const requestOfPostProduct3 = {
     headers: '',
     body: {
         name: 'product4',
-        price: '6',
+        price: 6,
         type: 'dinner',
     },
 };
@@ -188,14 +186,16 @@ const requestOfPostProduct4 = {
     headers: '',
     body: {
         name: 'product5',
-        price: '4',
-        type: 'lunch',
+        price: 6,
+        type: 'dinner',
+        image: 'https://urlImage.com'
     },
 };
 const productUpdate = {
     name: 'productUpdate',
-    price: '6',
-    type: 'dinner',
+    price: 5,
+    type: 'lunch',
+    image: 'https://urlImage2.com'
 }
 const requestOfPutProductByUid = {
     header: '',
@@ -203,7 +203,10 @@ const requestOfPutProductByUid = {
         productId: ''
     },
     body: {
-        name: 'productUpdate'
+        name: 'productUpdate',
+        type: 'lunch',
+        price: 5,
+        image: 'https://urlImage2.com'
     }
 }
 const requestOfPutBadUid = {
@@ -212,6 +215,13 @@ const requestOfPutBadUid = {
         productId: 'badProductId123'
     },
     body: { name: 'papas' },
+}
+const requestOfPutPropertyBad = {
+    header: '',
+    params: {
+        productId: ''
+    },
+    body: { badProperty: [] }
 }
 describe('PUT/products:productId', () => {
     const resp = {
@@ -223,21 +233,70 @@ describe('PUT/products:productId', () => {
     it('Debe retornar el producto editado que ha sido llamado por su Uid', async() => {
         const productPost = await postProduct(requestOfPostProduct3, resp, next);
         requestOfPutProductByUid.params.productId = productPost._id.toString();
+
         const producto = await putProductById(requestOfPutProductByUid, resp, next);
         resp.send.mockReturnValue(producto);
         expect(resp.send()).toHaveProperty('_id');
         expect(resp.send()).toHaveProperty('name', productUpdate.name);
         expect(resp.send()).toHaveProperty('type', productUpdate.type);
     })
-
     it('Debe retornar 400 sino existe ningún campo a editar', async() => {
         requestOfPutProductByUid.body = '';
-        console.log(requestOfPutProductByUid)
         await putProductById(requestOfPutProductByUid, resp, next)
         expect(next.mock.calls[0][0]).toBe(400);
     });
+
     it('Debe retornar 404 si se ingres un id inválido', async() => {
         await putProductById(requestOfPutBadUid, resp, next)
         expect(next.mock.calls[1][0]).toBe(404);
+    })
+    it('Debe retornar 400 si se ingresa una propiedad inválida', async() => {
+        const productPost2 = await postProduct(requestOfPostProduct4, resp, next);
+        requestOfPutPropertyBad.params.productId = productPost2._id.toString();
+        await putProductById(requestOfPutPropertyBad, resp, next)
+        expect(next.mock.calls[2][0]).toBe(400);
+    })
+});
+
+
+const requestOfPostProduct5 = {
+    headers: '',
+    body: {
+        name: 'productDelete',
+        price: 2,
+        type: 'lunch',
+    },
+};
+const requestOfDeleteProductByUid = {
+    header: '',
+    params: {
+        productId: ''
+    },
+    body: {}
+}
+const requestOfDeleteBadUid = {
+    header: '',
+    params: {
+        productId: 'badProductId123'
+    },
+    body: {}
+}
+describe('DELETE/products:productId', () => {
+    const resp = {
+        send: jest.fn(json => json),
+    };
+
+    const next = jest.fn(json => json);
+
+    it('Debe eliminar el producto editado que ha sido llamado por su Uid', async() => {
+        const productPost = await postProduct(requestOfPostProduct5, resp, next);
+        requestOfDeleteProductByUid.params.productId = productPost._id.toString();
+        const producto = await deleteProductById(requestOfDeleteProductByUid, resp, next);
+        resp.send.mockReturnValue(producto);
+        expect(resp.send()).toEqual({ message: 'Se borro satisfactoriamente!' });
+    })
+    it('Debe retornar 404 si se ingresa un id inválido', async() => {
+        await deleteProductById(requestOfDeleteBadUid, resp, next)
+        expect(next.mock.calls[0][0]).toBe(404);
     })
 });
