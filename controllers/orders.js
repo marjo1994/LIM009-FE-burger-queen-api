@@ -56,7 +56,6 @@ module.exports.postOrders = async(req, resp, next) => {
 
 module.exports.putOrders = async(req, resp, next) => {
     try {
-       //console.error(req.body)
         if (!req.body.userId && !req.body.client && !req.body.products && !req.body.status) {
             return next(400);
         }
