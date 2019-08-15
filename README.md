@@ -4,6 +4,7 @@ Un pequeño restaurante de hamburguesas, que está creciendo, necesita un sistem
 1 API
 
 Según lo establecido por la documentación entregada por nuestra clienta, la API debe exponer los siguientes endpoints:
+
 1.1 /
 
     GET /
@@ -11,6 +12,8 @@ Según lo establecido por la documentación entregada por nuestra clienta, la AP
 1.2 /auth
 
     POST /auth
+
+    [POST/auth](img/postAuth.png)
 
 1.3 /users
 
