@@ -13,7 +13,7 @@ Según lo establecido por la documentación entregada por nuestra clienta, la AP
 
     POST /auth
 
-    [POST/auth](img/postAuth.png)
+[POST/auth](img/postAuth.png)
 
 1.3 /users
 
