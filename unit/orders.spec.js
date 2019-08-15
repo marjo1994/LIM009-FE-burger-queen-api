@@ -8,6 +8,7 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 600000;
 
 let mongoServer;
 let port;
+
 beforeEach(async() => {
     if (mongoServer) {
         await mongoose.disconnect();
@@ -78,6 +79,68 @@ describe('POST/ orders', () => {
         expect(next.mock.calls[0][0]).toBe(400);
     });
 });
+
+describe('GET/orders', () => {
+
+    const requestOfGetOrders = {
+        headers: {
+            authorization: '',    
+        },
+        query: {
+            limit: 10,
+            page: 1
+        },
+        protocol: 'http',
+        get: jest.fn(res => `localhost:${port}`),
+        path: '/orders',
+    }
+    
+    const resp = {
+        send: jest.fn(json => json),
+        set: jest.fn(json => json)
+    };
+    const next = jest.fn(json => json);
+
+
+    it('Debería obtener un array con las ordenes', async() => {
+        const resp1 = {
+            send: jest.fn(json => json),
+        };
+        const createdProduct = await postProduct(requestOfPostProduct, resp1, next);
+        requestOfPostOrders.body.products[0].product = createdProduct._id;
+        const resp2 = {
+            send: jest.fn(json => json),
+        };
+        await postOrders(requestOfPostOrders, resp2, next);        
+        const order = await getOrders(requestOfGetOrders, resp, next);
+        console.log(order)
+        expect(resp.send.mock.calls.length).toBe(1)
+    })
+})
+
+describe('GET/orders/:orderid', () => {
+   /* const requestOfGetProductByUid = {
+        headers: {
+            authorization: ''
+        },
+        params: {
+            productId: mockUid._id.toString()
+        }
+    }
+
+    const resp = {
+        send: jest.fn(json => {
+            console.log(resp.send.mock.calls[0][0],'hola')
+            expect(resp.send.mock.calls).toHaveLength(1);
+        }),
+    };
+    getProductById(requestOfGetProductByUid, resp, next)*/
+})
+
+
+
+
+
 const requestOfPostOrders2 = {
     headers: {
         authorization: '',
@@ -94,7 +157,7 @@ const requestOfPostOrders2 = {
         products: [{ qty: 1 }]
     }
 }
-const requestOfGetOrders = {
+const requestOfPutOrders = {
     headers: {
         authorization: '',
         user: {
@@ -103,13 +166,32 @@ const requestOfGetOrders = {
             roles: { admin: true }
         }
     },
-    query: {
-        limit: 10,
-        page: 1
+    body: {
+        status: 'preparing'
     },
-    get: jest.fn(json => json)
+    params: {
+        uid: '5d4916541d4f9a3b2dcac66d',
+    }
 };
 
+describe('PUT/ orders:uid', () => {
+    const resp = {
+        send: jest.fn(json => json),
+    };
+
+    const next = jest.fn(json => json);
+
+    it('Debería crear una nueva orden', async() => {
+        const createdProduct = await postProduct(requestOfPostOrders2, resp, next);
+        requestOfPostOrders.body.products[0].product = createdProduct._id;
+        await putOrders(requestOfPutOrders, resp, next);
+        expect(resp.send.mock.results[1].value).toHaveProperty('_id');
+    });
+    /*    it('Debería retornar 400 si no se ingresan datos', async() => {
+           await postOrders(requestEmptyPostOrders, resp, next);
+           expect(next.mock.calls[0][0]).toBe(400);
+       }); */
+});
 /* describe('GET/ orders', () => {
     const resp = {
         send: jest.fn(json => json),

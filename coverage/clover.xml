@@ -1,6 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1565818844151" clover="3.2.0">
-  <project timestamp="1565818844152" name="All files">
-    <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0" elements="0" coveredelements="0" complexity="0" loc="0" ncloc="0" packages="0" files="0" classes="0"/>
+<coverage generated="1565892153413" clover="3.2.0">
+  <project timestamp="1565892153413" name="All files">
+    <metrics statements="58" coveredstatements="44" conditionals="34" coveredconditionals="17" methods="9" coveredmethods="7" elements="101" coveredelements="68" complexity="0" loc="58" ncloc="58" packages="3" files="3" classes="3"/>
+    <package name="controllers">
+      <metrics statements="48" coveredstatements="34" conditionals="28" coveredconditionals="14" methods="8" coveredmethods="6"/>
+      <file name="products.js" path="/home/marjorie/Documentos/API-prueba/LIM009-FE-burger-queen-api/controllers/products.js">
+        <metrics statements="48" coveredstatements="34" conditionals="28" coveredconditionals="14" methods="8" coveredmethods="6"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="5" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="6" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="11" count="1" type="stmt"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="17" count="2" type="cond" truecount="2" falsecount="2"/>
+        <line num="18" count="2" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="25" count="6" type="stmt"/>
+        <line num="26" count="6" type="cond" truecount="4" falsecount="0"/>
+        <line num="27" count="2" type="stmt"/>
+        <line num="30" count="4" type="stmt"/>
+        <line num="37" count="4" type="stmt"/>
+        <line num="38" count="4" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="46" count="1" type="stmt"/>
+        <line num="47" count="1" type="stmt"/>
+        <line num="48" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="51" count="1" type="stmt"/>
+        <line num="52" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="55" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="56" count="1" type="stmt"/>
+        <line num="58" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="61" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="64" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="67" count="1" type="stmt"/>
+        <line num="68" count="1" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="71" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="85" count="1" type="stmt"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="87" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="91" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="models">
+      <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="modelProducts.js" path="/home/marjorie/Documentos/API-prueba/LIM009-FE-burger-queen-api/models/modelProducts.js">
+        <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="utils">
+      <metrics statements="6" coveredstatements="6" conditionals="6" coveredconditionals="3" methods="1" coveredmethods="1"/>
+      <file name="pagination.js" path="/home/marjorie/Documentos/API-prueba/LIM009-FE-burger-queen-api/utils/pagination.js">
+        <metrics statements="6" coveredstatements="6" conditionals="6" coveredconditionals="3" methods="1" coveredmethods="1"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="5" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="6" count="1" type="stmt"/>
+      </file>
+    </package>
   </project>
 </coverage>

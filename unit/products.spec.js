@@ -118,7 +118,7 @@ describe('GET/products', () => {
     })
 });
 
-describe('GET/ products:uid', () => {
+describe('GET/ products:productId', () => {
     let mockUid = '';
     beforeAll(async() => {
         const requestOfPostProduct = {
@@ -143,12 +143,13 @@ describe('GET/ products:uid', () => {
                 authorization: ''
             },
             params: {
-                uid: mockUid._id.toString()
+                productId: mockUid._id.toString()
             }
         }
 
         const resp = {
             send: jest.fn(json => {
+                console.log(resp.send.mock.calls[0][0],'hola')
                 expect(resp.send.mock.calls).toHaveLength(1);
             }),
         };
@@ -176,72 +177,61 @@ describe('GET/ products:uid', () => {
 
 });
 
+const requestOfPostProduct3 = {
+    headers: '',
+    body: {
+        name: 'product4',
+        price: '6',
+        type: 'dinner',
+    },
+};
+const requestOfPutProductByUid = {
+    header: '',
+    params: {
+        productId: ''
+    },
+    body: {
+        name: 'productUpdate2'
+    }
+}
 
-describe('PUT/products:uid', () => {
-    let mockUid2 = '';
-    beforeAll(async() => {
-        const requestOfPostProduct = {
-            headers: '',
-            body: {
-                name: 'product4',
-                price: '6',
-                type: 'dinner',
-            },
-        };
+describe('PUT/products:productId', () => {
+
+    it('Debe retornar el producto editado que ha sido llamado por su Uid', async() => {
+
         const resp = {
             send: jest.fn(json => json),
         };
-        await postProduct(requestOfPostProduct, resp, next);
-        mockUid2 = resp.send.mock.calls[0][0];
+
+        const next = jest.fn(json => json);
+
+        const productPost = await postProduct(requestOfPostProduct3, resp, next);
+        requestOfPutProductByUid.params.productId = productPost._id.toString();
+        // console.log(requestOfPutProductByUid)
+        const producto = await putProductById(requestOfPutProductByUid, resp, next);
+        // console.log(producto)
+        resp.send.mockReturnValue(producto)
+        expect(resp.send()).toHaveProperty('_id');
     })
 
-    it('Debe retornar el producto editado que ha sido llamado por su Uid', () => {
-        const productUpdate = {
-            name: 'product4Updated',
-            price: '6',
-            type: 'dinner',
-        }
+    /*     it('DeObjectIdbe retornar 400 sino existe ningún campo a editar', () => {
+            const requestOfPutProductByUid = {
+                header: '',
+                params: {
+                    uid: mockUid2._id.toString()
+                }
+            };
+            const resp = {
+                send: jest.fn(json => json)
+            };
 
-        const requestOfPutProductByUid = {
-            header: '',
-            params: {
-                uid: mockUid2._id.toString()
-            },
-            body: {
-                name: 'product4Update'
-            }
-        }
-
-        const resp = {
-            send: jest.fn(json => {
-                expect(resp.send.mock.results[0].value).toMatchObject(productUpdate);
+            const next = jest.fn(json => {
+                expect(next.mock.calls[0][0]).toBe(400);
             })
-        };
 
-        const next = jest.fn(json => json)
+            putProductById(requestOfPutProductByUid, resp, next)
 
-        putProductById(requestOfPutProductByUid, resp, next)
-
-    })
-
-    it('Debe retornar 400 sino existe ningún campo a editar', () => {
-        const requestOfPutProductByUid = {
-            header: '',
-            params: {
-                uid: mockUid2._id.toString()
-            }
-        };
-        const resp = {
-            send: jest.fn(json => json)
-        };
-
-        const next = jest.fn(json => {
-            expect(next.mock.calls[0][0]).toBe(400);
-        })
-
-        putProductById(requestOfPutProductByUid, resp, next)
-
-    })
+        }) */
 });
 
 /* 
