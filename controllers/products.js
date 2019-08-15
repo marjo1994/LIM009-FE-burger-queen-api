@@ -33,9 +33,7 @@ module.exports.postProduct = async(req, resp, next) => {
             image: req.body.image,
             type: req.body.type
         });
-
-        const productSave = await newProduct.save()
-        return resp.send(productSave);
+        return resp.send(await newProduct.save());
 
     } catch (e) {
         return next(404)
@@ -45,10 +43,14 @@ module.exports.postProduct = async(req, resp, next) => {
 
 module.exports.putProductById = async(req, resp, next) => {
     try {
-        if (!req.body) {
+
+        if (req.body == {} || !req.body) {
             return next(400)
         }
+
         const productById = await products.findOne({ _id: req.params.productId });
+        console.error(productById)
+
         if (!productById) {
             return next(404)
         }

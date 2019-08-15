@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">69.39% </span>
+        <span class="strong">71.43% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>34/49</span>
+        <span class='fraction'>35/49</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">50% </span>
+        <span class="strong">56.67% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>14/28</span>
+        <span class='fraction'>17/30</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">75% </span>
@@ -35,9 +35,9 @@
         <span class='fraction'>6/8</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">70.83% </span>
+        <span class="strong">72.92% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>34/48</span>
+        <span class='fraction'>35/48</span>
       </div>
     </div>
     <p class="quiet">
@@ -141,7 +141,9 @@
 <a name='L93'></a><a href='#L93'>93</a>
 <a name='L94'></a><a href='#L94'>94</a>
 <a name='L95'></a><a href='#L95'>95</a>
-<a name='L96'></a><a href='#L96'>96</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -165,20 +167,18 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -187,13 +187,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -271,9 +275,7 @@ module.exports.postProduct = async(req, resp, next) =&gt; {
             image: req.body.image,
             type: req.body.type
         });
-&nbsp;
-        const productSave = await newProduct.save()
-        return resp.send(productSave);
+        return resp.send(await newProduct.save());
 &nbsp;
     } catch (e) {
 <span class="cstat-no" title="statement not covered" >        return next(404)</span>
@@ -283,12 +285,16 @@ module.exports.postProduct = async(req, resp, next) =&gt; {
 &nbsp;
 module.exports.putProductById = async(req, resp, next) =&gt; {
     try {
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (!req.body) {
+&nbsp;
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (req.body == {} || !req.body) {
 <span class="cstat-no" title="statement not covered" >            return next(400)</span>
         }
+&nbsp;
         const productById = await products.findOne({ _id: req.params.productId });
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (!productById) {
-<span class="cstat-no" title="statement not covered" >            return next(404)</span>
+        console.error(productById)
+&nbsp;
+        if (!productById) {
+            return next(404)
         }
         <span class="missing-if-branch" title="else path not taken" >E</span>if (req.body.name) {
             productById.name = req.body.name
@@ -337,7 +343,7 @@ module.exports.deleteProductById = <span class="fstat-no" title="function not co
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu Aug 15 2019 02:01:27 GMT-0500 (-05)
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Thu Aug 15 2019 11:58:59 GMT-0500 (-05)
 </div>
 </div>
 <script src="../prettify.js"></script>
