@@ -14,7 +14,7 @@ Se desarrollaron cuatro módulos(Auth, Users, Products, Orders) de acuerdo a lo 
 
 Para generar las solicitudes debemos especificar el protocolo de red, en los siguientes ejemplos usaremos `https`, el IP de nuestra maquina de prueba será `167.71.153.94`, el puerto por defecto será `81`, a esto le añadiremos una ruta para especificar la petición (auth, users, products, orders).
 
-Según lo establecido por la documentación entregada por nuestra clienta, la API debe exponer los siguientes endpoints:
+Según lo establecido por la [documentación](https://laboratoria.github.io/burger-queen-api/) entregada por nuestra clienta, la API debe exponer los siguientes endpoints:
 
 ### 1.1 
 
