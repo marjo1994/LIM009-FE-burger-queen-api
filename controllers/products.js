@@ -43,12 +43,13 @@ module.exports.postProduct = async(req, resp, next) => {
 }
 
 
-module.exports.putProductById = (req, resp, next) => {
-    if (!req.body) {
-        return next(400)
-    }
-    products.findOne({ _id: req.params.productId }, (err, productById) => {
-        if (err) {
+module.exports.putProductById = async(req, resp, next) => {
+    try {
+        if (!req.body) {
+            return next(400)
+        }
+        const productById = await products.findOne({ _id: req.params.productId });
+        if (!productById) {
             return next(404)
         }
         if (req.body.name) {
@@ -63,13 +64,22 @@ module.exports.putProductById = (req, resp, next) => {
         if (req.body.type) {
             productById.type = req.body.type
         }
+        const productStored = await productById.save();
+        return resp.send(productStored)
+    } catch (e) {
+        console.error(e)
+        if (e.kind === 'ObjectId') return next(404)
+        return next(400)
+    }
+
+    /* , (err, productById) => {
+     
         productById.save((err, productStored) => {
             if (err) {
                 return next(400)
             }
-            resp.send(productStored)
         });
-    })
+    } */
 }
 
 module.exports.deleteProductById = (req, resp, next) => {
