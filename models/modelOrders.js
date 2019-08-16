@@ -21,9 +21,9 @@ const order = new Schema({
     },
     dateEntry: {
         type: Date,
-        required: true,
-        default: Date.now()
+        required: true
     },
     dateProcessed: Date,
 })
 module.exports = mongoose.model('Orders', order);
+//module.exports = mongoose.model('subcollectionProducts', productsSubcollection);

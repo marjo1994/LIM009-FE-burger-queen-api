@@ -82,12 +82,7 @@ module.exports.putUser = async(req, resp, next) => {
 
 module.exports.deleteUser = async(req, resp, next) => {
     try {
-        if (req.headers.user._id.toString() === req.params.uid || req.headers.user.email === req.params.uid) {
-            console.log('aaaaa')
-            return resp.send({ message: 'Usuario o administrador no pueden eliminarse a si mismo.' })
-        }
         const obj = uidOrEmail(req.params.uid);
-
         const userdeleted = await users.findOne(obj)
         if (!userdeleted) {
             return next(404)

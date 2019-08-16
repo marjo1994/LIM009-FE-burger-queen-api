@@ -1,5 +1,5 @@
 const user = require('../models/modelUsers');
-const { comparePassword } = require('../utils/auth-functions.js');
+const { comparePassword } = require('../utils/utils.js');
 
 /** @module auth */
 module.exports = (app, nextMain) => {
@@ -17,7 +17,7 @@ module.exports = (app, nextMain) => {
      */
 
     app.post('/auth', (req, resp, next) => {
-      
+
         const { email, password } = req.body;
 
         if (!email || !password) {

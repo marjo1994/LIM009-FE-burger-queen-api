@@ -22,11 +22,10 @@ module.exports.getProductById = (req, resp, next) => {
 }
 
 module.exports.postProduct = async(req, resp, next) => {
-    try{
+    try {
         if (!req.body.name || !req.body.price) {
             return next(400)
         }
-
         /*Primero, como administrador debo poder crear productos*/
         let newProduct = new products({
             name: req.body.name,
@@ -37,9 +36,9 @@ module.exports.postProduct = async(req, resp, next) => {
 
         const productSave = await newProduct.save()
         return resp.send(productSave);
-        
-    } catch(e) {
-        return next(err)
+
+    } catch (e) {
+        return next(404)
     }
 }
 
@@ -49,6 +48,7 @@ module.exports.putProductById = (req, resp, next) => {
         return next(400)
     }
     products.findOne({ _id: req.params.productId }, (err, productById) => {
+       // console.error(productById)
         if (err) {
             return next(404)
         }
@@ -85,8 +85,3 @@ module.exports.deleteProductById = (req, resp, next) => {
     })
 
 }
-
-
-
-
-
