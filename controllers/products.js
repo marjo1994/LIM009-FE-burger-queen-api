@@ -17,7 +17,7 @@ module.exports.getProductById = (req, resp, next) => {
         if (err || !productById) {
             return next(404)
         }
-        resp.send(productById);
+      return resp.send(productById);
     })
 }
 
@@ -33,25 +33,22 @@ module.exports.postProduct = async(req, resp, next) => {
             image: req.body.image,
             type: req.body.type
         });
-
-        const productSave = await newProduct.save()
-        return resp.send(productSave);
-
+        const saved = await newProduct.save()
+        return resp.send(saved);
     } catch (e) {
         return next(404)
     }
 }
 
 
-module.exports.putProductById = (req, resp, next) => {
-    if (!req.body) {
-        return next(400)
-    }
-    products.findOne({ _id: req.params.productId }, (err, productById) => {
-       // console.error(productById)
-        if (err) {
-            return next(404)
+module.exports.putProductById = async(req, resp, next) => {
+    try {
+        if (req.body === {} || !req.body) {
+            return next(400);
         }
+
+        const productById = await products.findOne({ _id: req.params.productId });
+
         if (req.body.name) {
             productById.name = req.body.name
         }
@@ -64,24 +61,23 @@ module.exports.putProductById = (req, resp, next) => {
         if (req.body.type) {
             productById.type = req.body.type
         }
-        productById.save((err, productStored) => {
-            if (err) {
-                return next(400)
-            }
-            resp.send(productStored)
-        });
-    })
-}
+        const productStored = await productById.save();
+        return resp.send(productStored);
+    } catch (e) {
+        if (e.kind === 'ObjectId') return next(404)
+        return next(400);
+    }
+};
 
-module.exports.deleteProductById = (req, resp, next) => {
-    products.findByIdAndRemove(req.params.productId, (err, product) => {
-        if (err) {
-            return next(404)
-        }
-        // console.log(resp.status)
-        resp.send({
+module.exports.deleteProductById = async(req, resp, next) => {
+    try {
+        const productDelete = await products.findByIdAndRemove(req.params.productId);
+        return resp.send({
             message: 'Se borro satisfactoriamente!',
         });
-    })
 
+    } catch (e) {
+        return next(404)
+
+    }
 }

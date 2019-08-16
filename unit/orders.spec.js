@@ -80,7 +80,147 @@ describe('POST/ orders', () => {
     });
 });
 
-const requestOfPostOrders2 = {
+describe('GET/orders', () => {
+    beforeEach(async()=> {
+        const resp1 = {
+            send: jest.fn(json => json),
+        };
+        const next = jest.fn(json => json);
+        const createdProduct = await postProduct(requestOfPostProduct, resp1, next);
+        requestOfPostOrders.body.products[0].product = createdProduct._id;
+        const resp2 = {
+            send: jest.fn(json => json),
+        };
+        await postOrders(requestOfPostOrders, resp2, next);
+        //console.log(order)
+    })
+     
+
+    it('Debería obtener un array con las ordenes', async() => {
+        const requestOfGetOrders = {
+            headers: {
+                authorization: '',    
+            },
+            query: {
+                limit: 10,
+                page: 1
+            },
+            protocol: 'http',
+            get: jest.fn(res => `localhost:${port}`),
+            path: '/orders',
+        }
+        
+        const resp = {
+            send: jest.fn(json => json),
+            set: jest.fn(json => json)
+        };
+        const next = jest.fn(json => json);
+        await getOrders(requestOfGetOrders, resp, next);
+        expect(resp.send.mock.calls.length).toBe(1)
+    })
+})
+
+describe('GET/orders/:orderid', () => {
+    let mockId = ''
+    beforeEach(async()=> {
+        const resp1 = {
+            send: jest.fn(json => json),
+        };
+        const next = jest.fn(json => json);
+        const createdProduct = await postProduct(requestOfPostProduct, resp1, next);
+        requestOfPostOrders.body.products[0].product = createdProduct._id;
+        const resp2 = {
+            send: jest.fn(json => json),
+        };
+        await postOrders(requestOfPostOrders, resp2, next);
+        mockId =  resp2.send.mock.calls[0][0]
+    })
+
+  
+  it('Debería retornar la orden llamada por su Uid', async() =>{
+      const objOrden = {
+        userId: '5d4916541d4f9a3b2dcac66d',
+        client: 'Maria',  
+      }
+       const requestOfGetOrderByUid = {
+            headers: {
+                authorization: ''
+            },
+            params: {
+                orderid: mockId._id.toString(),
+            }
+       }
+
+        const resp = {
+        send: jest.fn(json => json),
+        };
+        const next = jest.fn(json => json);
+        await getOrdersById(requestOfGetOrderByUid, resp, next);
+        expect(resp.send.mock.results[0].value).toMatchObject(objOrden);
+  })    
+});
+
+
+describe('DELETE/orders:orderid', () => {
+    let mockId = ''
+    beforeEach(async()=> {
+        const resp1 = {
+            send: jest.fn(json => json),
+        };
+        const next = jest.fn(json => json);
+        const createdProduct = await postProduct(requestOfPostProduct, resp1, next);
+        requestOfPostOrders.body.products[0].product = createdProduct._id;
+        const resp2 = {
+            send: jest.fn(json => json),
+        };
+        await postOrders(requestOfPostOrders, resp2, next);
+        mockId =  resp2.send.mock.calls[0][0]
+    })
+
+    it('Debería eliminar una orden con su respectivo id', async() => {
+        
+        const requestOfDelete = {
+            headers: {
+                authorization: ''
+            },
+            params: {
+                orderid: mockId._id.toString(),
+            }
+        }
+
+        const resp = {
+            send: jest.fn(json => json)
+        };
+
+
+        const next = jest.fn(json => json);
+
+
+        await deleteOrders(requestOfDelete, resp, next)
+        expect(resp.send.mock.calls[0][0]).toEqual({ message: 'Se borro satisfactoriamente!' });
+
+    })
+    it('Debería retornar 404 cuando no existe el id requerido', async ()=>{
+        const requestOfDelete = {
+            headers: {
+                authorization: ''
+            },
+            params: {
+                orderid: 'failabc',
+            }
+        }
+        const resp = {
+            send: jest.fn(json => json)
+        };
+        const next = jest.fn(json => json)
+
+        await deleteOrders(requestOfDelete, resp, next)
+        expect(next.mock.calls[0][0]).toBe(404);
+    })
+})
+
+
+/*const requestOfPostOrders2 = {
     headers: {
         authorization: '',
         user: {
@@ -129,8 +269,8 @@ describe('PUT/ orders:uid', () => {
     /*    it('Debería retornar 400 si no se ingresan datos', async() => {
            await postOrders(requestEmptyPostOrders, resp, next);
            expect(next.mock.calls[0][0]).toBe(400);
-       }); */
-});
+       }); 
+});*/
 /* describe('GET/ orders', () => {
     const resp = {
         send: jest.fn(json => json),

@@ -56,7 +56,6 @@ module.exports.postOrders = async(req, resp, next) => {
 
 module.exports.putOrders = async(req, resp, next) => {
     try {
-       //console.error(req.body)
         if (!req.body.userId && !req.body.client && !req.body.products && !req.body.status) {
             return next(400);
         }
@@ -102,11 +101,12 @@ module.exports.putOrders = async(req, resp, next) => {
 }
 
 
-module.exports.deleteOrders = (req, resp, next) => {
-    order.findByIdAndRemove(req.params.orderid, (err, product) => {
-        if (err) {
-            return next(404)
-        }
-        return resp.send({ message: 'Se borro satisfactoriamente!' });
-    });
+module.exports.deleteOrders = async (req, resp, next) => {
+   try {
+    await order.findByIdAndRemove(req.params.orderid)
+    return resp.send({ message: 'Se borro satisfactoriamente!' });
+   }
+   catch(e) {
+    return next(404)
+   }
 }
