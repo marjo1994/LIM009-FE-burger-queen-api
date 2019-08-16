@@ -33,10 +33,8 @@ module.exports.postProduct = async(req, resp, next) => {
             image: req.body.image,
             type: req.body.type
         });
-
-        const productSave = await newProduct.save()
-        return resp.send(productSave);
-
+        const saved = await newProduct.save()
+        return resp.send(saved);
     } catch (e) {
         return next(404)
     }
@@ -45,13 +43,12 @@ module.exports.postProduct = async(req, resp, next) => {
 
 module.exports.putProductById = async(req, resp, next) => {
     try {
-        if (!req.body) {
-            return next(400)
+        if (req.body === {} || !req.body) {
+            return next(400);
         }
+
         const productById = await products.findOne({ _id: req.params.productId });
-        if (!productById) {
-            return next(404)
-        }
+        console.error(productById)
         if (req.body.name) {
             productById.name = req.body.name
         }
@@ -65,32 +62,22 @@ module.exports.putProductById = async(req, resp, next) => {
             productById.type = req.body.type
         }
         const productStored = await productById.save();
-        return resp.send(productStored)
+        return resp.send(productStored);
     } catch (e) {
-        console.error(e)
         if (e.kind === 'ObjectId') return next(404)
-        return next(400)
+        return next(400);
     }
+};
 
-    /* , (err, productById) => {
-     
-        productById.save((err, productStored) => {
-            if (err) {
-                return next(400)
-            }
-        });
-    } */
-}
-
-module.exports.deleteProductById = (req, resp, next) => {
-    products.findByIdAndRemove(req.params.productId, (err, product) => {
-        if (err) {
-            return next(404)
-        }
-        // console.log(resp.status)
-        resp.send({
+module.exports.deleteProductById = async(req, resp, next) => {
+    try {
+        const productDelete = await products.findByIdAndRemove(req.params.productId);
+        return resp.send({
             message: 'Se borro satisfactoriamente!',
         });
-    })
 
+    } catch (e) {
+        return next(404)
+
+    }
 }
