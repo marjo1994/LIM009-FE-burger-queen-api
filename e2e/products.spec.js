@@ -159,7 +159,7 @@ describe('PUT /products/:productid', () => {
 });
 
 
-describe('DELETE /products/:productid', () => {
+describe.only('DELETE /products/:productid', () => {
   it('should fail with 401 when no auth', () => (
     fetch('/products/xxx', { method: 'DELETE' })
       .then(resp => expect(resp.status).toBe(401))

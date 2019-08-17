@@ -12,13 +12,18 @@ module.exports.getProducts = async(req, resp, next) => {
     return resp.send(result);
 }
 
-module.exports.getProductById = (req, resp, next) => {
-    products.findOne({ _id: req.params.productId }, (err, productById) => {
-        if (err || !productById) {
+module.exports.getProductById = async(req, resp, next) => {    
+    try {
+        const productById = await products.findOne({ _id: req.params.productId })
+        return resp.send(productById);
+      } catch(e) {
+
+        if (e.kind === 'ObjectId') {
+            console.error(e)
+
             return next(404)
-        }
-      return resp.send(productById);
-    })
+        } 
+      }
 }
 
 module.exports.postProduct = async(req, resp, next) => {
@@ -75,9 +80,7 @@ module.exports.deleteProductById = async(req, resp, next) => {
         return resp.send({
             message: 'Se borro satisfactoriamente!',
         });
-
     } catch (e) {
-        return next(404)
-
+        return next(404)        
     }
 }

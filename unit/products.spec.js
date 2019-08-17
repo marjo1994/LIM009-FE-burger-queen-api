@@ -121,7 +121,8 @@ describe('GET/products', () => {
 
 describe('GET/ products:productId', () => {
     let mockUid = '';
-    beforeAll(async() => {
+    beforeEach(async() => {
+    
         const requestOfPostProduct = {
             headers: '',
             body: {
@@ -137,7 +138,13 @@ describe('GET/ products:productId', () => {
         mockUid = resp.send.mock.calls[0][0]
     })
 
-    it('Debería retornar el producto llamado por su Uid', () => {
+    it('Debería retornar el producto llamado por su Uid', async () => {
+        const objProduct = {
+            name: 'product3',
+            price: 5,
+            type:'breakfast'
+        }       
+        
         const requestOfGetProductByUid = {
             headers: {
                 authorization: ''
@@ -148,26 +155,29 @@ describe('GET/ products:productId', () => {
         }
 
         const resp = {
-            send: jest.fn(json => {
-                expect(resp.send.mock.calls).toHaveLength(1);
-            }),
+            send: jest.fn(json => json),
+
         };
-        getProductById(requestOfGetProductByUid, resp, next)
+
+        await getProductById(requestOfGetProductByUid, resp, next)
+        expect(resp.send.mock.results[0].value).toMatchObject(objProduct)
+
+        //expect(resp.send.mock.calls[0][0]).toBe('a');
+       
     })
 
-    it('Debería retornar 404 llamado por un Uid errado', () => {
+    it('Debería retornar 404 llamado por un Uid errado', async() => {
 
         const requestOfGetProductByUidWrong = {
             headers: '',
             params: {
-                uid: 'failUid'
+                productId: 'failUid'
             }
         };
-        const next = jest.fn(json => {
-            expect(next.mock.calls[0][0]).toBe(404);
-        });
+        const next = jest.fn(json => json);
 
-        getProductById(requestOfGetProductByUidWrong, resp, next)
+        await getProductById(requestOfGetProductByUidWrong, resp, next)
+        expect(next.mock.calls[0][0]).toBe(404);
 
     })
 
