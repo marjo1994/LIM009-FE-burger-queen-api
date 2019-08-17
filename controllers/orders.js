@@ -84,14 +84,14 @@ module.exports.putOrders = async(req, resp, next) => {
 
         if (req.body.status === 'delivered') {
             item.dateProcessed = Date.now();
-          }
+        }
 
-          const orderSaved = await order.findOneAndUpdate({ _id: req.params.orderid }, { $set: item }, { runValidators: true, new: true }) //,(err,order)=>{
-            if (orderSaved.status === 'canceled' || !orderSaved) {
-                return next(404);
-            };
-            resp.send(orderSaved);
-        }catch (e) {
+        const orderSaved = await order.findOneAndUpdate({ _id: req.params.orderid }, { $set: item }, { runValidators: true, new: true }) //,(err,order)=>{
+        if (orderSaved.status === 'canceled' || !orderSaved) {
+            return next(404);
+        };
+        resp.send(orderSaved);
+    } catch (e) {
         if (e.kind === 'enum' || !e.kind) {
             return next(400);
         }
@@ -101,12 +101,11 @@ module.exports.putOrders = async(req, resp, next) => {
 }
 
 
-module.exports.deleteOrders = async (req, resp, next) => {
-   try {
-    await order.findByIdAndRemove(req.params.orderid)
-    return resp.send({ message: 'Se borro satisfactoriamente!' });
-   }
-   catch(e) {
-    return next(404)
-   }
+module.exports.deleteOrders = async(req, resp, next) => {
+    try {
+        await order.findByIdAndRemove(req.params.orderid)
+        return resp.send({ message: 'Se borro satisfactoriamente!' });
+    } catch (e) {
+        return next(404)
+    }
 }

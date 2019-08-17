@@ -15,15 +15,16 @@ module.exports.getProducts = async(req, resp, next) => {
 module.exports.getProductById = async(req, resp, next) => {    
     try {
         const productById = await products.findOne({ _id: req.params.productId })
-        return resp.send(productById);
-      } catch(e) {
-
-        if (e.kind === 'ObjectId') {
-            console.error(e)
-
+        if (!productById) {
             return next(404)
         } 
-      }
+        return resp.send(productById);
+        
+
+      } catch(e) {
+            return next(404)
+        } 
+      
 }
 
 module.exports.postProduct = async(req, resp, next) => {

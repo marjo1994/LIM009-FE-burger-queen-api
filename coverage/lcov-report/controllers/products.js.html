@@ -3,12 +3,12 @@
 <head>
     <title>Code coverage report for controllers/products.js</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="..\prettify.css" />
-    <link rel="stylesheet" href="..\base.css" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style type='text/css'>
         .coverage-summary .sorter {
-            background-image: url(..\sort-arrow-sprite.png);
+            background-image: url(../sort-arrow-sprite.png);
         }
     </style>
 </head>
@@ -16,13 +16,19 @@
 <div class='wrapper'>
   <div class='pad1'>
     <h1>
-      <a href="..\index.html">All files</a> / <a href="index.html">controllers</a> products.js
+      <a href="../index.html">All files</a> / <a href="index.html">controllers</a> products.js
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
+<<<<<<< HEAD
         <span class="strong">34.78% </span>
         <span class="quiet">Statements</span>
         <span class='fraction'>16/46</span>
+=======
+        <span class="strong">26.09% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>12/46</span>
+>>>>>>> 19868956a61b52c4429ae02c866da8db1530c028
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">13.64% </span>
@@ -35,9 +41,15 @@
         <span class='fraction'>2/6</span>
       </div>
       <div class='fl pad1y space-right2'>
+<<<<<<< HEAD
         <span class="strong">35.56% </span>
         <span class="quiet">Lines</span>
         <span class='fraction'>16/45</span>
+=======
+        <span class="strong">26.67% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>12/45</span>
+>>>>>>> 19868956a61b52c4429ae02c866da8db1530c028
       </div>
     </div>
     <p class="quiet">
@@ -153,19 +165,33 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<<<<<<< HEAD
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
+=======
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10x</span>
+>>>>>>> 19868956a61b52c4429ae02c866da8db1530c028
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<<<<<<< HEAD
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
+=======
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
+>>>>>>> 19868956a61b52c4429ae02c866da8db1530c028
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -224,6 +250,7 @@ module.exports.getProducts = <span class="fstat-no" title="function not covered"
 <span class="cstat-no" title="statement not covered" >    return resp.send(result);</span>
 }
 &nbsp;
+<<<<<<< HEAD
 module.exports.getProductById = async(req, resp, next) =&gt; {    
     try {
         const productById = await products.findOne({ _id: req.params.productId })
@@ -231,6 +258,15 @@ module.exports.getProductById = async(req, resp, next) =&gt; {
       } catch(e) {
         return next(404)        
       }
+=======
+module.exports.getProductById = <span class="fstat-no" title="function not covered" >(r</span>eq, resp, next) =&gt; {
+<span class="cstat-no" title="statement not covered" >    products.findOne({ _id: req.params.productId }, <span class="fstat-no" title="function not covered" >(e</span>rr, productById) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        if (err || !productById) {</span>
+<span class="cstat-no" title="statement not covered" >            return next(404)</span>
+        }
+<span class="cstat-no" title="statement not covered" >      return resp.send(productById);</span>
+    })
+>>>>>>> 19868956a61b52c4429ae02c866da8db1530c028
 }
 &nbsp;
 module.exports.postProduct = async(req, resp, next) =&gt; {
@@ -259,9 +295,9 @@ module.exports.putProductById = async(req, resp, next) =&gt; {
 <span class="cstat-no" title="statement not covered" >            return next(400);</span>
         }<span class="cstat-no" title="statement not covered" ></span>
 &nbsp;
-        const productById = await products.findOne({ _id: req.params.productId });
-<span class="cstat-no" title="statement not covered" ></span>
-        if (req.body.name) {
+        const productById = <span class="cstat-no" title="statement not covered" >await products.findOne({ _id: req.params.productId });</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (req.body.name) {</span>
 <span class="cstat-no" title="statement not covered" >            productById.name = req.body.name</span>
         }<span class="cstat-no" title="statement not covered" ></span>
         if (req.body.price) {
@@ -298,10 +334,14 @@ module.exports.deleteProductById = async(req, resp, next) =&gt; {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
+<<<<<<< HEAD
   generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sat Aug 17 2019 10:33:59 GMT-0500 (GMT-05:00)
+=======
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Sat Aug 17 2019 01:12:48 GMT-0500 (-05)
+>>>>>>> 19868956a61b52c4429ae02c866da8db1530c028
 </div>
 </div>
-<script src="..\prettify.js"></script>
+<script src="../prettify.js"></script>
 <script>
 window.onload = function () {
         if (typeof prettyPrint === 'function') {
@@ -309,7 +349,7 @@ window.onload = function () {
         }
 };
 </script>
-<script src="..\sorter.js"></script>
-<script src="..\block-navigation.js"></script>
+<script src="../sorter.js"></script>
+<script src="../block-navigation.js"></script>
 </body>
 </html>
